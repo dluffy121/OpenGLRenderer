@@ -31,12 +31,12 @@ int main(void)
 	};
 
 	unsigned int bufferId;
-	glGenBuffers(1, &bufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, bufferId);
-	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), points, GL_STATIC_DRAW);
+	glGenBuffers(1, &bufferId);															// Generate 1 Buffer and get its id in 'bufferId' https://docs.gl/gl4/glGenBuffers
+	glBindBuffer(GL_ARRAY_BUFFER, bufferId);											// Bind the generated buffer with its id https://docs.gl/gl4/glBindBuffer
+	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), points, GL_STATIC_DRAW);		// update buffer data with its type of usage https://docs.gl/gl4/glBufferData
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+	glEnableVertexAttribArray(0);														// enables vertex atrrib array from the bound buffer https://docs.gl/gl4/glEnableVertexAttribArray
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);				// define an array vertex attribute data
 
 	unsigned int ibo;
 	glGenBuffers(1, &ibo);
@@ -53,8 +53,10 @@ int main(void)
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		//OpenGLHelper->GLClearError();
+		//glDrawArrays(GL_TRIANGLES, 0, 6);												// this method will draw from binded buffer array https://docs.gl/gl4/glDrawArrays
+		GLLog(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));						// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
+		//ASSERT(OpenGLHelper->GLLogCall());
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

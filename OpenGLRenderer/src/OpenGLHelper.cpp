@@ -1,10 +1,16 @@
 #pragma once
 #include <GL/glew.h>
-#include <cstdio>
+#include <iostream>
 #include <GLFW/glfw3.h>
+
+#define ASSERT(x)	if(!(x)) __debugbreak();
+#define GLLog(x)	OpenGLHelper::GLClearError();\
+					x;\
+					ASSERT(OpenGLHelper::GLLogCall(#x, __FILE__, __LINE__))
 
 class OpenGLHelper
 {
+
 	private:
 	static OpenGLHelper* instance;
 
@@ -76,6 +82,28 @@ class OpenGLHelper
 	void MakeWindow(GLFWwindow* window)
 	{
 		glfwMakeContextCurrent(window);
+	}
+
+	public:
+	static void GLClearError()
+	{
+		while (glGetError() != GL_NO_ERROR);
+		//while (!glGetError());		// since GL_NO_ERROR is equals to 0
+	}
+
+	public:
+	static bool GLLogCall(const char* function, const char* file, int line)
+	{
+		while (GLenum error = glGetError())	// this while loop will not end until 'error' is 0
+		{
+			std::cout << "\n"
+				"[OpenGL error]: (" << error << ")" << "\n"
+				"  Function: " << function << "\n"
+				"  File: " << file << "\n"
+				"  Line: " << line << std::endl;
+			return false;
+		}
+		return true;
 	}
 };
 
