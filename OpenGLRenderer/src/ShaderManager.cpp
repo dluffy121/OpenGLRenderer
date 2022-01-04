@@ -4,6 +4,7 @@
 #include <string>
 #include <GL/glew.h>
 #include <sstream>
+#include "OpenGLHelper.cpp"
 
 enum ShaderType
 {
@@ -65,22 +66,22 @@ class ShaderManager
 	{
 		unsigned int id = glCreateShader(type);
 		const char* src = source.c_str();
-		glShaderSource(id, 1, &src, NULL);
-		glCompileShader(id);
+		GLLog(glShaderSource(id, 1, &src, NULL));
+		GLLog(glCompileShader(id));
 
 		int result;
-		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+		GLLog(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
 		if (result == GL_FALSE)
 		{
 			int length;
-			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+			GLLog(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
 			char* message = (char*)_malloca(length * sizeof(char));
-			glGetShaderInfoLog(id, length, &length, message);
+			GLLog(glGetShaderInfoLog(id, length, &length, message));
 
 			std::cerr << "Failed to Compile Shader with id: " << id << " type: " << type << std::endl;
 			std::cerr << message << std::endl;
 
-			glDeleteShader(id);
+			GLLog(glDeleteShader(id));
 
 			return 0;
 		}
@@ -91,19 +92,19 @@ class ShaderManager
 	public:
 	unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
 	{
-		unsigned int program = glCreateProgram();
+		GLLog(unsigned int program = glCreateProgram());
 		unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
 		unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
-		glAttachShader(program, vs);
-		glAttachShader(program, fs);
-		glLinkProgram(program);
+		GLLog(glAttachShader(program, vs));
+		GLLog(glAttachShader(program, fs));
+		GLLog(glLinkProgram(program));
 
-		glDetachShader(program, vs);
-		glDetachShader(program, fs);
+		GLLog(glDetachShader(program, vs));
+		GLLog(glDetachShader(program, fs));
 
-		glDeleteShader(vs);
-		glDeleteShader(fs);
+		GLLog(glDeleteShader(vs));
+		GLLog(glDeleteShader(fs));
 
 		return program;
 	}
