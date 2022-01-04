@@ -47,16 +47,32 @@ int main(void)
 	unsigned int shader = ShaderManager->CreateShader(source.VertexSource, source.FragmentSource);
 	GLLog(glUseProgram(shader));
 
+	GLLog(GLuint uniformId = glGetUniformLocation(shader, "u_Color"));
+	ASSERT(uniformId != -1);
+	GLLog(glUniform4f(uniformId, 0.2f, 0.3f, 0.8f, 1.0f));
+
+	float r = 0.0f;
+	float increment = 0.05f;
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
 		/* Render here */
 		GLLog(glClear(GL_COLOR_BUFFER_BIT));
 
+		GLLog(glUniform4f(uniformId, r, 0.3f, 0.8f, 1.0f));
+
 		//OpenGLHelper->GLClearError();
 		//glDrawArrays(GL_TRIANGLES, 0, 6);														// this method will draw from binded buffer array https://docs.gl/gl4/glDrawArrays
-		GLLog(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));								// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
+		GLLog(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));						// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
 		//ASSERT(OpenGLHelper->GLLogCall());
+
+		if (r > 1)
+			increment = -0.05f;
+		else if (r < 0)
+			increment = 0.05f;
+
+		r += increment;
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

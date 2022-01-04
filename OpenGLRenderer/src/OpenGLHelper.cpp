@@ -82,6 +82,8 @@ class OpenGLHelper
 	void MakeWindow(GLFWwindow* window)
 	{
 		glfwMakeContextCurrent(window);
+
+		glfwSwapInterval(1);			// sets swap interval current gl context window i.e. wait for screen updates https://www.glfw.org/docs/3.3/group__context.html#ga6d4e0cdf151b5e579bd67f13202994ed
 	}
 
 	public:
