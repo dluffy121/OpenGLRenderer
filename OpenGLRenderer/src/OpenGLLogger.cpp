@@ -1,7 +1,5 @@
-#pragma once
-
-#include "OpenGLLogger.h"
 #include <GL/glew.h>
+#include "OpenGLLogger.h"
 #include <iostream>
 
 void GLClearError()

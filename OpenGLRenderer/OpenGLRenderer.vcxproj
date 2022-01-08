@@ -154,15 +154,20 @@
     <None Include="resources\shaders\Basic.shader" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\OpenGLHelper.cpp" />
     <ClCompile Include="src\OpenGLLogger.cpp" />
     <ClCompile Include="src\OpenGLRenderer.cpp" />
     <ClCompile Include="src\ShaderManager.cpp" />
+    <ClCompile Include="src\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\OpenGLHelper.h" />
     <ClInclude Include="src\OpenGLLogger.h" />
+    <ClInclude Include="src\OpenGLStaticConsts.h" />
     <ClInclude Include="src\ShaderManager.h" />
+    <ClInclude Include="src\VertexBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

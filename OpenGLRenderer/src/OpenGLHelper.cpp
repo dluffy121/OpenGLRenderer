@@ -1,6 +1,3 @@
-#pragma once
-
-#include <GL/glew.h>
 #include "OpenGLHelper.h"
 #include <stdio.h>
 
