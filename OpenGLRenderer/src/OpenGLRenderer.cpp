@@ -1,18 +1,19 @@
-#include "OpenGLHelper.cpp"
-#include "ShaderManager.cpp"
-#include <string>
+#pragma once
 
-OpenGLHelper* OpenGLHelper::instance = 0;
-ShaderManager* ShaderManager::instance = 0;
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include "OpenGLLogger.h"
+#include "OpenGLHelper.h"
+#include "ShaderManager.h"
 
 int main(void)
 {
-	OpenGLHelper* OpenGLHelper = OpenGLHelper->getInstance();
-	ShaderManager* ShaderManager = ShaderManager->getInstance();
+	OpenGLHelper* openGLHelperRef = OpenGLHelper::getOGHInstance();
+	ShaderManager* shaderManagerRef = ShaderManager::getSMInstance();
 
-	GLFWwindow* window;
+	GLFWwindow* window = nullptr;
 
-	int retVal = OpenGLHelper->Init(window);
+	int retVal = openGLHelperRef->Init(window);
 	if (retVal != int{})
 		return retVal;
 
@@ -43,8 +44,8 @@ int main(void)
 	GLLog(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
 	GLLog(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
 
-	ShaderProgramSource source = ShaderManager->ParseShader("resources/shaders/Basic.shader");
-	unsigned int shader = ShaderManager->CreateShader(source.VertexSource, source.FragmentSource);
+	ShaderProgramSource source = shaderManagerRef->ParseShader("resources/shaders/Basic.shader");
+	unsigned int shader = shaderManagerRef->CreateShader(source.VertexSource, source.FragmentSource);
 	GLLog(glUseProgram(shader));
 
 	GLLog(GLuint uniformId = glGetUniformLocation(shader, "u_Color"));
@@ -83,6 +84,6 @@ int main(void)
 
 	GLLog(glDeleteProgram(shader));
 
-	OpenGLHelper->TerminateGLFW();
+	//openGLHelperRef->TerminateGLFW();
 	return 0;
 }

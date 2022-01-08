@@ -1,111 +1,73 @@
 #pragma once
+
 #include <GL/glew.h>
-#include <iostream>
-#include <GLFW/glfw3.h>
+#include "OpenGLHelper.h"
+#include <stdio.h>
 
-#define ASSERT(x)	if(!(x)) __debugbreak();
-#define GLLog(x)	OpenGLHelper::GLClearError();\
-					x;\
-					ASSERT(OpenGLHelper::GLLogCall(#x, __FILE__, __LINE__))
+OpenGLHelper::OpenGLHelper()
+{}
 
-class OpenGLHelper
+OpenGLHelper* OpenGLHelper::getOGHInstance()
 {
+	static OpenGLHelper instance;
+	return &instance;
+}
 
-	private:
-	static OpenGLHelper* instance;
+int OpenGLHelper::Init(GLFWwindow*& window)
+{
+	if (!InitializeGLFW())
+		return -1;
 
-	public:
-	static OpenGLHelper* getInstance() {
-		if (!instance)
-			instance = new OpenGLHelper;
-		return instance;
-	}
-
-	public:
-	int Init(GLFWwindow*& window)
+	window = CreateWindow();
+	if (!window)
 	{
-		if (!InitializeGLFW())
-			return -1;
-
-		window = CreateWindow();
-		if (!window)
-		{
-			TerminateGLFW();
-			return -1;
-		}
-
-		MakeWindow(window);
-
-		if (!InitializeGLEW())
-			return -1;
-
-		fprintf(stdout, "Status: Using GL %s\n", glGetString(GL_VERSION));
-
-		return 0;
+		TerminateGLFW();
+		return -1;
 	}
 
-	private:
-	int InitializeGLFW()
+	MakeWindow(window);
+
+	if (!InitializeGLEW())
+		return -1;
+
+	fprintf(stdout, "Status: Using GL %s\n", glGetString(GL_VERSION));
+
+	return 0;
+}
+
+void OpenGLHelper::TerminateGLFW()
+{
+	glfwTerminate();
+}
+
+int OpenGLHelper::InitializeGLFW()
+{
+	int retVal = glfwInit();
+	fprintf(stdout, "Status: Using GLFW %s\n", glfwGetVersionString());
+	return retVal;
+}
+
+bool OpenGLHelper::InitializeGLEW()
+{
+	GLenum err = glewInit();
+	if (err != GLEW_OK)
 	{
-		int retVal = glfwInit();
-		fprintf(stdout, "Status: Using GLFW %s\n", glfwGetVersionString());
-		return retVal;
+		/* Problem: glewInit failed, something is seriously wrong. */
+		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		return false;
 	}
+	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+	return true;
+}
 
-	public:
-	void TerminateGLFW()
-	{
-		glfwTerminate();
-	}
+GLFWwindow* OpenGLHelper::CreateWindow()
+{
+	return glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+}
 
-	private:
-	bool InitializeGLEW()
-	{
-		GLenum err = glewInit();
-		if (err != GLEW_OK)
-		{
-			/* Problem: glewInit failed, something is seriously wrong. */
-			fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-			return false;
-		}
-		fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-		return true;
-	}
+void OpenGLHelper::MakeWindow(GLFWwindow* window)
+{
+	glfwMakeContextCurrent(window);
 
-	private:
-	GLFWwindow* CreateWindow()
-	{
-		return glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-	}
-
-	private:
-	void MakeWindow(GLFWwindow* window)
-	{
-		glfwMakeContextCurrent(window);
-
-		glfwSwapInterval(1);			// sets swap interval current gl context window i.e. wait for screen updates https://www.glfw.org/docs/3.3/group__context.html#ga6d4e0cdf151b5e579bd67f13202994ed
-	}
-
-	public:
-	static void GLClearError()
-	{
-		while (glGetError() != GL_NO_ERROR);
-		//while (!glGetError());		// since GL_NO_ERROR is equals to 0
-	}
-
-	public:
-	static bool GLLogCall(const char* function, const char* file, int line)
-	{
-		while (GLenum error = glGetError())	// this while loop will not end until 'error' is 0
-		{
-			std::cout << "\n"
-				"[OpenGL error]: (" << error << ")" << "\n"
-				"  Function: " << function << "\n"
-				"  File: " << file << "\n"
-				"  Line: " << line << std::endl;
-			return false;
-		}
-		return true;
-	}
-};
-
+	glfwSwapInterval(1);			// sets swap interval current gl context window i.e. wait for screen updates https://www.glfw.org/docs/3.3/group__context.html#ga6d4e0cdf151b5e579bd67f13202994ed
+}
