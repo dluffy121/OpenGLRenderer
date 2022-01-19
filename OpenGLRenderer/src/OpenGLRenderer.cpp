@@ -3,6 +3,7 @@
 #include "ShaderManager.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "VertexArray.h"
 
 int main(void)
 {
@@ -30,14 +31,12 @@ int main(void)
 			2,3,0
 		};
 
-		unsigned int vao;
-		GLLog(glGenVertexArrays(1, &vao));
-		GLLog(glBindVertexArray(vao));
-
+		VertexArray va;
 		VertexBuffer vb(points, 4 * 2 * sizeof(float));
 
-		GLLog(glEnableVertexAttribArray(0));														// enables vertex atrrib array from the bound buffer https://docs.gl/gl4/glEnableVertexAttribArray
-		GLLog(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));				// define an array vertex attribute data
+		VertexBufferLayout layout;
+		layout.Push<float>(2);
+		va.AddBuffer(vb, layout);
 
 		IndexBuffer ib(indices, 6);
 
@@ -49,7 +48,7 @@ int main(void)
 		ASSERT(uniformId != -1);
 		GLLog(glUniform4f(uniformId, 0.2f, 0.3f, 0.8f, 1.0f));
 
-		GLLog(glBindVertexArray(0));
+		va.UnBind();
 		GLLog(glUseProgram(0));
 		GLLog(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 		GLLog(glBindBuffer(GL_ARRAY_BUFFER, 0));
@@ -66,7 +65,8 @@ int main(void)
 			GLLog(glUseProgram(shader));
 			GLLog(glUniform4f(uniformId, r, 0.3f, 0.8f, 1.0f));
 
-			GLLog(glBindVertexArray(vao));
+			va.Bind();
+			//GLLog(glBindVertexArray(vao));
 			ib.Bind();
 			//GLLog(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
 
