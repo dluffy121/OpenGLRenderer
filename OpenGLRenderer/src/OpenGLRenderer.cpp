@@ -1,6 +1,6 @@
 #include "OpenGLLogger.h"
 #include "OpenGLHelper.h"
-#include "ShaderManager.h"
+#include "Shader.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
@@ -8,7 +8,6 @@
 int main(void)
 {
 	OpenGLHelper* openGLHelperRef = OpenGLHelper::getOGHInstance();
-	ShaderManager* shaderManagerRef = ShaderManager::getSMInstance();
 
 	GLFWwindow* window = nullptr;
 
@@ -40,18 +39,12 @@ int main(void)
 
 		IndexBuffer ib(indices, 6);
 
-		ShaderProgramSource source = shaderManagerRef->ParseShader("resources/shaders/Basic.shader");
-		unsigned int shader = shaderManagerRef->CreateShader(source.VertexSource, source.FragmentSource);
-		GLLog(glUseProgram(shader));
-
-		GLLog(GLuint uniformId = glGetUniformLocation(shader, "u_Color"));
-		ASSERT(uniformId != -1);
-		GLLog(glUniform4f(uniformId, 0.2f, 0.3f, 0.8f, 1.0f));
+		Shader shader("resources/shaders/Basic.shader");
 
 		va.UnBind();
-		GLLog(glUseProgram(0));
-		GLLog(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-		GLLog(glBindBuffer(GL_ARRAY_BUFFER, 0));
+		shader.UnBind();
+		vb.UnBind();
+		ib.UnBind();
 
 		float r = 0.0f;
 		float increment = 0.05f;
@@ -62,8 +55,10 @@ int main(void)
 			/* Render here */
 			GLLog(glClear(GL_COLOR_BUFFER_BIT));
 
-			GLLog(glUseProgram(shader));
-			GLLog(glUniform4f(uniformId, r, 0.3f, 0.8f, 1.0f));
+			shader.Bind();
+			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+			//GLLog(glUseProgram(shader));
+			//GLLog(glUniform4f(uniformId, r, 0.3f, 0.8f, 1.0f));
 
 			va.Bind();
 			//GLLog(glBindVertexArray(vao));
@@ -88,8 +83,6 @@ int main(void)
 			/* Poll for and process events */
 			glfwPollEvents();
 		}
-
-		GLLog(glDeleteProgram(shader));
 	}
 
 	openGLHelperRef->TerminateGLFW();

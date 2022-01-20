@@ -158,7 +158,7 @@
     <ClCompile Include="src\OpenGLHelper.cpp" />
     <ClCompile Include="src\OpenGLLogger.cpp" />
     <ClCompile Include="src\OpenGLRenderer.cpp" />
-    <ClCompile Include="src\ShaderManager.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="src\VertexBufferLayout.cpp" />
@@ -168,7 +168,7 @@
     <ClInclude Include="src\OpenGLHelper.h" />
     <ClInclude Include="src\OpenGLLogger.h" />
     <ClInclude Include="src\OpenGLStaticConsts.h" />
-    <ClInclude Include="src\ShaderManager.h" />
+    <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
     <ClInclude Include="src\VertexBufferLayout.h" />
