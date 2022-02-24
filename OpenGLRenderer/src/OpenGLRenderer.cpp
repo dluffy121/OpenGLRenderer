@@ -4,16 +4,31 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
+#include "Renderer.h"
+#include <iostream>
+#include "ShaderManager.h"
+#include "RendererManager.h"
 
 int main(void)
 {
-	OpenGLHelper* openGLHelperRef = OpenGLHelper::getOGHInstance();
+	if (!OpenGLHelper::InitializeGLFW())
+		return -1;
 
-	GLFWwindow* window = nullptr;
+	ShaderManager* shaderManager = ShaderManager::getInstance();
+	RendererManager* rendererManager = RendererManager::getInstance();
 
-	int retVal = openGLHelperRef->Init(window);
-	if (retVal != int{})
-		return retVal;
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4.6);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	GLFWwindow* window = OpenGLHelper::CreateWindow(640, 480, "", NULL, true);
+	OpenGLHelper::UseWindow(window);
+	OpenGLHelper::SetSwqpInterval(1);
+
+	Renderer* renderer1 = rendererManager->GetRendererInstance("Main Window", 720, 1280, window);
+	Renderer* renderer2 = rendererManager->GetRendererInstance("Second Window", 720, 1280, window);
+
+	if (!OpenGLHelper::InitializeGLEW())
+		return -1;
 
 	{
 		float points[]
@@ -30,45 +45,43 @@ int main(void)
 			2,3,0
 		};
 
-		VertexArray va;
+		VertexArray va1;
+		VertexArray va2;
+
 		VertexBuffer vb(points, 4 * 2 * sizeof(float));
 
 		VertexBufferLayout layout;
 		layout.Push<float>(2);
-		va.AddBuffer(vb, layout);
 
-		IndexBuffer ib(indices, 6);
+		va1.AddBuffer(vb, layout);
+		va2.AddBuffer(vb, layout);
 
-		Shader shader("resources/shaders/Basic.shader");
+		renderer1->SetVertexArray(va1);
+		renderer2->SetVertexArray(va2);
 
-		va.UnBind();
-		shader.UnBind();
+		IndexBuffer ib(indices, GL_UNSIGNED_INT, 6);
+		renderer1->SetIndexBuffer(ib);
+		renderer2->SetIndexBuffer(ib);
+
+		ShaderAsset shaderAsset = shaderManager->CreateShaderAsset("resources/shaders/Basic.shader");
+		Shader shader(shaderManager->LoadShader(shaderAsset));
+		renderer1->SetShader(shader);
+		renderer2->SetShader(shader);
+
 		vb.UnBind();
 		ib.UnBind();
+
+		float time = 0.0f;
+		float timeDelta = 0.00694444f;
 
 		float r = 0.0f;
 		float increment = 0.05f;
 
-		/* Loop until the user closes the window */
-		while (!glfwWindowShouldClose(window))
+		Action UpdateAction = [&r, &increment, &shader]()
 		{
-			/* Render here */
-			GLLog(glClear(GL_COLOR_BUFFER_BIT));
-
 			shader.Bind();
 			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-			//GLLog(glUseProgram(shader));
-			//GLLog(glUniform4f(uniformId, r, 0.3f, 0.8f, 1.0f));
-
-			va.Bind();
-			//GLLog(glBindVertexArray(vao));
-			ib.Bind();
-			//GLLog(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-
-			//OpenGLHelper->GLClearError();
-			//glDrawArrays(GL_TRIANGLES, 0, 6);														// this method will draw from binded buffer array https://docs.gl/gl4/glDrawArrays
-			GLLog(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));						// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
-			//ASSERT(OpenGLHelper->GLLogCall());
+			shader.UnBind();
 
 			if (r > 1)
 				increment = -0.05f;
@@ -76,15 +89,16 @@ int main(void)
 				increment = 0.05f;
 
 			r += increment;
+		};
 
-			/* Swap front and back buffers */
-			glfwSwapBuffers(window);
+		rendererManager->UpdateActions.push_back(UpdateAction);
 
-			/* Poll for and process events */
-			glfwPollEvents();
-		}
+		rendererManager->RenderLoop();
 	}
 
-	openGLHelperRef->TerminateGLFW();
+	delete renderer1;
+	delete renderer2;
+
+	OpenGLHelper::TerminateGLFW();
 	return 0;
 }

@@ -1,39 +1,24 @@
 #include "OpenGLHelper.h"
 #include <stdio.h>
+#include "OpenGLLogger.h"
+#include <iostream>
 
-OpenGLHelper::OpenGLHelper()
-{}
-
-OpenGLHelper* OpenGLHelper::getOGHInstance()
+unsigned int GetSizeOfType(unsigned int type)
 {
-	static OpenGLHelper instance;
-	return &instance;
-}
-
-int OpenGLHelper::Init(GLFWwindow*& window)
-{
-	if (!InitializeGLFW())
-		return -1;
-
-	window = CreateWindow();
-	if (!window)
+	switch (type)
 	{
-		TerminateGLFW();
-		return -1;
+	case GL_FLOAT:			return 4;
+	case GL_UNSIGNED_INT:	return 4;
+	case GL_UNSIGNED_SHORT:	return 2;
+	case GL_UNSIGNED_BYTE:	return 1;
 	}
-
-	MakeWindow(window);
-
-	if (!InitializeGLEW())
-		return -1;
-
-	fprintf(stdout, "Status: Using GL %s\n", glGetString(GL_VERSION));
-
+	ASSERT(false);
 	return 0;
 }
 
 void OpenGLHelper::TerminateGLFW()
 {
+	std::cout << "GLFW Terminated" << std::endl;
 	glfwTerminate();
 }
 
@@ -57,14 +42,24 @@ bool OpenGLHelper::InitializeGLEW()
 	return true;
 }
 
-GLFWwindow* OpenGLHelper::CreateWindow()
+GLFWwindow* OpenGLHelper::CreateWindow(int width, int height, const std::string& title, GLFWwindow* sharedWindow, bool isHidden, bool isDecorated)
 {
-	return glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+	glfwWindowHint(GLFW_VISIBLE, isHidden ? GLFW_FALSE : GLFW_TRUE);
+	glfwWindowHint(GLFW_DECORATED, isDecorated ? GLFW_TRUE : GLFW_FALSE);
+	return glfwCreateWindow(width, height, title.c_str(), NULL, sharedWindow);
 }
 
-void OpenGLHelper::MakeWindow(GLFWwindow* window)
+void OpenGLHelper::SetSwqpInterval(int interval)
+{
+	glfwSwapInterval(interval);			// sets swap interval current gl context window i.e. wait for screen updates https://www.glfw.org/docs/3.3/group__context.html#ga6d4e0cdf151b5e579bd67f13202994ed
+}
+
+void OpenGLHelper::UseWindow(GLFWwindow* window)
 {
 	glfwMakeContextCurrent(window);
+}
 
-	glfwSwapInterval(1);			// sets swap interval current gl context window i.e. wait for screen updates https://www.glfw.org/docs/3.3/group__context.html#ga6d4e0cdf151b5e579bd67f13202994ed
+void OpenGLHelper::DestroyWindow(GLFWwindow* window)
+{
+	glfwDestroyWindow(window);
 }
