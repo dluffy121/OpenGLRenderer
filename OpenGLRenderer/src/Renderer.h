@@ -3,7 +3,7 @@
 #include "RenderData.h"
 #include <functional>
 #include <GLFW/glfw3.h>
-#include "TypeDefs.h"
+#include "Action.h"
 
 class Renderer
 {
@@ -25,11 +25,13 @@ public:
 	inline std::string GetRendererId() const { return m_RendererId; }
 	inline GLFWwindow*& GetRendererWindow() { return m_Window; }
 
-	inline VertexArray& GetVertexArray() { return *m_RenderData.m_VertexArray; }
-	inline IndexBuffer& GetIndexBuffer() { return *m_RenderData.m_IndexBuffer; }
-	inline Shader& GetShader() { return *m_RenderData.m_Shader; }
+	inline VertexArray& GetVertexArray() const { return *m_RenderData.VertexArray; }
+	inline IndexBuffer& GetIndexBuffer() const { return *m_RenderData.IndexBuffer; }
+	inline std::vector<Shader*> GetShaders() const { return m_RenderData.Shaders; }
+	inline std::vector<Texture*> GetTextures() const { return m_RenderData.Textures; }
 
-	inline void SetVertexArray(VertexArray& va) { m_RenderData.m_VertexArray = &va; }
-	inline void SetIndexBuffer(IndexBuffer& ib) { m_RenderData.m_IndexBuffer = &ib; }
-	inline void SetShader(Shader& shader) { m_RenderData.m_Shader = &shader; }
+	inline void SetVertexArray(VertexArray& va) { m_RenderData.VertexArray = &va; }
+	inline void SetIndexBuffer(IndexBuffer& ib) { m_RenderData.IndexBuffer = &ib; }
+	inline void AddShader(Shader& shader) { m_RenderData.Shaders.push_back(&shader); }
+	inline void AddTexture(Texture& texture) { m_RenderData.Textures.push_back(&texture); }
 };

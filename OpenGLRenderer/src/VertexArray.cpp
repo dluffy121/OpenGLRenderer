@@ -10,8 +10,11 @@ VertexArray::VertexArray() :
 
 VertexArray::~VertexArray()
 {
-	GLLog(glDeleteVertexArrays(1, &m_VertexArrayId));
-	std::cout << "Deleted VertexArray with id: " << m_VertexArrayId << std::endl;
+	if (m_isGenerated)
+	{
+		GLLog(glDeleteVertexArrays(1, &m_VertexArrayId));
+		std::cout << "Deleted VertexArray with id: " << m_VertexArrayId << std::endl;
+	}
 }
 
 void VertexArray::Bind()
@@ -20,15 +23,7 @@ void VertexArray::Bind()
 	{
 		GLLog(glGenVertexArrays(1, &m_VertexArrayId));
 		m_isGenerated = true;
-		for (auto& vbData : m_vbDataCollection)
-		{
-			const auto& elements = vbData.layout.GetElements();
-			unsigned int offset = 0;
-			for (unsigned int i = 0; i < elements.size(); i++)
-			{
-				vbData.layout.DisableElement(i);
-			}
-		}
+		DisableVertexAttribArrays();
 	}
 
 	GLLog(glBindVertexArray(m_VertexArrayId));
@@ -43,25 +38,6 @@ void VertexArray::UnBind() const
 void VertexArray::AddBuffer(const VertexBuffer& vb, VertexBufferLayout& layout)
 {
 	m_vbDataCollection.push_back({ vb, layout });
-
-	//Bind();
-
-	//vbData.vb.Bind();
-
-	//const auto& elements = vbData.layout.GetElements();
-	//unsigned int offset = 0;
-	//for (unsigned int i = 0; i < elements.size(); i++)
-	//{
-	//	const auto& element = elements[i];
-	//	GLLog(glEnableVertexAttribArray(i));					// enables vertex atrrib array from the bound buffer https://docs.gl/gl4/glEnableVertexAttribArray
-	//	glVertexAttribPointer(i,							// define an array vertex attribute data
-	//		element.count,
-	//		element.type,
-	//		element.normalized,
-	//		vbData.layout.GetStride(),
-	//		(const void*)offset);
-	//	offset += element.count * GetSizeOfType(element.type);
-	//}
 }
 
 void VertexArray::EnableVertexAttribArrays() const
@@ -87,6 +63,20 @@ void VertexArray::EnableVertexAttribArrays() const
 			offset += element.count * GetSizeOfType(element.type);
 
 			vbData.layout.EnableElement(i);
+		}
+	}
+}
+
+void VertexArray::DisableVertexAttribArrays() const
+{
+	for (auto& vbData : m_vbDataCollection)
+	{
+		const auto& elements = vbData.layout.GetElements();
+		unsigned int offset = 0;
+		for (unsigned int i = 0; i < elements.size(); i++)
+		{
+			GLLog(glDisableVertexAttribArray(i));
+			vbData.layout.DisableElement(i);
 		}
 	}
 }

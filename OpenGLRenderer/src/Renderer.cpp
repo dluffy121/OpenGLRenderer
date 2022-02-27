@@ -3,8 +3,7 @@
 #include <iostream>
 
 Renderer::Renderer(const std::string& rendererId, int width, int height, GLFWwindow* sharedWindow) :
-	m_RendererId(rendererId),
-	m_RenderData()
+	m_RendererId(rendererId)
 {
 	m_Window = OpenGLHelper::CreateWindow(width, height, m_RendererId, sharedWindow);
 	if (!m_Window)
@@ -28,34 +27,19 @@ void Renderer::Clear() const
 
 void Renderer::Draw() const
 {
-	if (m_RenderData.m_VertexArray == nullptr)
-	{
-		std::cout << "VertexArray is null" << std::endl;
-		ASSERT(false);
-		return;
-	}
+	m_RenderData.VertexArray->Bind();
+	m_RenderData.IndexBuffer->Bind();
+	for (auto& shader : m_RenderData.Shaders)
+		shader->Bind();
+	for (auto& texture : m_RenderData.Textures)
+		texture->Bind();
 
-	if (m_RenderData.m_IndexBuffer == nullptr)
-	{
-		std::cout << "IndexBufferis null" << std::endl;
-		ASSERT(false);
-		return;
-	}
+	GLLog(glDrawElements(GL_TRIANGLES, m_RenderData.IndexBuffer->GetCount(), m_RenderData.IndexBuffer->GetIndexType(), nullptr));						// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
 
-	if (m_RenderData.m_Shader == nullptr)
-	{
-		std::cout << "Shader is null" << std::endl;
-		ASSERT(false);
-		return;
-	}
-
-	m_RenderData.m_Shader->Bind();
-	m_RenderData.m_VertexArray->Bind();
-	m_RenderData.m_IndexBuffer->Bind();
-
-	GLLog(glDrawElements(GL_TRIANGLES, m_RenderData.m_IndexBuffer->GetCount(), m_RenderData.m_IndexBuffer->GetIndexType(), nullptr));						// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
-
-	m_RenderData.m_VertexArray->UnBind();
-	m_RenderData.m_IndexBuffer->UnBind();
-	m_RenderData.m_Shader->UnBind();
+	m_RenderData.VertexArray->UnBind();
+	m_RenderData.IndexBuffer->UnBind();
+	for (auto& shader : m_RenderData.Shaders)
+		shader->UnBind();
+	for (auto& texture : m_RenderData.Textures)
+		texture->UnBind();
 }

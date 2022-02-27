@@ -29,4 +29,5 @@ public:
 
 private:
 	void EnableVertexAttribArrays() const;
+	void DisableVertexAttribArrays() const;
 };

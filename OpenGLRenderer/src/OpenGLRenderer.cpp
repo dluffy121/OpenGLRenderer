@@ -8,6 +8,7 @@
 #include <iostream>
 #include "ShaderManager.h"
 #include "RendererManager.h"
+#include "Texture.h"
 
 int main(void)
 {
@@ -17,26 +18,33 @@ int main(void)
 	ShaderManager* shaderManager = ShaderManager::getInstance();
 	RendererManager* rendererManager = RendererManager::getInstance();
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4.6);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	GLFWwindow* window = OpenGLHelper::CreateWindow(640, 480, "", NULL, true);
 	OpenGLHelper::UseWindow(window);
 	OpenGLHelper::SetSwqpInterval(1);
 
-	Renderer* renderer1 = rendererManager->GetRendererInstance("Main Window", 720, 1280, window);
-	Renderer* renderer2 = rendererManager->GetRendererInstance("Second Window", 720, 1280, window);
+	GLLog(glEnable(GL_BLEND));
+	GLLog(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+	Renderer* renderer1 = rendererManager->GetRendererInstance("Main Window", 720, 720, window);
+	Renderer* renderer2 = rendererManager->GetRendererInstance("Second Window", 720, 720, window);
 
 	if (!OpenGLHelper::InitializeGLEW())
 		return -1;
 
+	fprintf(stdout, "Status: Using OpenGL version %s\n", glGetString(GL_VERSION));
+
 	{
 		float points[]
-		{
-			-0.5, -0.5, //0
-			 0.5, -0.5, //1
-			 0.5,  0.5, //2
-			-0.5,  0.5  //3
+		{	
+			//	Vertex Buffer Layouts			| Vertex Attrib Pointer
+			//	Vertex Pos		Tex Coords
+				-0.5, -0.5,		0.0f, 0.0f,		// 0
+				 0.5, -0.5,		1.0f, 0.0f,		// 1
+				 0.5,  0.5,		1.0f, 1.0f,		// 2
+				-0.5,  0.5,		0.0f, 1.0f		// 3
 		};
 
 		unsigned int indices[]
@@ -48,9 +56,10 @@ int main(void)
 		VertexArray va1;
 		VertexArray va2;
 
-		VertexBuffer vb(points, 4 * 2 * sizeof(float));
+		VertexBuffer vb(points, 4 * 4 * sizeof(float));
 
 		VertexBufferLayout layout;
+		layout.Push<float>(2);
 		layout.Push<float>(2);
 
 		va1.AddBuffer(vb, layout);
@@ -65,8 +74,16 @@ int main(void)
 
 		ShaderAsset shaderAsset = shaderManager->CreateShaderAsset("resources/shaders/Basic.shader");
 		Shader shader(shaderManager->LoadShader(shaderAsset));
-		renderer1->SetShader(shader);
-		renderer2->SetShader(shader);
+		renderer1->AddShader(shader);
+		renderer2->AddShader(shader);
+
+		Texture texture("resources/textures/Opengl.png");
+		renderer1->AddTexture(texture);
+		renderer2->AddTexture(texture);
+		texture.Bind();
+		shader.Bind();
+		shader.SetUniform1i("u_Texture", 0);
+		shader.UnBind();
 
 		vb.UnBind();
 		ib.UnBind();
@@ -77,7 +94,7 @@ int main(void)
 		float r = 0.0f;
 		float increment = 0.05f;
 
-		Action UpdateAction = [&r, &increment, &shader]()
+		Action UpdateAction = [&r, &increment, &shader, &texture]()
 		{
 			shader.Bind();
 			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
