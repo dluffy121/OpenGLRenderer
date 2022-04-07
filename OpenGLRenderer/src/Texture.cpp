@@ -1,7 +1,7 @@
 #include "Texture.h"
 #include "OpenGLLogger.h"
 #include <GL/glew.h>
-#include "vendor/stb_image/stb_image.h"
+#include "stb_image/stb_image.h"
 #include <iostream>
 
 Texture::Texture(const std::string& texturePath) :
@@ -23,10 +23,10 @@ Texture::Texture(const std::string& texturePath) :
 	GLLog(glGenTextures(1, &m_TextureId));
 	GLLog(glBindTexture(GL_TEXTURE_2D, m_TextureId));
 
-	GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+	GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-	GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
 	GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
 

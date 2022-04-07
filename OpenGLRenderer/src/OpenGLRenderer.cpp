@@ -9,6 +9,8 @@
 #include "ShaderManager.h"
 #include "RendererManager.h"
 #include "Texture.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 int main(void)
 {
@@ -28,8 +30,8 @@ int main(void)
 	GLLog(glEnable(GL_BLEND));
 	GLLog(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-	Renderer* renderer1 = rendererManager->GetRendererInstance("Main Window", 720, 720, window);
-	Renderer* renderer2 = rendererManager->GetRendererInstance("Second Window", 720, 720, window);
+	Renderer* renderer1 = rendererManager->GetRendererInstance("Main Window", 640, 480, window);
+	Renderer* renderer2 = rendererManager->GetRendererInstance("Second Window", 640, 480, window);
 
 	if (!OpenGLHelper::InitializeGLEW())
 		return -1;
@@ -38,7 +40,7 @@ int main(void)
 
 	{
 		float points[]
-		{	
+		{
 			//	Vertex Buffer Layouts			| Vertex Attrib Pointer
 			//	Vertex Pos		Tex Coords
 				-0.5, -0.5,		0.0f, 0.0f,		// 0
@@ -80,10 +82,12 @@ int main(void)
 		Texture texture("resources/textures/Opengl.png");
 		renderer1->AddTexture(texture);
 		renderer2->AddTexture(texture);
+		renderer1->SetOrthoMultiplier(1.5f);
 		texture.Bind();
 		shader.Bind();
 		shader.SetUniform1i("u_Texture", 0);
 		shader.UnBind();
+		texture.UnBind();
 
 		vb.UnBind();
 		ib.UnBind();
@@ -108,7 +112,15 @@ int main(void)
 			r += increment;
 		};
 
+		std::function<void(const Renderer&)> UpdateActionRenderer = [&shader](const Renderer& r)
+		{
+			shader.Bind();
+			shader.SetUniformMat4f("u_MVP", r.m_RenderData.Projection);
+			shader.UnBind();
+		};
+
 		rendererManager->UpdateActions.push_back(UpdateAction);
+		rendererManager->UpdateActionsRenderer.push_back(UpdateActionRenderer);
 
 		rendererManager->RenderLoop();
 	}
