@@ -3,8 +3,6 @@
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 
 struct RenderData
 {
@@ -12,11 +10,4 @@ struct RenderData
 	IndexBuffer* IndexBuffer = nullptr;
 	std::vector<Shader*> Shaders;
 	std::vector<Texture*> Textures;
-
-	int widthRatio;
-	int heightRatio;
-
-	float OrthoMultiplier = 1.0f;
-
-	glm::mat4 Projection;
 };

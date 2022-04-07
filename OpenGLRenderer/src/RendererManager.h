@@ -7,7 +7,6 @@ class RendererManager
 {
 public:
 	std::vector<Action> UpdateActions;
-	std::vector<std::function<void(const Renderer&)>> UpdateActionsRenderer;
 
 private:
 	int rendererCount;
