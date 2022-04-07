@@ -1,9 +1,11 @@
 #include "Renderer.h"
 #include "OpenGLHelper.h"
 #include <iostream>
+#include "Math.h"
 
 Renderer::Renderer(const std::string& rendererId, int width, int height, GLFWwindow* sharedWindow) :
-	m_RendererId(rendererId)
+	m_RendererId(rendererId),
+	m_isDirty(true)
 {
 	m_Window = OpenGLHelper::CreateWindow(width, height, m_RendererId, sharedWindow);
 	if (!m_Window)
@@ -12,6 +14,12 @@ Renderer::Renderer(const std::string& rendererId, int width, int height, GLFWwin
 		ASSERT(false);
 		return;
 	}
+
+	int l_gcd = gcd(width, height);
+	m_RenderData.widthRatio = width / l_gcd;
+	m_RenderData.heightRatio = height / l_gcd;
+
+	UpdateProjectionMatrix();
 }
 
 Renderer::~Renderer()
@@ -42,4 +50,19 @@ void Renderer::Draw() const
 		shader->UnBind();
 	for (auto& texture : m_RenderData.Textures)
 		texture->UnBind();
+}
+
+void Renderer::SetOrthoMultiplier(float multiplier)
+{
+	m_RenderData.OrthoMultiplier = multiplier;
+	UpdateProjectionMatrix();
+}
+
+void Renderer::UpdateProjectionMatrix()
+{
+	float leftRightOffset = m_RenderData.widthRatio * m_RenderData.OrthoMultiplier;
+	float topBotOffset = m_RenderData.heightRatio * m_RenderData.OrthoMultiplier;
+	//m_RenderData.Projection = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+	m_RenderData.Projection = glm::ortho(-leftRightOffset, leftRightOffset, -topBotOffset, topBotOffset, -1.0f, 1.0f);
+	Log(m_RenderData.widthRatio << "|" << m_RenderData.heightRatio << " | " << m_RenderData.OrthoMultiplier  << " | " << leftRightOffset << "|" << topBotOffset);
 }

@@ -43,6 +43,9 @@ void RendererManager::RenderLoop()
 
 			m_RendererCollection[i]->Clear();
 
+			for (auto& raction : UpdateActionsRenderer)
+				raction(*m_RendererCollection[i]);
+
 			m_RendererCollection[i]->Draw();
 
 			glfwSwapBuffers(m_WindowCollection[i]);
@@ -59,8 +62,10 @@ void RendererManager::RenderLoop()
 		}
 
 		if (!windowClosed)
+		{
 			for (auto& action : UpdateActions)
 				action();
+		}
 
 		windowClosed = false;
 		i = 0;
