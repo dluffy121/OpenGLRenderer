@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include "glm/glm.hpp"
+#include "Action.h"
 
 class Shader
 {
@@ -15,6 +16,8 @@ private:
 public:
 	Shader(unsigned int shaderId);
 	~Shader();
+
+	std::vector<Action> OnUpdate;
 
 	void Bind() const;
 	void UnBind() const;
@@ -30,4 +33,5 @@ public:
 
 private:
 	GLint GetUniformLocation(const std::string& name);
+	void UpdateAction();
 };

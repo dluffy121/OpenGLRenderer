@@ -1,5 +1,5 @@
 #include "ShaderAsset.h"
-#include "OpenGLLogger.h"
+#include "Logger.h"
 #include <string>
 #include <iostream>
 #include <fstream>

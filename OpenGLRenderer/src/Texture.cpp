@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "OpenGLLogger.h"
+#include "Logger.h"
 #include <GL/glew.h>
 #include "stb_image/stb_image.h"
 #include <iostream>
@@ -8,16 +8,16 @@ Texture::Texture(const std::string& texturePath) :
 	m_TextureId(0),
 	m_FilePath(texturePath),
 	m_LocalBuffer(nullptr),
-	m_width(0),
-	m_height(0),
+	m_Width(0),
+	m_Height(0),
 	m_BPP(0)
 {
 	stbi_set_flip_vertically_on_load(1);
-	m_LocalBuffer = stbi_load(m_FilePath.c_str(), &m_width, &m_height, &m_BPP, 0);	// 4 is for RGBA
+	m_LocalBuffer = stbi_load(m_FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 0);	// 4 is for RGBA
 
 	Log("Texture with id: " << m_TextureId << std::endl
 		<< "Load Status: " << (m_LocalBuffer != nullptr) << std::endl
-		<< "Resolution: " << m_width << " x " << m_height << std::endl
+		<< "Resolution: " << m_Width << " x " << m_Height << std::endl
 		<< "Bits Per Pixel: " << m_BPP << std::endl);
 
 	GLLog(glGenTextures(1, &m_TextureId));
@@ -28,7 +28,7 @@ Texture::Texture(const std::string& texturePath) :
 	GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
 	GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
-	GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
+	GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
 
 	GLLog(glBindTexture(GL_TEXTURE_2D, 0));
 

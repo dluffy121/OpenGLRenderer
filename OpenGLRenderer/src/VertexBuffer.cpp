@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include "VertexBuffer.h"
-#include "OpenGLLogger.h"
+#include "Logger.h"
 #include <iostream>
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size)

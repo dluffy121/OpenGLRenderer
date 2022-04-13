@@ -1,43 +1,41 @@
 #pragma once
 
+#include "Shader.h"
+#include "Component.h"
 #include "RenderData.h"
-#include <functional>
-#include <GLFW/glfw3.h>
-#include "Action.h"
+#include "glm/glm.hpp"
 
-class Renderer
+class Renderer : public Component
 {
-public:
-	RenderData m_RenderData;
-	std::vector<Action> UpdateActions;
-
 private:
-	std::string m_RendererId;
-	GLFWwindow* m_Window;
-	bool m_isDirty;
+	Shader* m_Shader;
+	Texture* m_Texture;
+
+	float* m_vertexCoords;
+	float* m_textureCoords;
+	unsigned int* m_triangleIndices;
+
+	RenderData* m_RenderData;
 
 public:
-	Renderer(const std::string& rendererId, int width = 640, int height = 480, GLFWwindow* sharedWindow = NULL);
+	Renderer(float& vertexCoords, unsigned int vcSize, unsigned int& triangleIndices, unsigned int tiSize, bool is3D);
+	Renderer(float& vertexCoords, unsigned int vcSize, float& textureCoords, unsigned int tcSize, unsigned int& triangleIndices, unsigned int tiSize, bool is3D);
 	~Renderer();
 
-	void Clear() const;
-	void Draw() const;
+	void SetShader(Shader& shader);
+	void SetTexture(Texture& texture);
 
-	inline std::string GetRendererId() const { return m_RendererId; }
-	inline GLFWwindow*& GetRendererWindow() { return m_Window; }
+	void BindToVA(VertexArray& va) const;
 
-	inline VertexArray& GetVertexArray() const { return *m_RenderData.VertexArray; }
-	inline IndexBuffer& GetIndexBuffer() const { return *m_RenderData.IndexBuffer; }
-	inline std::vector<Shader*> GetShaders() const { return m_RenderData.Shaders; }
-	inline std::vector<Texture*> GetTextures() const { return m_RenderData.Textures; }
+	inline RenderData* GetRenderData() const { return m_RenderData; }
 
-	inline void SetVertexArray(VertexArray& va) { m_RenderData.VertexArray = &va; }
-	inline void SetIndexBuffer(IndexBuffer& ib) { m_RenderData.IndexBuffer = &ib; }
-	inline void AddShader(Shader& shader) { m_RenderData.Shaders.push_back(&shader); }
-	inline void AddTexture(Texture& texture) { m_RenderData.Textures.push_back(&texture); }
+	bool BindShader() const;
+	bool UnBindShader() const;
+	bool UpdateShaderMVP(glm::mat4 mvp) const;
 
-	void SetOrthoMultiplier(float multiplier);
+	bool BindTexture() const;
+	bool UnBindTexture() const;
 
 private:
-	void UpdateProjectionMatrix();
+	float* MergeVertexCoordsNTextureCoords(bool is3D, int vbSize, float& vertexCoords, float& textureCoords);
 };

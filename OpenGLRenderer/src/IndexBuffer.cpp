@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include "IndexBuffer.h"
-#include "OpenGLLogger.h"
+#include "Logger.h"
 #include "OpenGLHelper.h"
 #include <iostream>
 

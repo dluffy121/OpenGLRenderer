@@ -3,20 +3,16 @@
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 
 struct RenderData
 {
-	VertexArray* VertexArray = nullptr;
-	IndexBuffer* IndexBuffer = nullptr;
-	std::vector<Shader*> Shaders;
-	std::vector<Texture*> Textures;
+	const VertexBuffer* m_vb;
+	VertexBufferLayout* m_layout;
+	const IndexBuffer* m_ib;
 
-	int widthRatio;
-	int heightRatio;
-
-	float OrthoMultiplier = 1.0f;
-
-	glm::mat4 Projection;
+	RenderData(const VertexBuffer& vb, VertexBufferLayout& layout, const IndexBuffer& ib) :
+		m_vb(&vb),
+		m_layout(&layout),
+		m_ib(&ib)
+	{}
 };

@@ -1,7 +1,6 @@
 #include "OpenGLHelper.h"
 #include <stdio.h>
-#include "OpenGLLogger.h"
-#include <iostream>
+#include "Logger.h"
 
 unsigned int GetSizeOfType(unsigned int type)
 {
@@ -54,12 +53,12 @@ void OpenGLHelper::SetSwqpInterval(int interval)
 	glfwSwapInterval(interval);			// sets swap interval current gl context window i.e. wait for screen updates https://www.glfw.org/docs/3.3/group__context.html#ga6d4e0cdf151b5e579bd67f13202994ed
 }
 
-void OpenGLHelper::UseWindow(GLFWwindow* window)
+void OpenGLHelper::UseGLFWWindow(GLFWwindow* window)
 {
 	glfwMakeContextCurrent(window);
 }
 
-void OpenGLHelper::DestroyWindow(GLFWwindow* window)
+void OpenGLHelper::DestroyGLFWWindow(GLFWwindow* window)
 {
 	glfwDestroyWindow(window);
 }

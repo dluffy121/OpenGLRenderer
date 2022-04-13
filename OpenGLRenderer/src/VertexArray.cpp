@@ -1,7 +1,6 @@
 #include "VertexArray.h"
-#include "OpenGLLogger.h"
+#include "Logger.h"
 #include "OpenGLHelper.h"
-#include <iostream>
 
 VertexArray::VertexArray() :
 	m_isGenerated(false),
@@ -45,25 +44,7 @@ void VertexArray::EnableVertexAttribArrays() const
 	for (auto& vbData : m_vbDataCollection)
 	{
 		vbData.vb.Bind();
-		const auto& elements = vbData.layout.GetElements();
-		unsigned int offset = 0;
-		for (unsigned int i = 0; i < elements.size(); i++)
-		{
-			const auto& element = elements[i];
-			if (element.isEnabled)
-				continue;
-
-			GLLog(glEnableVertexAttribArray(i));
-			GLLog(glVertexAttribPointer(i,
-				element.count,
-				element.type,
-				element.normalized,
-				vbData.layout.GetStride(),
-				(const void*)offset));
-			offset += element.count * GetSizeOfType(element.type);
-
-			vbData.layout.EnableElement(i);
-		}
+		vbData.layout.Bind();
 	}
 }
 
@@ -71,12 +52,6 @@ void VertexArray::DisableVertexAttribArrays() const
 {
 	for (auto& vbData : m_vbDataCollection)
 	{
-		const auto& elements = vbData.layout.GetElements();
-		unsigned int offset = 0;
-		for (unsigned int i = 0; i < elements.size(); i++)
-		{
-			GLLog(glDisableVertexAttribArray(i));
-			vbData.layout.DisableElement(i);
-		}
+		vbData.layout.UnBind();
 	}
 }

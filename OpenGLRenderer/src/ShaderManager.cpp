@@ -1,6 +1,6 @@
 #include "ShaderManager.h"
 #include "Shader.h"
-#include "OpenGLLogger.h"
+#include "Logger.h"
 #include <iostream>
 
 ShaderManager::ShaderManager() {}

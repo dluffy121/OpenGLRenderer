@@ -1,6 +1,5 @@
+#include "Logger.h"
 #include <GL/glew.h>
-#include "OpenGLLogger.h"
-#include <iostream>
 
 void GLClearError()
 {

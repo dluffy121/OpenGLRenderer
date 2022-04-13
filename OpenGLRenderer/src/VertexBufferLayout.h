@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <GL/glew.h>
-#include "OpenGLLogger.h"
+#include "Logger.h"
 #include "OpenGLHelper.h"
 
 struct VertexBufferElement
@@ -53,6 +53,10 @@ public:
 
 	inline const std::vector<VertexBufferElement>& GetElements() const { return m_Elements; }
 	inline unsigned int GetStride() const { return m_Stride; }
+	void Bind();
+	void UnBind();
+
+private:
 	inline void EnableElement(int index) { m_Elements[index].isEnabled = true; }
 	inline void DisableElement(int index) { m_Elements[index].isEnabled = false; }
 };

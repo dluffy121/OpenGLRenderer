@@ -1,68 +1,133 @@
 #include "Renderer.h"
-#include "OpenGLHelper.h"
-#include <iostream>
-#include "Math.h"
+#include "Action.h"
 
-Renderer::Renderer(const std::string& rendererId, int width, int height, GLFWwindow* sharedWindow) :
-	m_RendererId(rendererId),
-	m_isDirty(true)
+Renderer::Renderer(float& vertexCoords, unsigned int vcSize, unsigned int& triangleIndices, unsigned int tiSize, bool is3D)
 {
-	m_Window = OpenGLHelper::CreateWindow(width, height, m_RendererId, sharedWindow);
-	if (!m_Window)
-	{
-		OpenGLHelper::TerminateGLFW();
-		ASSERT(false);
-		return;
-	}
+	m_vertexCoords = &vertexCoords;
+	//std::copy(vertexCoords, vertexCoords + vcSize, m_vertexCoords);
 
-	int l_gcd = gcd(width, height);
-	m_RenderData.widthRatio = width / l_gcd;
-	m_RenderData.heightRatio = height / l_gcd;
+	m_triangleIndices = &triangleIndices;
+	//std::copy(triangleIndices, triangleIndices + tiSize, m_triangleIndices);
 
-	UpdateProjectionMatrix();
+	unsigned int dimensions = is3D ? 3 : 2;
+
+	VertexBuffer* vb = new VertexBuffer(m_vertexCoords, vcSize * sizeof(float));
+	IndexBuffer* ib = new IndexBuffer(m_triangleIndices, GL_UNSIGNED_INT, tiSize);
+	VertexBufferLayout* layout = new VertexBufferLayout();
+	layout->Push<float>(2);			// for Vertex coords
+
+	m_RenderData = new RenderData(*vb, *layout, *ib);
+}
+
+Renderer::Renderer(float& vertexCoords, unsigned int vcSize, float& textureCoords, unsigned int tcSize, unsigned int& triangleIndices, unsigned int tiSize, bool is3D)
+{
+	m_vertexCoords = &vertexCoords;
+	//std::copy(vertexCoords, vertexCoords + vcSize, m_vertexCoords);
+
+	m_textureCoords = &textureCoords;
+	//std::copy(textureCoords, textureCoords + tcSize, m_textureCoords);
+
+	m_triangleIndices = &triangleIndices;
+	//std::copy(triangleIndices, triangleIndices + tiSize, m_triangleIndices);
+
+	unsigned int dimensions = is3D ? 3 : 2;
+
+	int vbSize = vcSize + tcSize;
+
+	float* vertexData = MergeVertexCoordsNTextureCoords(is3D, vbSize, vertexCoords, textureCoords);
+
+	VertexBuffer* vb = new VertexBuffer(vertexData, vbSize * sizeof(float));
+	IndexBuffer* ib = new IndexBuffer(m_triangleIndices, GL_UNSIGNED_INT, tiSize);
+	VertexBufferLayout* layout = new VertexBufferLayout();
+	layout->Push<float>(2);			// for Vertex coords
+	layout->Push<float>(2);			// for Texture coords
+
+	m_RenderData = new RenderData(*vb, *layout, *ib);
 }
 
 Renderer::~Renderer()
 {
-	OpenGLHelper::DestroyWindow(m_Window);
-	std::cout << "Deleted Renderer with id: " << m_RendererId << std::endl;
 }
 
-void Renderer::Clear() const
+void Renderer::SetShader(Shader& shader)
 {
-	GLLog(glClear(GL_COLOR_BUFFER_BIT));
+	m_Shader = &shader;
 }
 
-void Renderer::Draw() const
+void Renderer::SetTexture(Texture& texture)
 {
-	m_RenderData.VertexArray->Bind();
-	m_RenderData.IndexBuffer->Bind();
-	for (auto& shader : m_RenderData.Shaders)
-		shader->Bind();
-	for (auto& texture : m_RenderData.Textures)
-		texture->Bind();
-
-	GLLog(glDrawElements(GL_TRIANGLES, m_RenderData.IndexBuffer->GetCount(), m_RenderData.IndexBuffer->GetIndexType(), nullptr));						// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
-
-	m_RenderData.VertexArray->UnBind();
-	m_RenderData.IndexBuffer->UnBind();
-	for (auto& shader : m_RenderData.Shaders)
-		shader->UnBind();
-	for (auto& texture : m_RenderData.Textures)
-		texture->UnBind();
+	m_Texture = &texture;
 }
 
-void Renderer::SetOrthoMultiplier(float multiplier)
+void Renderer::BindToVA(VertexArray& va) const
 {
-	m_RenderData.OrthoMultiplier = multiplier;
-	UpdateProjectionMatrix();
+	va.AddBuffer(*m_RenderData->m_vb, *m_RenderData->m_layout);
 }
 
-void Renderer::UpdateProjectionMatrix()
+bool Renderer::BindShader() const
 {
-	float leftRightOffset = m_RenderData.widthRatio * m_RenderData.OrthoMultiplier;
-	float topBotOffset = m_RenderData.heightRatio * m_RenderData.OrthoMultiplier;
-	//m_RenderData.Projection = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
-	m_RenderData.Projection = glm::ortho(-leftRightOffset, leftRightOffset, -topBotOffset, topBotOffset, -1.0f, 1.0f);
-	Log(m_RenderData.widthRatio << "|" << m_RenderData.heightRatio << " | " << m_RenderData.OrthoMultiplier << " | " << leftRightOffset << "|" << topBotOffset);
+	if (m_Shader == nullptr)
+		return false;
+
+	m_Shader->Bind();
+	return true;
+}
+
+bool Renderer::UnBindShader() const
+{
+	if (m_Shader == nullptr)
+		return false;
+
+	m_Shader->UnBind();
+	return true;
+}
+
+bool Renderer::UpdateShaderMVP(glm::mat4 mvp) const
+{
+	if (m_Shader == nullptr)
+		return false;
+
+	m_Shader->Bind();
+	m_Shader->SetUniformMat4f("u_MVP", mvp);
+	m_Shader->UnBind();
+	return true;
+}
+
+bool Renderer::BindTexture() const
+{
+	if (m_Texture == NULL)
+		return false;
+
+	m_Texture->Bind();
+	return true;
+}
+
+bool Renderer::UnBindTexture() const
+{
+	if (m_Texture == NULL)
+		return false;
+
+	m_Texture->UnBind();
+	return true;
+}
+
+float* Renderer::MergeVertexCoordsNTextureCoords(bool is3D, int vbSize, float& vertexCoords, float& textureCoords)
+{
+	float* vertexData = new float[vbSize];
+	unsigned int divisor = is3D ? 6 : 4;
+	unsigned int remainder = is3D ? 3 : 2;
+	int x = 0;
+	int y = 0;
+	for (unsigned int i = 0; i < vbSize; i++)
+	{
+		if (i % divisor < remainder)
+		{
+			vertexData[i] = (&vertexCoords)[x++];
+			continue;
+		}
+
+		vertexData[i] = (&textureCoords)[y++];
+	}
+
+	return vertexData;
 }
