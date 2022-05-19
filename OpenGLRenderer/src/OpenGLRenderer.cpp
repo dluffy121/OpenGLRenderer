@@ -107,8 +107,8 @@ int main(void)
 		Renderer* simpleRenderer = new Renderer(*vertexCoords2, ARRAYSIZE(vertexCoords2), *indices, ARRAYSIZE(indices), false);
 		colorVastu->AddComponent(*simpleRenderer);
 
-		ShaderAsset shaderAsset = shaderManager->CreateShaderAsset("resources/shaders/Basic.shader");
-		ShaderAsset shaderAsset2 = shaderManager->CreateShaderAsset("resources/shaders/Basic2.shader");
+		ShaderAsset shaderAsset = shaderManager->CreateShaderAsset("resources/shaders/Texture.shader");
+		ShaderAsset shaderAsset2 = shaderManager->CreateShaderAsset("resources/shaders/Color.shader");
 
 		Shader shader(shaderManager->LoadShader(shaderAsset));
 		Shader shader2(shaderManager->LoadShader(shaderAsset2));
@@ -175,7 +175,7 @@ int main(void)
 			}
 			glm::vec3 camrot = cameraTransform->GetRotation();
 			float* camrotArr = glm::value_ptr(camrot);
-			if (ImGui::DragFloat3("R", camrotArr, 0.5f, 0.0f, 180.0f))
+			if (ImGui::DragFloat3("R", camrotArr))
 			{
 				camrot = glm::make_vec3(camrotArr);
 				cameraTransform->SetRotation(camrot);
@@ -199,7 +199,7 @@ int main(void)
 				textureTransform->SetPosition(glm::make_vec3(texposArr));
 			glm::vec3 texrot = textureTransform->GetRotation();
 			float* texrotArr = glm::value_ptr(texrot);
-			if (ImGui::DragFloat3("R", texrotArr, 0.5f, 0.0f, 180.0f))
+			if (ImGui::DragFloat3("R", texrotArr))
 				textureTransform->SetRotation(glm::make_vec3(texrotArr));
 			glm::vec3 texscale = textureTransform->GetScale();
 			float* texscaleArr = glm::value_ptr(texscale);
@@ -215,7 +215,7 @@ int main(void)
 				colorTransform->SetPosition(glm::make_vec3(colposArr));
 			glm::vec3 colrot = colorTransform->GetRotation();
 			float* colrotArr = glm::value_ptr(colrot);
-			if (ImGui::DragFloat3("R", colrotArr, 0.5f, 0.0f, 180.0f))
+			if (ImGui::DragFloat3("R", colrotArr))
 				colorTransform->SetRotation(glm::make_vec3(colrotArr));
 			glm::vec3 colscale = colorTransform->GetScale();
 			float* colscaleArr = glm::value_ptr(colscale);
