@@ -30,4 +30,15 @@ public:
 	inline float GetRight() { return m_Right; }
 	inline float GetBottom() { return m_Bottom; }
 	inline float GetTop() { return m_Top; }
+
+	void SetOrthoMultiplier(float orthoMultiplier);
+	void SetNearClipPlane(float nearClipPlane);
+	void SetFarClipPlane(float farClipPlane);
+	void SetLeft(float left);
+	void SetRight(float right);
+	void SetBottom(float bottom);
+	void SetTop(float top);
+
+private:
+	void UpdateProjectionMatrix();
 };
