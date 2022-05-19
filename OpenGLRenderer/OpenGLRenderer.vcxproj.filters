@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\Basic.shader">
+    <None Include="resources\shaders\Texture.shader">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resources\shaders\Basic2.shader" />
+    <None Include="resources\shaders\Color.shader" />
     <None Include="src\vendor\glm\detail\func_common.inl">
       <Filter>Header Files</Filter>
     </None>

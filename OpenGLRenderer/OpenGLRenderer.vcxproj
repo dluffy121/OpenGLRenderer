@@ -151,8 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="resources\shaders\Basic.shader" />
-    <None Include="resources\shaders\Basic2.shader" />
+    <None Include="resources\shaders\Texture.shader" />
+    <None Include="resources\shaders\Color.shader" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
     <None Include="src\vendor\glm\detail\func_common_simd.inl" />
     <None Include="src\vendor\glm\detail\func_exponential.inl" />
