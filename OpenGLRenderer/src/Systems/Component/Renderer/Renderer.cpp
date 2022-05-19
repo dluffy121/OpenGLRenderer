@@ -3,10 +3,7 @@
 Renderer::Renderer(float& vertexCoords, unsigned int vcSize, unsigned int& triangleIndices, unsigned int tiSize, bool is3D)
 {
 	m_vertexCoords = &vertexCoords;
-	//std::copy(vertexCoords, vertexCoords + vcSize, m_vertexCoords);
-
 	m_triangleIndices = &triangleIndices;
-	//std::copy(triangleIndices, triangleIndices + tiSize, m_triangleIndices);
 
 	unsigned int dimensions = is3D ? 3 : 2;
 
@@ -21,13 +18,8 @@ Renderer::Renderer(float& vertexCoords, unsigned int vcSize, unsigned int& trian
 Renderer::Renderer(float& vertexCoords, unsigned int vcSize, float& textureCoords, unsigned int tcSize, unsigned int& triangleIndices, unsigned int tiSize, bool is3D)
 {
 	m_vertexCoords = &vertexCoords;
-	//std::copy(vertexCoords, vertexCoords + vcSize, m_vertexCoords);
-
 	m_textureCoords = &textureCoords;
-	//std::copy(textureCoords, textureCoords + tcSize, m_textureCoords);
-
 	m_triangleIndices = &triangleIndices;
-	//std::copy(triangleIndices, triangleIndices + tiSize, m_triangleIndices);
 
 	unsigned int dimensions = is3D ? 3 : 2;
 
@@ -46,6 +38,7 @@ Renderer::Renderer(float& vertexCoords, unsigned int vcSize, float& textureCoord
 
 Renderer::~Renderer()
 {
+	delete m_RenderData;
 }
 
 void Renderer::SetShader(Shader& shader)
