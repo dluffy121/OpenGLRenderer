@@ -27,7 +27,6 @@ public:
 	inline glm::vec3 GetRotation() { return m_Rotation; };
 	inline glm::mat4 GetRotationMatrix() { return m_RotationMatrix; };
 	inline glm::vec3 GetScale() { return m_Scale; };
-	inline glm::mat4 GetScaleMatrix() { return m_ScaleMatrix; };
 	inline glm::mat4 GetModelMatrix() { return m_modelMatrix; }
 
 private:

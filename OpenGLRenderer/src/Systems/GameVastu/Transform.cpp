@@ -8,7 +8,6 @@ Transform::Transform() :
 	m_Scale(glm::vec3(1.0f)),
 	m_PositionMatrix(glm::mat4(1)),
 	m_RotationMatrix(glm::mat4(1)),
-	m_ScaleMatrix(glm::mat4(1)),
 	m_modelMatrix(glm::mat4(1))
 {}
 
@@ -20,8 +19,6 @@ void Transform::SetPosition(glm::vec3 position)
 	m_Position = position;
 
 	m_PositionMatrix = glm::translate(glm::mat4(1), m_Position);
-
-	std::cout << glm::to_string(m_PositionMatrix) << std::endl;
 
 	UpdateModelMatrix();
 }
@@ -59,12 +56,10 @@ void Transform::SetScale(glm::vec3 scale)
 {
 	m_Scale = scale;
 
-	std::cout << glm::to_string(m_RotationMatrix) << std::endl;
-
 	UpdateModelMatrix();
 }
 
 void Transform::UpdateModelMatrix()
 {
-	m_modelMatrix = glm::scale(m_PositionMatrix * m_RotationMatrix, m_Scale);
+	m_modelMatrix = glm::scale(m_PositionMatrix, m_Scale) * m_RotationMatrix;
 }
