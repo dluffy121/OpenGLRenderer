@@ -93,10 +93,10 @@ int main(void)
 		};
 
 		GameVastu* cameraVastu = gameVastuManager->CreateGameVastu();
-		Camera* camera = new Camera();
+		Camera* camera = new Camera(window1->GetWindowWidth(), window1->GetWindowHeight());
 		cameraVastu->AddComponent(*camera);
 		GameVastu* cameraVastu2 = gameVastuManager->CreateGameVastu();
-		Camera* camera2 = new Camera();
+		Camera* camera2 = new Camera(window2->GetWindowWidth(), window2->GetWindowHeight());
 		cameraVastu2->AddComponent(*camera2);
 
 		GameVastu* textureVastu = gameVastuManager->CreateGameVastu();

@@ -14,8 +14,6 @@ class Window
 public:
 	std::vector<Action> UpdateActions;
 
-	glm::mat4 m_Projection;
-
 private:
 	std::string m_WindowId;
 	GLFWwindow* m_GLFWWindow;

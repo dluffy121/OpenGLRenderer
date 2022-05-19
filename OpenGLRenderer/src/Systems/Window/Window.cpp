@@ -22,8 +22,6 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 
 	InstallCallbacks();
 
-	m_Projection = glm::ortho(0.0f, (float)GetWindowWidth(), 0.0f, (float)GetWindowHeight(), -999.0f, 999.0f);	// Providing int to this method does not produce desired output
-
 	if (!m_GLFWWindow)
 	{
 		OpenGLHelper::TerminateGLFW();
@@ -67,8 +65,8 @@ void Window::Draw() const
 		if (gameVastu == nullptr)
 			continue;
 
-		glm::mat4 mvp = m_Projection
-			* m_Camera->gameVastu->m_transform->GetPositionMatrix()
+		glm::mat4 mvp = m_Camera->GetProjectionMatrix()
+			* m_Camera->GetViewMatrix()
 			* gameVastu->m_transform->GetModelMatrix();
 
 		if (!renderer->UpdateShaderMVP(mvp))
