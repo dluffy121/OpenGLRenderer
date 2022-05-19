@@ -32,19 +32,22 @@ void Transform::SetRotation(glm::vec3 rotation)
 	{
 		glm::vec3 axis = glm::vec3(0.0f);
 		axis.x = 1.0f;
-		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Rotation.x - rotation.x), axis);
+		float angle = fmodf(m_Rotation.x - rotation.x, ANGLE_360);
+		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(angle), axis);
 	}
 	if (m_Rotation.y != rotation.y)
 	{
 		glm::vec3 axis = glm::vec3(0.0f);
 		axis.y = 1.0f;
-		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Rotation.y - rotation.y), axis);
+		float angle = fmodf(m_Rotation.y - rotation.y, ANGLE_360);
+		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(angle), axis);
 	}
 	if (m_Rotation.z != rotation.z)
 	{
 		glm::vec3 axis = glm::vec3(0.0f);
 		axis.z = 1.0f;
-		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Rotation.z - rotation.z), axis);
+		float angle = fmodf(m_Rotation.z - rotation.z, ANGLE_360);
+		m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(angle), axis);
 	}
 
 	m_Rotation = rotation;
@@ -56,8 +59,6 @@ void Transform::SetScale(glm::vec3 scale)
 {
 	m_Scale = scale;
 
-	m_ScaleMatrix = glm::translate(glm::mat4(1), m_Scale);
-
 	std::cout << glm::to_string(m_RotationMatrix) << std::endl;
 
 	UpdateModelMatrix();
@@ -65,7 +66,5 @@ void Transform::SetScale(glm::vec3 scale)
 
 void Transform::UpdateModelMatrix()
 {
-	m_modelMatrix = m_PositionMatrix
-		* m_RotationMatrix
-		* m_ScaleMatrix;
+	m_modelMatrix = glm::scale(m_PositionMatrix * m_RotationMatrix, m_Scale);
 }

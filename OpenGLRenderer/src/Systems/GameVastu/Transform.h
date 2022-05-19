@@ -3,6 +3,8 @@
 
 class Transform
 {
+	const float ANGLE_360 = 360.0f;
+
 private:
 	glm::vec3 m_Position;
 	glm::vec3 m_Rotation;
@@ -10,7 +12,6 @@ private:
 
 	glm::mat4 m_PositionMatrix;
 	glm::mat4 m_RotationMatrix;
-	glm::mat4 m_ScaleMatrix;
 	glm::mat4 m_modelMatrix;
 
 public:
