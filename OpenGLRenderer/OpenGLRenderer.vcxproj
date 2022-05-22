@@ -296,6 +296,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\StaticMethods.h" />
+    <ClInclude Include="src\Systems\GUI\ScenesWindow.h" />
+    <ClInclude Include="src\Systems\Scene\Scene.h" />
+    <ClInclude Include="src\Systems\Scene\Scenes\ColorScene.h" />
+    <ClInclude Include="src\Systems\Scene\Scenes\TextureScene.h" />
     <ClInclude Include="src\Utils\Action.h" />
     <ClInclude Include="src\Systems\Component\Camera\Camera.h" />
     <ClInclude Include="src\Systems\Component\Component.h" />
@@ -622,6 +626,10 @@
     <ClCompile Include="src\Core\GL\OpenGLHelper.cpp" />
     <ClCompile Include="src\OpenGLRenderer.cpp" />
     <ClCompile Include="src\Systems\Component\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\Systems\GUI\ScenesWindow.cpp" />
+    <ClCompile Include="src\Systems\Scene\Scene.cpp" />
+    <ClCompile Include="src\Systems\Scene\Scenes\ColorScene.cpp" />
+    <ClCompile Include="src\Systems\Scene\Scenes\TextureScene.cpp" />
     <ClCompile Include="src\Systems\Shader\Shader.cpp" />
     <ClCompile Include="src\Systems\Shader\ShaderAsset.cpp" />
     <ClCompile Include="src\Systems\Shader\ShaderManager.cpp" />

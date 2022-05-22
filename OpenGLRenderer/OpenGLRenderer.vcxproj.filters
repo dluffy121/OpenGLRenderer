@@ -1385,6 +1385,18 @@
     <ClInclude Include="src\StaticMethods.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Systems\Scene\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Systems\Scene\Scenes\ColorScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Systems\Scene\Scenes\TextureScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Systems\GUI\ScenesWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\vendor\glm\detail\glm.cpp">
@@ -1469,6 +1481,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Systems\Scene\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Systems\Scene\Scenes\ColorScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Systems\Scene\Scenes\TextureScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Systems\GUI\ScenesWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
