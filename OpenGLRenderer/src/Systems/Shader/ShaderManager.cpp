@@ -13,12 +13,12 @@ ShaderManager* ShaderManager::getInstance()
 ShaderAsset& ShaderManager::CreateShaderAsset(const std::string& shaderPath)
 {
 	ShaderAsset* shaderAsset = nullptr;
-	if (shaderAssetCollection.find(shaderPath) != shaderAssetCollection.end())
-		shaderAsset = shaderAssetCollection[shaderPath];
+	if (m_ShaderAssetCollection.find(shaderPath) != m_ShaderAssetCollection.end())
+		shaderAsset = m_ShaderAssetCollection[shaderPath];
 	else
 	{
 		shaderAsset = new ShaderAsset(shaderPath);
-		shaderAssetCollection[shaderPath] = shaderAsset;
+		m_ShaderAssetCollection[shaderPath] = shaderAsset;
 	}
 
 	return *shaderAsset;
@@ -26,10 +26,10 @@ ShaderAsset& ShaderManager::CreateShaderAsset(const std::string& shaderPath)
 
 ShaderAsset* ShaderManager::GetShaderAsset(const std::string& shaderPath)
 {
-	if (shaderAssetCollection.find(shaderPath) == shaderAssetCollection.end())
+	if (m_ShaderAssetCollection.find(shaderPath) == m_ShaderAssetCollection.end())
 		return nullptr;
 
-	return shaderAssetCollection[shaderPath];
+	return m_ShaderAssetCollection[shaderPath];
 }
 
 unsigned int ShaderManager::LoadShader(ShaderAsset& shaderAsset)

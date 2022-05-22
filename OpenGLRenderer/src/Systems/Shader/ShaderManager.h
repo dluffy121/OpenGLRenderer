@@ -5,8 +5,7 @@
 class ShaderManager
 {
 private:
-	std::unordered_map<std::string, ShaderAsset*> shaderAssetCollection;
-	//std::unordered_map<unsigned int, Shader*> shaderCollection;
+	std::unordered_map<std::string, ShaderAsset*> m_ShaderAssetCollection;
 
 public:
 	static ShaderManager* getInstance();

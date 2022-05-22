@@ -16,12 +16,18 @@ Shader::~Shader()
 
 void Shader::Bind() const
 {
+	GLLog(glEnable(GL_BLEND));
+	GLLog(glBlendEquation(GL_FUNC_ADD));
+	GLLog(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
 	ASSERT(glIsProgram(shaderId) == GL_TRUE);
 	GLLog(glUseProgram(shaderId));
 }
 
 void Shader::UnBind() const
 {
+	GLLog(glDisable(GL_BLEND));
+
 	GLLog(glUseProgram(0));
 }
 
