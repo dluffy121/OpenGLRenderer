@@ -48,7 +48,7 @@ GLFWwindow* OpenGLHelper::CreateWindow(int width, int height, const std::string&
 	return glfwCreateWindow(width, height, title.c_str(), NULL, sharedWindow);
 }
 
-void OpenGLHelper::SetSwqpInterval(int interval)
+void OpenGLHelper::SetSwapInterval(int interval)
 {
 	glfwSwapInterval(interval);			// sets swap interval current gl context window i.e. wait for screen updates https://www.glfw.org/docs/3.3/group__context.html#ga6d4e0cdf151b5e579bd67f13202994ed
 }

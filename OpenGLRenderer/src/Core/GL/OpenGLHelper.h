@@ -18,7 +18,7 @@ public:
 	static void TerminateGLFW();
 
 	static GLFWwindow* CreateWindow(int width, int height, const std::string& title, GLFWwindow* sharedWindow = NULL, bool isHidden = false, bool isDecorated = true);
-	static void SetSwqpInterval(int interval);
+	static void SetSwapInterval(int interval);
 	static void UseGLFWWindow(GLFWwindow* window);
 	static void DestroyGLFWWindow(GLFWwindow* window);
 };
