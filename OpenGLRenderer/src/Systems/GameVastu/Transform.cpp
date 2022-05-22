@@ -61,5 +61,5 @@ void Transform::SetScale(glm::vec3 scale)
 
 void Transform::UpdateModelMatrix()
 {
-	m_modelMatrix = glm::scale(m_PositionMatrix, m_Scale) * m_RotationMatrix;
+	m_modelMatrix = glm::scale(m_PositionMatrix * m_RotationMatrix, m_Scale);
 }

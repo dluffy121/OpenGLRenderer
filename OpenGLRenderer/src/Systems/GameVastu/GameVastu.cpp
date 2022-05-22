@@ -3,7 +3,9 @@
 
 GameVastu::GameVastu() :
 	m_transform(new Transform())
-{}
+{
+	Id = reinterpret_cast<unsigned int>(this);
+}
 
 GameVastu::GameVastu(const GameVastu& gameVastu) :
 	Id(gameVastu.Id),
@@ -12,11 +14,3 @@ GameVastu::GameVastu(const GameVastu& gameVastu) :
 
 GameVastu::~GameVastu()
 {}
-
-void GameVastu::SetId(unsigned int id, const std::source_location& location)
-{
-	if (!strcmp(location.file_name(), "GameVastuManager"))
-		return;
-
-	Id = id;
-}

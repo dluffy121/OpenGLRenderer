@@ -12,8 +12,7 @@ GameVastuManager* GameVastuManager::getInstance()
 GameVastu* GameVastuManager::CreateGameVastu()
 {
 	GameVastu* gameVastu = new GameVastu();
-	unsigned int id = reinterpret_cast<unsigned int>(gameVastu);
-	gameVastu->SetId(id);
+	unsigned int id = gameVastu->GetId();
 
 	ASSERT(m_GameVastus.find(id) == m_GameVastus.end());
 
@@ -24,13 +23,9 @@ GameVastu* GameVastuManager::CreateGameVastu()
 
 void GameVastuManager::DestroyGameVastu(GameVastu*& gameVastu)
 {
-	unsigned int id = gameVastu->GetId();
 	m_GameVastus.erase(gameVastu->GetId());
 
-	gameVastu->~GameVastu();
-
-	delete gameVastu;			// doubt
-	gameVastu = nullptr;
+	delete gameVastu;
 }
 
 GameVastu* GameVastuManager::FindGameVastu(unsigned int id)
