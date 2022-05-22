@@ -12,7 +12,7 @@ Texture::Texture(const std::string& texturePath) :
 	m_BPP(0)
 {
 	stbi_set_flip_vertically_on_load(1);
-	unsigned char* localBuffer; = stbi_load(m_FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 0);	// 4 is for RGBA
+	unsigned char* localBuffer = stbi_load(m_FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 0);	// 4 is for RGBA
 
 	Log("Texture with id: " << m_TextureId << std::endl
 		<< "Load Status: " << (localBuffer != nullptr) << std::endl
