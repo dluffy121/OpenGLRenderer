@@ -1,4 +1,6 @@
 #include "Renderer.h"
+#include "../Systems/GameVastu/GameVastu.h"
+#include "../../Window/WindowManager.h"
 
 Renderer::Renderer(float& vertexCoords, unsigned int vcSize, unsigned int& triangleIndices, unsigned int tiSize, bool is3D)
 {
@@ -34,6 +36,8 @@ Renderer::Renderer(float& vertexCoords, unsigned int vcSize, float& textureCoord
 	layout->Push<float>(2);			// for Texture coords
 
 	m_RenderData = new RenderData(*vb, *layout, *ib);
+
+	BindToVA(WindowManager::getInstance()->GetCurrentWindow()->GetVertexArray());
 }
 
 Renderer::~Renderer()
@@ -56,6 +60,8 @@ void Renderer::BindToVA(VertexArray& va) const
 	va.AddBuffer(*m_RenderData->m_vb, *m_RenderData->m_layout);
 }
 
+// TODO :: Implement Unbind
+
 bool Renderer::BindShader() const
 {
 	if (m_Shader == nullptr)
@@ -70,17 +76,6 @@ bool Renderer::UnBindShader() const
 	if (m_Shader == nullptr)
 		return false;
 
-	m_Shader->UnBind();
-	return true;
-}
-
-bool Renderer::UpdateShaderMVP(glm::mat4 mvp) const
-{
-	if (m_Shader == nullptr)
-		return false;
-
-	m_Shader->Bind();
-	m_Shader->SetUniformMat4f("u_MVP", mvp);
 	m_Shader->UnBind();
 	return true;
 }
@@ -122,4 +117,21 @@ float* Renderer::MergeVertexCoordsNTextureCoords(bool is3D, int vbSize, float& v
 	}
 
 	return vertexData;
+}
+
+void Renderer::Render(const glm::mat4 vp)
+{
+	glm::mat4 mvp = gameVastu->m_transform->GetModelMatrix() * vp;
+
+	BindShader();
+	BindTexture();
+	m_RenderData->m_ib->Bind();
+
+	m_Shader->SetUniformMat4f("u_MVP", mvp);
+
+	GLLog(glDrawElements(GL_TRIANGLES, m_RenderData->m_ib->GetCount(), m_RenderData->m_ib->GetIndexType(), nullptr));	// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
+
+	m_RenderData->m_ib->UnBind();
+	UnBindShader();
+	UnBindTexture();
 }

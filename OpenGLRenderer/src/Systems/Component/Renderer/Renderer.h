@@ -1,6 +1,5 @@
 #pragma once
 
-#include "glm/glm.hpp"
 #include "RenderData.h"
 #include "../Component.h"
 #include "../../Shader/Shader.h"
@@ -27,17 +26,18 @@ public:
 	void SetShader(Shader& shader);
 	void SetTexture(Texture& texture);
 
-	void BindToVA(VertexArray& va) const;
-
 	inline RenderData* GetRenderData() const { return m_RenderData; }
 
-	bool BindShader() const;
-	bool UnBindShader() const;
-	bool UpdateShaderMVP(glm::mat4 mvp) const;
+private:
+	float* MergeVertexCoordsNTextureCoords(bool is3D, int vbSize, float& vertexCoords, float& textureCoords);
+
+	void Awake(VertexArray* va) override;
+	void Render(const glm::mat4 vp) override;
 
 	bool BindTexture() const;
 	bool UnBindTexture() const;
 
-private:
-	float* MergeVertexCoordsNTextureCoords(bool is3D, int vbSize, float& vertexCoords, float& textureCoords);
+	bool BindShader() const;
+	bool UnBindShader() const;
+	void BindToVA(VertexArray& va) const;
 };
