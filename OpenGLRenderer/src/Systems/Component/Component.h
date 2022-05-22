@@ -2,13 +2,20 @@
 
 #include <type_traits>
 #include <source_location>
+#include "glm/glm.hpp"
+#include "../../Core/GL/VertexArray/VertexArray.h"
 
 class GameVastu;
 
 class Component
 {
+private:
+	friend class GameVastu;
+
 public:
-	unsigned int GameVastuId;
+	bool m_Enabled;
+
+protected:
 	GameVastu* gameVastu;
 
 private:
@@ -16,20 +23,16 @@ private:
 
 public:
 	Component();
-	~Component();
+	virtual ~Component();
 
 	inline unsigned int GetId() const { return Id; }
-	void SetId(unsigned int id, const std::source_location& location = std::source_location::current());
+	inline GameVastu* GetGameVastu() { return gameVastu; }
 
-protected:
-	virtual void Awake();
+	virtual void Awake(VertexArray* va);
 	virtual void Update();
+	virtual void Render(const glm::mat4 vp);
+	virtual void OnGUI();
 	virtual void OnDestroy();
-
-private:
-	void _Awake();
-	void _Update();
-	void _OnDestroy();
 };
 
 template<class T>

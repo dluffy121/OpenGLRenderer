@@ -1,46 +1,35 @@
 #include "Component.h"
 #include <string.h>
+#include "../Window/WindowManager.h"
 
 Component::Component() :
-	Id(0)
+	gameVastu(nullptr)
 {
-	Awake();
+	Id = reinterpret_cast<unsigned int>(this);
 }
 
 Component::~Component()
 {
-	OnDestroy();
+	WindowManager::getInstance()->GetCurrentWindow()->UnRegisterComponent(*this);
 }
 
-void Component::SetId(unsigned int id, const std::source_location& location)
-{
-	if (!strcmp(location.file_name(), "GameVastu"))
-		return;
-
-	Id = id;
-}
-
-void Component::_Awake()
-{
-	unsigned int id = reinterpret_cast<unsigned int>(this);
-}
-
-void Component::_Update()
-{
-	Update();
-}
-
-void Component::_OnDestroy()
-{
-	OnDestroy();
-}
-
-void Component::Awake()
+void Component::Awake(VertexArray* va)
 {
 }
 
 void Component::Update()
 {
+	if (!m_Enabled) return;
+}
+
+void Component::Render(const glm::mat4 vp)
+{
+	if (!m_Enabled) return;
+}
+
+void Component::OnGUI()
+{
+	if (!m_Enabled) return;
 }
 
 void Component::OnDestroy()
