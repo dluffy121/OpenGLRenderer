@@ -3,7 +3,11 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
-WindowManager::WindowManager() {}
+WindowManager::WindowManager() :
+	rendererCount(0),
+	m_currentWindow(NULL),
+	m_imGuiRendererInitialized(false)
+{}
 
 WindowManager* WindowManager::getInstance()
 {
@@ -20,21 +24,51 @@ Window* WindowManager::GetWindowInstance(const std::string& windowId, int width,
 	}
 
 	Window* window = new Window(windowId, width, height, sharedWindow, sharedFontAtlas);
+
+	if (!m_currentWindow)
+		m_currentWindow = window;
+
 	m_WindowCollection.push_back(window);
-
-	GLFWwindow* glfwWindow = window->GetGLFWWindow();
-	m_GLFWWindowCollection.push_back(glfwWindow);
-
-	ImGuiContext* imGuiContext = window->GetImGuiContext();
-	m_ImGuiContextCollection.push_back(imGuiContext);
 
 	rendererCount++;
 
 	return window;
 }
 
-void WindowManager::RenderLoop()
+void WindowManager::InitImGuiRenderer()
 {
+	if (m_imGuiRendererInitialized)
+	{
+		ImGuiContext* context = ImGui::GetCurrentContext();
+		ImGui::SetCurrentContext(m_WindowCollection[0]->GetImGuiContext());
+		ImGuiIO& io = ImGui::GetIO();
+		ImGui::SetCurrentContext(context);
+
+		ImGui_ImplOpenGL3_Init(io);
+
+		return;
+	}
+
+	const char* glsl_version = "#version 460";
+	ImGui_ImplOpenGL3_Init(glsl_version);
+	m_imGuiRendererInitialized = true;
+}
+
+void WindowManager::ShutdownImGuiRenderer()
+{
+	if (!m_imGuiRendererInitialized)
+		return;
+
+	if (!m_WindowCollection.empty())
+		return;
+
+	ImGui_ImplOpenGL3_Shutdown();
+	m_imGuiRendererInitialized = false;
+}
+
+void WindowManager::WindowLoop()
+{
+	GLFWwindow* glfwWindow;
 	int i = 0;
 	bool windowClosed = false;
 	for (;;)
@@ -46,32 +80,41 @@ void WindowManager::RenderLoop()
 
 		for (; i < rendererCount; i++)
 		{
-			glfwMakeContextCurrent(m_GLFWWindowCollection[i]);
-			ImGui::SetCurrentContext(m_ImGuiContextCollection[i]);
+			m_currentWindow = m_WindowCollection[i];
+			glfwWindow = m_currentWindow->GetGLFWWindow();
+
+			glfwMakeContextCurrent(glfwWindow);
+
+			m_currentWindow->Clear();
+
+			m_currentWindow->NewFrame();
+
+			m_currentWindow->Update();
+			m_currentWindow->Render();
+
+			ImGui::SetCurrentContext(m_currentWindow->GetImGuiContext());
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
 
-			m_WindowCollection[i]->Clear();
+			for (auto& raction : UpdateActionsRenderGUI)
+				raction(*m_currentWindow);
 
-			for (auto& raction : UpdateActionsRenderer)
-				raction(*m_WindowCollection[i]);
-
-			m_WindowCollection[i]->Draw();
+			m_currentWindow->RenderGUI();
 
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-			glfwSwapBuffers(m_GLFWWindowCollection[i]);
+			glfwSwapBuffers(glfwWindow);
 
-			if (glfwWindowShouldClose(m_GLFWWindowCollection[i]))
+			if (glfwWindowShouldClose(glfwWindow))
 			{
 				windowClosed = true;
-				OpenGLHelper::DestroyGLFWWindow(m_GLFWWindowCollection[i]);
-				m_GLFWWindowCollection.erase(m_GLFWWindowCollection.begin() + i);
-				m_WindowCollection.erase(m_WindowCollection.begin() + i);
-				m_ImGuiContextCollection.erase(m_ImGuiContextCollection.begin() + i);
+				delete m_currentWindow;
+				m_WindowCollection[i] = m_WindowCollection[rendererCount - 1];
+				m_WindowCollection[rendererCount - 1] = m_currentWindow;
+				m_WindowCollection.erase(m_WindowCollection.end() - 1);
 				rendererCount--;
 				i--;
 			}

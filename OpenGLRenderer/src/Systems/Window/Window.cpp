@@ -1,16 +1,15 @@
-#include "../Core/GL/OpenGLHelper.h"
-#include "Window.h"
-#include <iostream>
-#include "Math.h"
-#include <imgui/imgui_impl_glfw.h>
-#include <imgui/imgui_impl_opengl3.h>
 #include "../GameVastu/GameVastuManager.h"
+#include "../Component/Camera/Camera.h"
+#include "../../Core/GL/OpenGLHelper.h"
+#include "Window.h"
+#include "../GUI/GUIWindow.h"
+#include <imgui/imgui_impl_opengl3.h>
+#include <imgui/imgui_impl_glfw.h>
 
 Window::Window(const std::string& rendererId, int width, int height, GLFWwindow* sharedWindow, ImFontAtlas* sharedFontAtlas) :
 	m_WindowId(rendererId),
 	m_Width(width),
 	m_Height(height),
-	m_Camera(nullptr),
 	m_VA(new VertexArray())
 {
 	m_GLFWWindow = OpenGLHelper::CreateWindow(width, height, m_WindowId, sharedWindow);
@@ -22,6 +21,10 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 
 	InstallCallbacks();
 
+	m_CameraVastu = GameVastuManager::getInstance()->CreateGameVastu();
+	m_Camera = new Camera(m_Width, m_Height);
+	m_CameraVastu->AddComponent(*m_Camera);
+
 	if (!m_GLFWWindow)
 	{
 		OpenGLHelper::TerminateGLFW();
@@ -32,8 +35,10 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 
 Window::~Window()
 {
-	ImGui::SetCurrentContext(m_ImGuiContext);
-	ImGui_ImplOpenGL3_Shutdown();
+	for (auto& scene : m_Scenes)
+		delete scene.second;
+
+	WindowManager::getInstance()->ShutdownImGuiRenderer();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 	OpenGLHelper::DestroyGLFWWindow(m_GLFWWindow);
@@ -46,53 +51,7 @@ void Window::CreateImGUIContext(ImFontAtlas* sharedFontAtlas)
 	ImGui::SetCurrentContext(m_ImGuiContext);
 	ImGui_ImplGlfw_InitForOpenGL(m_GLFWWindow, false);
 	ImGui::StyleColorsDark();
-	const char* glsl_version = "#version 460";
-	ImGui_ImplOpenGL3_Init(glsl_version);
-}
-
-void Window::Clear() const
-{
-	GLLog(glClear(GL_COLOR_BUFFER_BIT));
-}
-
-void Window::Draw() const
-{
-	m_VA->Bind();
-
-	for (auto& renderer : m_Renderers)
-	{
-		GameVastu* gameVastu = GameVastuManager::getInstance()->FindGameVastu(renderer->GameVastuId);
-		if (gameVastu == nullptr)
-			continue;
-
-		glm::mat4 mvp = m_Camera->GetProjectionMatrix()
-			* m_Camera->GetViewMatrix()
-			* gameVastu->m_transform->GetModelMatrix();
-
-		if (!renderer->UpdateShaderMVP(mvp))
-			continue;
-
-		RenderData* renderData = renderer->GetRenderData();
-
-		renderer->BindShader();
-		renderer->BindTexture();
-
-		renderData->m_ib->Bind();
-
-		GLLog(glDrawElements(GL_TRIANGLES, renderData->m_ib->GetCount(), renderData->m_ib->GetIndexType(), nullptr));						// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
-
-		renderData->m_ib->UnBind();
-
-		renderer->UnBindTexture();
-		renderer->UnBindShader();
-	}
-
-	for (auto& guiWindow : m_GUIWindows)
-	{
-		guiWindow->Draw();
-	}
-
-	m_VA->UnBind();
+	WindowManager::getInstance()->InitImGuiRenderer();
 }
 
 void Window::InstallCallbacks()
@@ -180,7 +139,6 @@ void Window::KeyCallback(GLFWwindow* glfwWindow, int keycode, int scancode, int 
 	ImGui::SetCurrentContext(lastImGuiContext);
 }
 
-
 void Window::CharCallback(GLFWwindow* glfwWindow, unsigned int c)
 {
 	ImGuiContext* lastImGuiContext = ImGui::GetCurrentContext();
@@ -191,64 +149,71 @@ void Window::CharCallback(GLFWwindow* glfwWindow, unsigned int c)
 	ImGui::SetCurrentContext(lastImGuiContext);
 }
 
-void Window::RegisterGameVastu(const GameVastu& gameVastu)
+void Window::NewFrame()
 {
-	unsigned int id = gameVastu.GetId();
-
-	for (auto it = m_GameVastus.begin(); it != m_GameVastus.end(); ++it)
-		if ((*it)->GetId() == id)
-			return;
-
-	m_GameVastus.push_back(&gameVastu);
-
-	Renderer* renderer = gameVastu.GetComponent<Renderer>();
-	if (renderer == nullptr)
-		return;
-	id = renderer->GetId();
-
-	for (auto it = m_Renderers.begin(); it != m_Renderers.end(); ++it)
-		if ((*it)->GetId() == id)
-			return;
-
-	m_Renderers.push_back(gameVastu.GetComponent<Renderer>());
-
-	renderer->BindToVA(*m_VA);
+	m_Frames++;
 }
 
-void Window::UnRegisterGameVastu(const GameVastu& gameVastu)
+ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+void Window::Clear()
 {
-	unsigned int id = gameVastu.GetId();
-
-	for (auto it = m_GameVastus.begin(); it != m_GameVastus.end(); ++it)
-		if ((*it)->GetId() == id)
-			m_GameVastus.erase(it);
-
-	Renderer* renderer = gameVastu.GetComponent<Renderer>();
-	if (renderer == nullptr)
-		return;
-	id = renderer->GetId();
-
-	for (auto it = m_Renderers.begin(); it != m_Renderers.end(); ++it)
-		if ((*it)->GetId() == id)
-			m_Renderers.erase(it);
+	glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+	GLLog(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Window::RegisterGUIWindow(const GUIWindow& guiWindow)
+void Window::Update()
 {
-	if (std::find(m_GUIWindows.begin(), m_GUIWindows.end(), &guiWindow) != m_GUIWindows.end())
-		return;
-
-	m_GUIWindows.push_back(&guiWindow);
+	for (auto& component : m_Components)
+	{
+		component->Update();
+	}
 }
 
-void Window::UnRegisterGUIWindow(const GUIWindow& guiWindow)
+void Window::Render()
+{
+	m_VA->Bind();
+
+	glm::mat4 vp = m_Camera->GetProjectionMatrix()
+		* m_Camera->GetViewMatrix();
+
+	for (auto& component : m_Components)
+	{
+		component->Render(vp);
+	}
+
+	m_VA->UnBind();
+}
+
+void Window::RenderGUI()
+{
+	for (auto& component : m_Components)
+	{
+		component->OnGUI();
+	}
+
+	for (auto& guiWindow : m_GUIWindows)
+	{
+		guiWindow->Draw(this);
+	}
+}
+
+void Window::RegisterGUIWindow(GUIWindow& window)
+{
+	if (std::find(m_GUIWindows.begin(), m_GUIWindows.end(), &window) != m_GUIWindows.end())
+		return;
+
+	m_GUIWindows.push_back(&window);
+}
+
+void Window::UnRegisterGUIWindow(GUIWindow& window)
 {
 	size_t size = m_GUIWindows.size();
 	for (size_t i = 0; i < size; ++i)
 	{
-		if (m_GUIWindows[i] == &guiWindow)
+		if (m_GUIWindows[i] == &window)
 		{
-			const GUIWindow* tmp = m_GUIWindows[size - 1];
+			GUIWindow* tmp = m_GUIWindows[size - 1];
 			m_GUIWindows[size - 1] = m_GUIWindows[i];
 			m_GUIWindows[i] = tmp;
 			size--;
@@ -256,5 +221,71 @@ void Window::UnRegisterGUIWindow(const GUIWindow& guiWindow)
 		}
 	}
 
-	m_GUIWindows.erase(m_GUIWindows.end());
+	m_GUIWindows.erase(m_GUIWindows.end() - 1);
+}
+
+void Window::RegisterComponent(Component& component)
+{
+	if (std::find(m_Components.begin(), m_Components.end(), &component) != m_Components.end())
+		return;
+
+	component.Awake(m_VA);
+
+	m_Components.push_back(&component);
+}
+
+void Window::UnRegisterComponent(Component& component)
+{
+	size_t size = m_Components.size();
+
+	if (size == 0)
+		return;
+
+	for (size_t i = 0; i < size; ++i)
+	{
+		if (m_Components[i] == &component)
+		{
+			Component* tmp = m_Components[size - 1];
+			m_Components[size - 1] = m_Components[i];
+			m_Components[i] = tmp;
+			size--;
+			break;
+		}
+	}
+
+	m_Components.erase(m_Components.end() - 1);
+}
+
+void Window::AddScene(scene::Scene* scene)
+{
+	std::string name = scene->GetName();
+
+	if (m_Scenes.find(name) != m_Scenes.end())
+		return;
+
+	m_Scenes[name] = scene;
+}
+
+void Window::RemoveScene(const std::string& sceneName)
+{
+	if (m_Scenes.find(sceneName) == m_Scenes.end())
+		return;
+
+	delete m_Scenes[sceneName];
+	m_Scenes.erase(sceneName);
+}
+
+void Window::RemoveScene(const scene::Scene& scene)
+{
+	RemoveScene(scene.GetName());
+}
+
+bool Window::IsSceneActive(const std::string& sceneName)
+{
+	return m_Scenes.find(sceneName) != m_Scenes.end();
+}
+
+bool Window::IsSceneActive(const scene::Scene& scene)
+{
+	return IsSceneActive(scene.GetName());
 }

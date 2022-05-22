@@ -7,20 +7,27 @@ class WindowManager
 {
 public:
 	std::vector<Action> UpdateActions;
-	std::vector<std::function<void(const Window&)>> UpdateActionsRenderer;
+	std::vector<std::function<void(const Window&)>> UpdateActionsRenderGUI;
 
 private:
 	int rendererCount;
 	std::vector<Window*> m_WindowCollection;
-	std::vector<GLFWwindow*> m_GLFWWindowCollection;
-	std::vector<ImGuiContext*> m_ImGuiContextCollection;
+
+	Window* m_currentWindow;
+
+	bool m_imGuiRendererInitialized;
 
 public:
 	static WindowManager* getInstance();
 
 	Window* GetWindowInstance(const std::string& windowId, int width, int height, GLFWwindow* sharedWindow = NULL, ImFontAtlas* sharedFontAtlas = NULL);
 
-	void RenderLoop();
+	void WindowLoop();
+
+	inline Window*& GetCurrentWindow() { return m_currentWindow; }
+
+	void InitImGuiRenderer();
+	void ShutdownImGuiRenderer();
 
 protected:
 	WindowManager();

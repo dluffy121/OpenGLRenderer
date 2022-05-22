@@ -1,13 +1,17 @@
 #pragma once
 
-#include <functional>
+#include "../../Utils/Action.h"
 #include <GLFW/glfw3.h>
-#include "../Utils/Action.h"
-#include "../Component/Camera/Camera.h"
-#include "../Component/Renderer/Renderer.h"
-#include "../GameVastu/GameVastu.h"
+#include <vector>
 #include <imgui/imgui.h>
-#include "../GUI/GUIWindow.h"
+
+class VertexArray;
+class GameVastu;
+class Component; 
+class Camera;
+class GUIWindow;
+
+#include "../Scene/Scene.h"
 
 class Window
 {
@@ -22,35 +26,49 @@ private:
 	int m_Width;
 	int m_Height;
 
+	unsigned int m_Frames;
+
 	VertexArray* m_VA;
 
+	GameVastu* m_CameraVastu;
 	Camera* m_Camera;
 
-	std::vector<const GameVastu*> m_GameVastus;
-	std::vector<const Renderer*> m_Renderers;
-	std::vector<const GUIWindow*> m_GUIWindows;
+	std::vector<Component*> m_Components;
+	std::vector<GUIWindow*> m_GUIWindows;
+	std::unordered_map<std::string, scene::Scene*> m_Scenes;
 
 public:
 	Window(const std::string& rendererId, int width = 640, int height = 480, GLFWwindow* sharedWindow = NULL, ImFontAtlas* sharedFontAtlas = NULL);
 	~Window();
 
-	void Clear() const;
-	void Draw() const;
+	void NewFrame();
+	void Clear();
+	void Update();
+	void Render();
+	void RenderGUI();
 
 	inline Camera& GetCamera() const { return *m_Camera; }
 	inline void SetCamera(Camera& camera) { m_Camera = &camera; }
 
 	inline std::string GetWindowId() const { return m_WindowId; }
-	inline GLFWwindow* GetGLFWWindow() { return m_GLFWWindow; }
-	inline ImGuiContext* GetImGuiContext() { return m_ImGuiContext; }
+	inline GLFWwindow* GetGLFWWindow() const { return m_GLFWWindow; }
+	inline ImGuiContext* GetImGuiContext() const { return m_ImGuiContext; }
+	inline VertexArray& GetVertexArray() const { return *m_VA; }
 	inline int GetWindowWidth() { return m_Width; }
 	inline int GetWindowHeight() { return m_Height; }
+	inline int GetFrames() { return m_Frames; }
 
-	void RegisterGameVastu(const GameVastu& gameVastu);
-	void UnRegisterGameVastu(const GameVastu& gameVastu);
+	void RegisterComponent(Component& component);
+	void UnRegisterComponent(Component& component);
 
-	void RegisterGUIWindow(const GUIWindow& guiWindow);
-	void UnRegisterGUIWindow(const GUIWindow& guiWindow);
+	void RegisterGUIWindow(GUIWindow& window);
+	void UnRegisterGUIWindow(GUIWindow& window);
+
+	void AddScene(scene::Scene* scene);
+	void RemoveScene(const std::string& sceneName);
+	void RemoveScene(const scene::Scene& scene);
+	bool IsSceneActive(const std::string& sceneName);
+	bool IsSceneActive(const scene::Scene& scene);
 
 private:
 	void CreateImGUIContext(ImFontAtlas* sharedFontAtlas);
