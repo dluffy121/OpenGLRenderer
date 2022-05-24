@@ -1,16 +1,16 @@
-#include "../GameVastu/GameVastuManager.h"
-#include "../Component/Camera/Camera.h"
 #include "../../Core/GL/OpenGLHelper.h"
 #include "Window.h"
+#include "../GameVastu/GameVastuManager.h"
+#include "../Component/Camera/Camera.h"
 #include "../GUI/GUIWindow.h"
 #include <imgui/imgui_impl_opengl3.h>
 #include <imgui/imgui_impl_glfw.h>
+#include "../Core/GL/VertexArray/VertexArray.h"
 
 Window::Window(const std::string& rendererId, int width, int height, GLFWwindow* sharedWindow, ImFontAtlas* sharedFontAtlas) :
 	m_WindowId(rendererId),
 	m_Width(width),
-	m_Height(height),
-	m_VA(new VertexArray())
+	m_Height(height)
 {
 	m_GLFWWindow = OpenGLHelper::CreateWindow(width, height, m_WindowId, sharedWindow);
 	glfwMakeContextCurrent(m_GLFWWindow);
@@ -25,6 +25,8 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 	m_Camera = new Camera(m_Width, m_Height);
 	m_CameraVastu->AddComponent(*m_Camera);
 
+	m_VAO = new VertexArray();
+
 	if (!m_GLFWWindow)
 	{
 		OpenGLHelper::TerminateGLFW();
@@ -38,7 +40,6 @@ Window::~Window()
 	for (auto& scene : m_Scenes)
 		delete scene.second;
 
-	WindowManager::getInstance()->ShutdownImGuiRenderer();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 	OpenGLHelper::DestroyGLFWWindow(m_GLFWWindow);
@@ -51,7 +52,6 @@ void Window::CreateImGUIContext(ImFontAtlas* sharedFontAtlas)
 	ImGui::SetCurrentContext(m_ImGuiContext);
 	ImGui_ImplGlfw_InitForOpenGL(m_GLFWWindow, false);
 	ImGui::StyleColorsDark();
-	WindowManager::getInstance()->InitImGuiRenderer();
 }
 
 void Window::InstallCallbacks()
@@ -172,7 +172,7 @@ void Window::Update()
 
 void Window::Render()
 {
-	m_VA->Bind();
+	m_VAO->Bind();
 
 	glm::mat4 vp = m_Camera->GetProjectionMatrix()
 		* m_Camera->GetViewMatrix();
@@ -182,7 +182,7 @@ void Window::Render()
 		component->Render(vp);
 	}
 
-	m_VA->UnBind();
+	m_VAO->UnBind();
 }
 
 void Window::RenderGUI()
@@ -229,7 +229,7 @@ void Window::RegisterComponent(Component& component)
 	if (std::find(m_Components.begin(), m_Components.end(), &component) != m_Components.end())
 		return;
 
-	component.Awake(m_VA);
+	component.Awake();
 
 	m_Components.push_back(&component);
 }

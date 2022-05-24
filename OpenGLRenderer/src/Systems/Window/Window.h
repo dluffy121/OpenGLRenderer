@@ -7,7 +7,7 @@
 
 class VertexArray;
 class GameVastu;
-class Component; 
+class Component;
 class Camera;
 class GUIWindow;
 
@@ -28,7 +28,7 @@ private:
 
 	unsigned int m_Frames;
 
-	VertexArray* m_VA;
+	VertexArray* m_VAO;
 
 	GameVastu* m_CameraVastu;
 	Camera* m_Camera;
@@ -53,7 +53,7 @@ public:
 	inline std::string GetWindowId() const { return m_WindowId; }
 	inline GLFWwindow* GetGLFWWindow() const { return m_GLFWWindow; }
 	inline ImGuiContext* GetImGuiContext() const { return m_ImGuiContext; }
-	inline VertexArray& GetVertexArray() const { return *m_VA; }
+	inline VertexArray& GetVertexArrayObject() const { return *m_VAO; }
 	inline int GetWindowWidth() { return m_Width; }
 	inline int GetWindowHeight() { return m_Height; }
 	inline int GetFrames() { return m_Frames; }

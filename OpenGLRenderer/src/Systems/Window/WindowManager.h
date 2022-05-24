@@ -15,19 +15,18 @@ private:
 
 	Window* m_currentWindow;
 
-	bool m_imGuiRendererInitialized;
+	bool m_initialized;
 
 public:
 	static WindowManager* getInstance();
 
 	Window* GetWindowInstance(const std::string& windowId, int width, int height, GLFWwindow* sharedWindow = NULL, ImFontAtlas* sharedFontAtlas = NULL);
 
+	void Init();
 	void WindowLoop();
+	void Exit();
 
 	inline Window*& GetCurrentWindow() { return m_currentWindow; }
-
-	void InitImGuiRenderer();
-	void ShutdownImGuiRenderer();
 
 protected:
 	WindowManager();
@@ -35,4 +34,7 @@ protected:
 private:
 	WindowManager(const WindowManager&) = delete;
 	WindowManager operator=(const WindowManager&) = delete;
+
+	void InitImGuiRendererBackend();
+	void ShutdownImGuiRendererBackend();
 };

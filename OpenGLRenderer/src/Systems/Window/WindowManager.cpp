@@ -6,7 +6,7 @@
 WindowManager::WindowManager() :
 	rendererCount(0),
 	m_currentWindow(NULL),
-	m_imGuiRendererInitialized(false)
+	m_initialized(false)
 {}
 
 WindowManager* WindowManager::getInstance()
@@ -32,38 +32,51 @@ Window* WindowManager::GetWindowInstance(const std::string& windowId, int width,
 
 	rendererCount++;
 
+	if (m_initialized)
+	{
+		ImGuiContext* context = ImGui::GetCurrentContext();
+		ImGui::SetCurrentContext(m_currentWindow->GetImGuiContext());
+		ImGuiIO& io = ImGui::GetIO();
+		ImGui::SetCurrentContext(window->GetImGuiContext());
+		ImGui_ImplOpenGL3_Init(io);
+		ImGui::SetCurrentContext(context);
+	}
+
 	return window;
 }
 
-void WindowManager::InitImGuiRenderer()
+void WindowManager::InitImGuiRendererBackend()
 {
-	if (m_imGuiRendererInitialized)
-	{
-		ImGuiContext* context = ImGui::GetCurrentContext();
-		ImGui::SetCurrentContext(m_WindowCollection[0]->GetImGuiContext());
-		ImGuiIO& io = ImGui::GetIO();
-		ImGui::SetCurrentContext(context);
-
-		ImGui_ImplOpenGL3_Init(io);
-
+	if (!rendererCount)
 		return;
-	}
 
+	ImGui::SetCurrentContext(m_WindowCollection[0]->GetImGuiContext());
+	ImGuiContext* context = ImGui::GetCurrentContext();
 	const char* glsl_version = "#version 460";
 	ImGui_ImplOpenGL3_Init(glsl_version);
-	m_imGuiRendererInitialized = true;
+	ImGuiIO& io = ImGui::GetIO();
+
+	GLsizei size = rendererCount;
+	for (size_t i = 1; i < size; i++)
+	{
+		ImGui::SetCurrentContext(m_WindowCollection[i]->GetImGuiContext());
+
+		ImGui_ImplOpenGL3_Init(io);
+	}
+
+	ImGui::SetCurrentContext(context);
 }
 
-void WindowManager::ShutdownImGuiRenderer()
+void WindowManager::ShutdownImGuiRendererBackend()
 {
-	if (!m_imGuiRendererInitialized)
-		return;
-
-	if (!m_WindowCollection.empty())
-		return;
-
 	ImGui_ImplOpenGL3_Shutdown();
-	m_imGuiRendererInitialized = false;
+}
+
+void WindowManager::Init()
+{
+	InitImGuiRendererBackend();
+
+	m_initialized = true;
 }
 
 void WindowManager::WindowLoop()
@@ -127,4 +140,9 @@ void WindowManager::WindowLoop()
 		windowClosed = false;
 		i = 0;
 	}
+}
+
+void WindowManager::Exit()
+{
+	ShutdownImGuiRendererBackend();
 }
