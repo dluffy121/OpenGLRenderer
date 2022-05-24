@@ -13,7 +13,7 @@ Component::~Component()
 	WindowManager::getInstance()->GetCurrentWindow()->UnRegisterComponent(*this);
 }
 
-void Component::Awake(VertexArray* va)
+void Component::Awake()
 {
 }
 

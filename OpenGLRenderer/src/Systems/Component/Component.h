@@ -3,7 +3,6 @@
 #include <type_traits>
 #include <source_location>
 #include "glm/glm.hpp"
-#include "../../Core/GL/VertexArray/VertexArray.h"
 
 class GameVastu;
 
@@ -28,7 +27,7 @@ public:
 	inline unsigned int GetId() const { return Id; }
 	inline GameVastu* GetGameVastu() { return gameVastu; }
 
-	virtual void Awake(VertexArray* va);
+	virtual void Awake();
 	virtual void Update();
 	virtual void Render(const glm::mat4 vp);
 	virtual void OnGUI();
