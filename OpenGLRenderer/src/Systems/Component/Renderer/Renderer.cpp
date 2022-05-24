@@ -36,8 +36,6 @@ Renderer::Renderer(float& vertexCoords, unsigned int vcSize, float& textureCoord
 	layout->Push<float>(2);			// for Texture coords
 
 	m_RenderData = new RenderData(*vb, *layout, *ib);
-
-	BindToVA(WindowManager::getInstance()->GetCurrentWindow()->GetVertexArray());
 }
 
 Renderer::~Renderer()
@@ -54,13 +52,6 @@ void Renderer::SetTexture(Texture& texture)
 {
 	m_Texture = &texture;
 }
-
-void Renderer::BindToVA(VertexArray& va) const
-{
-	va.AddBuffer(*m_RenderData->m_vb, *m_RenderData->m_layout);
-}
-
-// TODO :: Implement Unbind
 
 bool Renderer::BindShader() const
 {
@@ -125,13 +116,13 @@ void Renderer::Render(const glm::mat4 vp)
 
 	BindShader();
 	BindTexture();
-	m_RenderData->m_ib->Bind();
+	m_RenderData->Bind();
 
 	m_Shader->SetUniformMat4f("u_MVP", mvp);
 
 	GLLog(glDrawElements(GL_TRIANGLES, m_RenderData->m_ib->GetCount(), m_RenderData->m_ib->GetIndexType(), nullptr));	// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
 
-	m_RenderData->m_ib->UnBind();
+	m_RenderData->UnBind();
 	UnBindShader();
 	UnBindTexture();
 }

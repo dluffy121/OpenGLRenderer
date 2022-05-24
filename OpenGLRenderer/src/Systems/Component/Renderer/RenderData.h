@@ -15,4 +15,18 @@ struct RenderData
 		m_layout(&layout),
 		m_ib(&ib)
 	{}
+
+	void Bind()
+	{
+		m_vb->Bind();
+		m_layout->Bind();
+		m_ib->Bind();
+	}
+
+	void UnBind()
+	{
+		m_vb->UnBind();
+		m_layout->UnBind();
+		m_ib->UnBind();
+	}
 };

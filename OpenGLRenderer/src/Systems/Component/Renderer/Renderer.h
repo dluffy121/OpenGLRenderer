@@ -26,12 +26,11 @@ public:
 	void SetShader(Shader& shader);
 	void SetTexture(Texture& texture);
 
-	inline RenderData* GetRenderData() const { return m_RenderData; }
+	inline const RenderData& GetRenderData() const { return *m_RenderData; }
 
 private:
 	float* MergeVertexCoordsNTextureCoords(bool is3D, int vbSize, float& vertexCoords, float& textureCoords);
 
-	void Awake(VertexArray* va) override;
 	void Render(const glm::mat4 vp) override;
 
 	bool BindTexture() const;
@@ -39,5 +38,4 @@ private:
 
 	bool BindShader() const;
 	bool UnBindShader() const;
-	void BindToVA(VertexArray& va) const;
 };
