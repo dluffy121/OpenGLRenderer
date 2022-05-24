@@ -1,9 +1,11 @@
 #pragma once
 
 #include "../Scene.h"
-#include "../../GameVastu/GameVastuManager.h"
-#include "../../Shader/ShaderManager.h"
-#include "../../Component/Renderer/Renderer.h"
+
+class GameVastu;
+class Renderer;
+class Shader;
+class Texture;
 
 namespace scene
 {
@@ -24,8 +26,6 @@ namespace scene
 		TextureScene();
 		~TextureScene();
 
-		void Update() override;
-		void Render(const glm::mat4 vp) override;
 		void OnGUI() override;
 		void OnDestroy() override;
 	};

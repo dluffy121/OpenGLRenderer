@@ -1,7 +1,10 @@
 #include "TextureScene.h"
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
+#include "../Systems/Component/Renderer/Renderer.h"
 #include "../../Window/WindowManager.h"
+#include "../../GameVastu/GameVastuManager.h"
+#include "../../Shader/ShaderManager.h"
 
 scene::TextureScene::TextureScene() :
 	Scene("TextureScene")
@@ -49,14 +52,6 @@ scene::TextureScene::TextureScene() :
 scene::TextureScene::~TextureScene()
 {
 	OnDestroy();
-}
-
-void scene::TextureScene::Update()
-{
-}
-
-void scene::TextureScene::Render(const glm::mat4 vp)
-{
 }
 
 void scene::TextureScene::OnGUI()

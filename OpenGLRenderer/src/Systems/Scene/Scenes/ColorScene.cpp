@@ -1,8 +1,11 @@
 #include "ColorScene.h"
+#include "../Systems/Component/Renderer/Renderer.h"
+#include "../../GameVastu/GameVastuManager.h"
 #include "../../Component/Camera/Camera.h"
+#include "../../Window/WindowManager.h"
+#include "../Systems/Shader/ShaderManager.h"
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
-#include "../../Window/WindowManager.h"
 
 scene::ColorScene::ColorScene() :
 	Scene("ColorScene")
@@ -50,10 +53,7 @@ void scene::ColorScene::Update()
 		increment = 0.05f;
 
 	r += increment;
-}
 
-void scene::ColorScene::Render(const glm::mat4 vp)
-{
 	shader->Bind();
 	shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 	shader->UnBind();
