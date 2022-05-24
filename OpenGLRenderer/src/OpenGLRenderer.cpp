@@ -31,14 +31,13 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	GLFWwindow* window = OpenGLHelper::CreateWindow(640, 480, "", NULL, true);
+	GLFWwindow* window = OpenGLHelper::CreateWindow(1, 1, "", NULL, true);
 	OpenGLHelper::UseGLFWWindow(window);
 	OpenGLHelper::SetSwapInterval(1);
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImFontAtlas* globalFontAtlas = ImGui::GetIO().Fonts;
-	auto rendererData = ImGui::GetIO().BackendRendererUserData;
 
 	if (!OpenGLHelper::InitializeGLEW())
 		return -1;
@@ -121,7 +120,9 @@ int main(void)
 
 		windowManager->UpdateActionsRenderGUI.push_back(GUIUpdateAction);
 
+		windowManager->Init();
 		windowManager->WindowLoop();
+		windowManager->Exit();
 	}
 
 	delete window1;
