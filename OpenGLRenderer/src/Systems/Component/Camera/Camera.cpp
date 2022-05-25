@@ -85,3 +85,14 @@ void Camera::SetTop(float top)
 	m_Top = top;
 	UpdateProjectionMatrix();
 }
+
+void Camera::OnInspectorGUI()
+{
+	ImGui::Text("Clip Planes:");
+	float nearClipPlane = m_NearClipPlane;
+	if (ImGui::DragFloat("Near", &nearClipPlane))
+		m_NearClipPlane = nearClipPlane;
+	float farClipPlane = m_FarClipPlane;
+	if (ImGui::DragFloat("Far", &farClipPlane))
+		m_FarClipPlane = farClipPlane;
+}

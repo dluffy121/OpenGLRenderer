@@ -8,6 +8,8 @@ Renderer::Renderer(float& vertexCoords, unsigned int vcSize, unsigned int& trian
 {
 	m_vertexCoords = &vertexCoords;
 	m_triangleIndices = &triangleIndices;
+	m_vertexCoordsSize = vcSize;
+	m_triangleIndicesSize = tiSize;
 
 	unsigned int dimensions = is3D ? 3 : 2;
 
@@ -24,6 +26,10 @@ Renderer::Renderer(float& vertexCoords, unsigned int vcSize, float& textureCoord
 	m_vertexCoords = &vertexCoords;
 	m_textureCoords = &textureCoords;
 	m_triangleIndices = &triangleIndices;
+	m_vertexCoordsSize = vcSize;
+	m_textureCoordsSize = tcSize;
+	m_triangleIndicesSize = tiSize;
+	m_triangleCount = tiSize / 3;
 
 	unsigned int dimensions = is3D ? 3 : 2;
 
@@ -127,4 +133,21 @@ void Renderer::Render(const glm::mat4 vp)
 	m_RenderData->UnBind();
 	UnBindShader();
 	UnBindTexture();
+}
+
+void Renderer::OnInspectorGUI()
+{
+	ImGui::Text("Shader Id");
+	ImGui::Text(std::to_string(gameVastu->GetId()).c_str());
+	ImGui::Text("Shader Path");
+	ImGui::Text(m_Shader->GetFilePath().c_str());
+
+	ImGui::Text("Vertex Co-ordinates");
+	ImGui::Text(std::to_string(m_vertexCoordsSize).c_str());
+	ImGui::Text("Texture Co-ordinates");
+	ImGui::Text(std::to_string(m_textureCoordsSize).c_str());
+	ImGui::Text("Triangle Indices");
+	ImGui::Text(std::to_string(m_triangleIndicesSize).c_str());
+	ImGui::Text("Triangles");
+	ImGui::Text(std::to_string(m_triangleCount).c_str());
 }

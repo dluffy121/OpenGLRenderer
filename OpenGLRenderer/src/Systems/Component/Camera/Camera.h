@@ -39,6 +39,8 @@ public:
 	void SetBottom(float bottom);
 	void SetTop(float top);
 
+	void OnInspectorGUI() override;
+
 private:
 	void UpdateProjectionMatrix();
 };

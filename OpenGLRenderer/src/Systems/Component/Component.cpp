@@ -2,7 +2,6 @@
 #include <GameVastu/GameVastu.h>
 #include <Window/WindowManager.h>
 #include <string.h>
-#include "../Window/WindowManager.h"
 
 Component::Component() :
 	gameVastu(nullptr)
@@ -32,6 +31,10 @@ void Component::Render(const glm::mat4 vp)
 void Component::OnGUI()
 {
 	if (!m_Enabled) return;
+}
+
+void Component::OnInspectorGUI()
+{
 }
 
 void Component::OnDestroy()

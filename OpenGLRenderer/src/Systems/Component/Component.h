@@ -31,6 +31,7 @@ public:
 	virtual void Update();
 	virtual void Render(const glm::mat4 vp);
 	virtual void OnGUI();
+	virtual void OnInspectorGUI();
 	virtual void OnDestroy();
 };
 
