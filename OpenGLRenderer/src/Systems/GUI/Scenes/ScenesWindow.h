@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GUIWindow.h"
+#include "../GUIWindow.h"
 #include <unordered_map>
 #include <functional>
-#include "../Scene/Scene.h"
+#include "../../Scene/Scene.h"
 
 class ScenesWindow : public GUIWindow
 {

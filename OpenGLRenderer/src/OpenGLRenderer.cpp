@@ -17,8 +17,9 @@
 #include <Scene/Scenes/ColorScene.h>
 #include <Scene/Scenes/TextureScene.h>
 #include <Window/WindowManager.h>
-#include "Systems/Scene/Scenes/TextureScene.h"
-#include "Systems/Window/WindowManager.h"
+#include <GUI/Scenes/ScenesWindow.h>
+#include <GUI/Inspector/InspectorWindow.h>
+#include <GUI/Hierarchy/HeirarchyWindow.h>
 
 using namespace core;
 using namespace core::gl;
@@ -30,7 +31,6 @@ int main(void)
 
 	ShaderManager* shaderManager = ShaderManager::getInstance();
 	WindowManager* windowManager = WindowManager::getInstance();
-	GameVastuManager* gameVastuManager = GameVastuManager::getInstance();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -72,57 +72,15 @@ int main(void)
 		window1->RegisterGUIWindow(scenesWindow);
 		window2->RegisterGUIWindow(scenesWindow);
 
-		// Register Ordering Matters
-		//window1->RegisterGameVastu(*colorVastu);
-		//window1->RegisterGameVastu(*textureVastu);
-		//window2->RegisterGameVastu(*colorVastu);
-		//window2->RegisterGameVastu(*textureVastu);
+		InspectorWindow inspectorWindow;
 
-		bool show_demo_window = false;
-		bool show_another_window = true;
-		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+		window1->RegisterGUIWindow(inspectorWindow);
+		window2->RegisterGUIWindow(inspectorWindow);
 
-		std::function<void(const Window&)> GUIUpdateAction = [](const Window& window)
-		{
-			Camera& camera = window.GetCamera();
-			GameVastu* cameraVastu = camera.GetGameVastu();
-			Transform* cameraTransform = cameraVastu->m_transform;
-			ImGui::Begin("Camera");
+		HeirarchyWindow heirarchyWindow;
 
-			ImGui::Text("Id:");
-			std::string id = std::to_string(cameraVastu->GetId());
-			ImGui::Text(id.c_str());
-
-			ImGui::Separator();
-
-			ImGui::Text("Tranform:");
-			glm::vec3 campos = cameraTransform->GetPosition();
-			float* camposArr = glm::value_ptr(campos);
-			if (ImGui::DragFloat3("P", camposArr))
-				cameraTransform->SetPosition(glm::make_vec3(camposArr));
-			glm::vec3 camrot = cameraTransform->GetRotation();
-			float* camrotArr = glm::value_ptr(camrot);
-			if (ImGui::DragFloat3("R", camrotArr))
-				cameraTransform->SetRotation(glm::make_vec3(camrotArr));
-			glm::vec3 camscale = cameraTransform->GetScale();
-			float* camscaleArr = glm::value_ptr(camscale);
-			if (ImGui::DragFloat3("S", camscaleArr))
-				cameraTransform->SetScale(glm::make_vec3(camscaleArr));
-
-			ImGui::Separator();
-
-			ImGui::Text("Clip Planes:");
-			float nearClipPlane = camera.GetNearClipPlane();
-			if (ImGui::DragFloat("Near", &nearClipPlane))
-				camera.SetNearClipPlane(nearClipPlane);
-			float farClipPlane = camera.GetFarClipPlane();
-			if (ImGui::DragFloat("Far", &farClipPlane))
-				camera.SetNearClipPlane(farClipPlane);
-
-			ImGui::End();
-		};
-
-		windowManager->UpdateActionsRenderGUI.push_back(GUIUpdateAction);
+		window1->RegisterGUIWindow(heirarchyWindow);
+		window2->RegisterGUIWindow(heirarchyWindow);
 
 		windowManager->Init();
 		windowManager->WindowLoop();

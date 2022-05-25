@@ -296,7 +296,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\StaticMethods.h" />
-    <ClInclude Include="src\Systems\GUI\ScenesWindow.h" />
+    <ClInclude Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.h" />
+    <ClInclude Include="src\Systems\GUI\Inspector\InspectorWindow.h" />
+    <ClInclude Include="src\Systems\GUI\Scenes\ScenesWindow.h" />
     <ClInclude Include="src\Systems\Scene\Scene.h" />
     <ClInclude Include="src\Systems\Scene\Scenes\ColorScene.h" />
     <ClInclude Include="src\Systems\Scene\Scenes\TextureScene.h" />
@@ -626,7 +628,9 @@
     <ClCompile Include="src\Core\GL\OpenGLHelper.cpp" />
     <ClCompile Include="src\OpenGLRenderer.cpp" />
     <ClCompile Include="src\Systems\Component\Renderer\Renderer.cpp" />
-    <ClCompile Include="src\Systems\GUI\ScenesWindow.cpp" />
+    <ClCompile Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.cpp" />
+    <ClCompile Include="src\Systems\GUI\Inspector\InspectorWindow.cpp" />
+    <ClCompile Include="src\Systems\GUI\Scenes\ScenesWindow.cpp" />
     <ClCompile Include="src\Systems\Scene\Scene.cpp" />
     <ClCompile Include="src\Systems\Scene\Scenes\ColorScene.cpp" />
     <ClCompile Include="src\Systems\Scene\Scenes\TextureScene.cpp" />

@@ -146,3 +146,11 @@ void WindowManager::Exit()
 {
 	ShutdownImGuiRendererBackend();
 }
+
+GameVastu* WindowManager::SelectedGameVastu(GameVastu* gameVastu)
+{
+	if (gameVastu)
+		m_currentWindow->SelectedGameVastu = gameVastu;
+
+	return m_currentWindow->SelectedGameVastu;
+}

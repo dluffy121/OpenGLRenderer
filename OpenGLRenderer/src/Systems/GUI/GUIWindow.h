@@ -17,6 +17,8 @@ protected:
 		m_Active(true)
 	{}
 
+	//virtual ~GUIWindow() = 0;
+
 public:
 	virtual void Draw(Window* window) = 0;
 };

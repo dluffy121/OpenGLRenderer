@@ -1,21 +1,26 @@
 #include "ScenesWindow.h"
-#include "../Window/Window.h"
+#include "../../Window/Window.h"
 
 ScenesWindow::ScenesWindow() :
 	GUIWindow("ScenesWindow")
 {}
 
 ScenesWindow::~ScenesWindow()
-{}
+{
+	delete loadString;
+	delete unloadString;
+}
 
 void ScenesWindow::Draw(Window* window)
 {
-	ImGui::StyleColorsDark();
 	ImGui::Begin("Scenes");
 
 	for (auto& scene : m_SceneToggles)
 	{
 		ImGui::Text(scene.first.c_str());
+		ImGui::SameLine();
+		ImGui::Indent();
+		ImGui::SameLine();
 		ImGui::PushID(scene.first.c_str());
 		if (!window->IsSceneActive(scene.first))
 		{
@@ -28,6 +33,7 @@ void ScenesWindow::Draw(Window* window)
 				window->RemoveScene(scene.first);
 		}
 		ImGui::PopID();
+		ImGui::Unindent();
 	}
 
 	ImGui::End();

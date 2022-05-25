@@ -9,7 +9,8 @@
 Window::Window(const std::string& rendererId, int width, int height, GLFWwindow* sharedWindow, ImFontAtlas* sharedFontAtlas) :
 	m_WindowId(rendererId),
 	m_Width(width),
-	m_Height(height)
+	m_Height(height),
+	SelectedGameVastu(NULL)
 {
 	m_GLFWWindow = OpenGLHelper::CreateWindow(width, height, m_WindowId, sharedWindow);
 	glfwMakeContextCurrent(m_GLFWWindow);

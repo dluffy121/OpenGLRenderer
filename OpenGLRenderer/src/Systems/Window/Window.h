@@ -21,7 +21,7 @@ using namespace core::gl;
 class Window
 {
 public:
-	std::vector<Action> UpdateActions;
+	GameVastu* SelectedGameVastu;
 
 private:
 	std::string m_WindowId;
@@ -74,6 +74,7 @@ public:
 	void RemoveScene(const scene::Scene& scene);
 	bool IsSceneActive(const std::string& sceneName);
 	bool IsSceneActive(const scene::Scene& scene);
+	inline std::unordered_map<std::string, scene::Scene*>& GetAllScenes() { return m_Scenes; }
 
 private:
 	void CreateImGUIContext(ImFontAtlas* sharedFontAtlas);

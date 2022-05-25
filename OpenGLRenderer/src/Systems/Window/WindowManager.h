@@ -26,6 +26,8 @@ public:
 	void WindowLoop();
 	void Exit();
 
+	GameVastu* SelectedGameVastu(GameVastu* gameVastu = NULL);
+
 	inline Window*& GetCurrentWindow() { return m_currentWindow; }
 
 protected:
