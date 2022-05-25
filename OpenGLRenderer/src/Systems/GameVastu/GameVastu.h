@@ -11,9 +11,11 @@ class GameVastu
 {
 private:
 	friend class GameVastuManager;
+	friend class InspectorWindow;
 
 public:
 	Transform* m_transform;
+	std::string m_name;
 
 private:
 	unsigned int Id;	// change to assign a proper generated unique Id
@@ -26,6 +28,12 @@ public:
 	GameVastu(const GameVastu& gameVastu);
 
 	inline unsigned int GetId() const { return Id; };
+
+	template <typename T>
+	void CreateComponent(Component& component)
+	{
+		static_assert(falseType<T>::value);
+	}
 
 	template <Component_T T>
 	void CreateComponent(T& component)
@@ -53,9 +61,7 @@ public:
 		}
 
 		component.gameVastu = this;
-		std::string name = GetTypeName<T>();
-		if (name != "class Camera")
-			WindowManager::getInstance()->GetCurrentWindow()->RegisterComponent(component);
+		WindowManager::getInstance()->GetCurrentWindow()->RegisterComponent(component);
 
 		m_Components[type] = &component;
 	}

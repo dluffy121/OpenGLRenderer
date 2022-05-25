@@ -18,3 +18,6 @@ static size_t GetTypeHash()
 {
 	return typeid(T).hash_code();
 }
+
+template<typename T>
+struct falseType : std::false_type { };

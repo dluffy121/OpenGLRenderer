@@ -4,7 +4,9 @@
 GameVastu::GameVastu() :
 	m_transform(new Transform())
 {
+#pragma warning (disable : 4311 4302)
 	Id = reinterpret_cast<unsigned int>(this);
+#pragma warning (default : 4311 4302)
 }
 
 GameVastu::GameVastu(const GameVastu& gameVastu) :
