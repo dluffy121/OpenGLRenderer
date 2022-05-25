@@ -4,6 +4,8 @@
 #include <sstream>
 #include "../../Core/Logger.h"
 
+using namespace core;
+
 Shader::Shader(unsigned int shaderId) :
 	shaderId(shaderId)
 {}

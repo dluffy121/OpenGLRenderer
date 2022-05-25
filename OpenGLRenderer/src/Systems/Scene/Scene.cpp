@@ -1,6 +1,6 @@
 #include "Scene.h"
-#include "../GameVastu/GameVastuManager.h"
-#include "../Window/WindowManager.h"
+#include <Window/WindowManager.h>
+#include <GameVastu/GameVastuManager.h>
 
 scene::Scene::Scene(std::string name) :
 	m_Active(true),

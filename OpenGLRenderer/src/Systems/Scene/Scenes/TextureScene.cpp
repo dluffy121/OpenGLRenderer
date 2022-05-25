@@ -1,10 +1,10 @@
 #include "TextureScene.h"
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
-#include "../Systems/Component/Renderer/Renderer.h"
-#include "../../Window/WindowManager.h"
-#include "../../GameVastu/GameVastuManager.h"
-#include "../../Shader/ShaderManager.h"
+#include <Shader/ShaderManager.h>
+#include <Component/Renderer/Renderer.h>
+#include <Component/Camera/Camera.h>
+#include <GameVastu/GameVastu.h>
 
 scene::TextureScene::TextureScene() :
 	Scene("TextureScene")

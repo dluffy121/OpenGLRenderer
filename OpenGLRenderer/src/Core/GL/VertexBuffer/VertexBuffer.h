@@ -1,14 +1,17 @@
 #pragma once
 
-class VertexBuffer
+namespace core::gl
 {
-private:
-	unsigned int m_VertexBufferId;
+	class VertexBuffer
+	{
+	private:
+		unsigned int m_VertexBufferId;
 
-public:
-	VertexBuffer(const void* data, unsigned int size);
-	~VertexBuffer();
+	public:
+		VertexBuffer(const void* data, unsigned int size);
+		~VertexBuffer();
 
-	void Bind() const;
-	void UnBind() const;
-};
+		void Bind() const;
+		void UnBind() const;
+	};
+}

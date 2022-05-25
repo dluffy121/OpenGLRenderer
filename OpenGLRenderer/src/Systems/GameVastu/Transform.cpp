@@ -1,6 +1,7 @@
 #include "Transform.h"
 #include <iostream>
-#include <glm/gtx/string_cast.hpp>
+#include <glm/gtx/transform.hpp>
+#include <corecrt_math.h>
 
 Transform::Transform() :
 	m_Position(glm::vec3(0.0f)),

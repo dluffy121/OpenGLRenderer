@@ -1,9 +1,11 @@
 #pragma once
 
-#include "../../Utils/Action.h"
+#include "../Core/GL/OpenGLHelper.h"
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <imgui/imgui.h>
+#include <Action.h>
+#include "../Core/GL/VertexArray/VertexArray.h"
 
 class VertexArray;
 class GameVastu;
@@ -12,6 +14,9 @@ class Camera;
 class GUIWindow;
 
 #include "../Scene/Scene.h"
+
+using namespace core;
+using namespace core::gl;
 
 class Window
 {

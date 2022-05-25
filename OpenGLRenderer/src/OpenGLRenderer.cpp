@@ -9,15 +9,19 @@
 #include "Macros.h"
 #include "Core/Logger.h"
 #include "Core/GL/Texture/Texture.h"
-#include "Systems/Shader/Shader.h"
-#include "Systems/Shader/ShaderManager.h"
-#include "Systems/GameVastu/GameVastuManager.h"
-#include "Systems/Component/Camera/Camera.h"
-#include "Systems/Window/WindowManager.h"
-#include "Utils/Action.h"
-#include "Systems/GUI/ScenesWindow.h"
-#include "Systems/Scene/Scenes/ColorScene.h"
+#include <Shader/Shader.h>
+#include <Shader/ShaderManager.h>
+#include <Component/Camera/Camera.h>
+#include <Action.h>
+#include <Scene/Scene.h>
+#include <Scene/Scenes/ColorScene.h>
+#include <Scene/Scenes/TextureScene.h>
+#include <Window/WindowManager.h>
 #include "Systems/Scene/Scenes/TextureScene.h"
+#include "Systems/Window/WindowManager.h"
+
+using namespace core;
+using namespace core::gl;
 
 int main(void)
 {

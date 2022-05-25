@@ -1,7 +1,8 @@
 #pragma once
 
 #include <unordered_map>
-#include "GameVastu.h"
+
+#include <GameVastu/GameVastu.h>
 
 class GameVastuManager
 {

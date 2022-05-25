@@ -1,24 +1,27 @@
 #include "VertexArray.h"
 #include "../../Logger.h"
 
-VertexArray::VertexArray() :
-	m_VertexArrayObjectId(0)
+namespace core::gl
 {
-	GLLog(glGenVertexArrays(1, &m_VertexArrayObjectId));
-}
+	VertexArray::VertexArray() :
+		m_VertexArrayObjectId(0)
+	{
+		GLLog(glGenVertexArrays(1, &m_VertexArrayObjectId));
+	}
 
-VertexArray::~VertexArray()
-{
-	GLLog(glDeleteVertexArrays(1, &m_VertexArrayObjectId));
-	std::cout << "Deleted VertexArray with id: " << m_VertexArrayObjectId << std::endl;
-}
+	VertexArray::~VertexArray()
+	{
+		GLLog(glDeleteVertexArrays(1, &m_VertexArrayObjectId));
+		std::cout << "Deleted VertexArray with id: " << m_VertexArrayObjectId << std::endl;
+	}
 
-void VertexArray::Bind() const
-{
-	GLLog(glBindVertexArray(m_VertexArrayObjectId));
-}
+	void VertexArray::Bind() const
+	{
+		GLLog(glBindVertexArray(m_VertexArrayObjectId));
+	}
 
-void VertexArray::UnBind() const
-{
-	GLLog(glBindVertexArray(0));
+	void VertexArray::UnBind() const
+	{
+		GLLog(glBindVertexArray(0));
+	}
 }

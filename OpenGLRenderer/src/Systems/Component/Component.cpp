@@ -1,4 +1,6 @@
 #include "Component.h"
+#include <GameVastu/GameVastu.h>
+#include <Window/WindowManager.h>
 #include <string.h>
 #include "../Window/WindowManager.h"
 

@@ -3,10 +3,9 @@
 #include <unordered_map>
 #include <string>
 #include "Transform.h"
-#include "../Core//Logger.h"
+#include <Window/WindowManager.h>
 #include "../StaticMethods.h"
-#include "../Component/Component.h"
-#include "../../Systems/Window/WindowManager.h"
+#include "../Core/Logger.h"
 
 class GameVastu
 {

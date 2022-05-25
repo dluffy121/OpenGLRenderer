@@ -1,11 +1,10 @@
 #include "../../Core/GL/OpenGLHelper.h"
 #include "Window.h"
-#include "../GameVastu/GameVastuManager.h"
-#include "../Component/Camera/Camera.h"
-#include "../GUI/GUIWindow.h"
-#include <imgui/imgui_impl_opengl3.h>
+#include <GameVastu/GameVastuManager.h>
+#include <Component/Camera/Camera.h>
+#include <GUI/GUIWindow.h>
 #include <imgui/imgui_impl_glfw.h>
-#include "../Core/GL/VertexArray/VertexArray.h"
+#include "../../Core/Logger.h"
 
 Window::Window(const std::string& rendererId, int width, int height, GLFWwindow* sharedWindow, ImFontAtlas* sharedFontAtlas) :
 	m_WindowId(rendererId),

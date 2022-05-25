@@ -2,6 +2,8 @@
 #include "Shader.h"
 #include "../../Core/Logger.h"
 
+using namespace core;
+
 ShaderManager::ShaderManager() {}
 
 ShaderManager* ShaderManager::getInstance()

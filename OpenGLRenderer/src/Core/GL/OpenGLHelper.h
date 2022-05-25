@@ -4,21 +4,24 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-static const unsigned long long GLUINT_SIZE = sizeof(GLuint);
-static const unsigned long long GLUSHORT_SIZE = sizeof(GLushort);
-
-extern unsigned int GetSizeOfType(unsigned int type);
-
-class OpenGLHelper
+namespace core::gl
 {
-public:
-	static int InitializeGLFW();
-	static bool InitializeGLEW();
+	static const unsigned long long GLUINT_SIZE = sizeof(GLuint);
+	static const unsigned long long GLUSHORT_SIZE = sizeof(GLushort);
 
-	static void TerminateGLFW();
+	extern unsigned int GetSizeOfType(unsigned int type);
 
-	static GLFWwindow* CreateWindow(int width, int height, const std::string& title, GLFWwindow* sharedWindow = NULL, bool isHidden = false, bool isDecorated = true);
-	static void SetSwapInterval(int interval);
-	static void UseGLFWWindow(GLFWwindow* window);
-	static void DestroyGLFWWindow(GLFWwindow* window);
-};
+	class OpenGLHelper
+	{
+	public:
+		static int InitializeGLFW();
+		static bool InitializeGLEW();
+
+		static void TerminateGLFW();
+
+		static GLFWwindow* CreateWindow(int width, int height, const std::string& title, GLFWwindow* sharedWindow = NULL, bool isHidden = false, bool isDecorated = true);
+		static void SetSwapInterval(int interval);
+		static void UseGLFWWindow(GLFWwindow* window);
+		static void DestroyGLFWWindow(GLFWwindow* window);
+	};
+}

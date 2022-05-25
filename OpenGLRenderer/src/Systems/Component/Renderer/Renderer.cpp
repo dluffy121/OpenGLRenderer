@@ -1,6 +1,8 @@
 #include "Renderer.h"
-#include "../Systems/GameVastu/GameVastu.h"
-#include "../../Window/WindowManager.h"
+#include <GameVastu/GameVastu.h>
+#include "../../../Core/Logger.h"
+
+using namespace core;
 
 Renderer::Renderer(float& vertexCoords, unsigned int vcSize, unsigned int& triangleIndices, unsigned int tiSize, bool is3D)
 {

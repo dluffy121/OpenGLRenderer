@@ -2,17 +2,20 @@
 
 #include "../OpenGLHelper.h"
 
-class VertexArray
+namespace core::gl
 {
-private:
-	GLuint m_VertexArrayObjectId;
+	class VertexArray
+	{
+	private:
+		GLuint m_VertexArrayObjectId;
 
-public:
-	VertexArray();
-	~VertexArray();
+	public:
+		VertexArray();
+		~VertexArray();
 
-	inline unsigned int GetId() { return m_VertexArrayObjectId; }
+		inline unsigned int GetId() { return m_VertexArrayObjectId; }
 
-	void Bind() const;
-	void UnBind() const;
-};
+		void Bind() const;
+		void UnBind() const;
+	};
+}

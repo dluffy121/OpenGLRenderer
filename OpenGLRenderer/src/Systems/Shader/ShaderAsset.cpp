@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include "../../Core/Logger.h"
 
+using namespace core;
+
 ShaderAsset::ShaderAsset(const std::string& shaderPath) :
 	shaderPath(shaderPath),
 	VertexShader(0),

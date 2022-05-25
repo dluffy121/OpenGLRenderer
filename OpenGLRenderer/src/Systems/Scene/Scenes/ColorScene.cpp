@@ -6,6 +6,10 @@
 #include "../Systems/Shader/ShaderManager.h"
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <Shader/ShaderManager.h>
+#include <Component/Renderer/Renderer.h>
+#include <Component/Camera/Camera.h>
+#include <GameVastu/GameVastu.h>
 
 scene::ColorScene::ColorScene() :
 	Scene("ColorScene")

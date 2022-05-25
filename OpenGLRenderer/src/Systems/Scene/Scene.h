@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "../Component/Component.h"
+#include <Component/Component.h>
 
 namespace scene
 {

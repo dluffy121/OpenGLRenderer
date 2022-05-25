@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../../../Core/GL/VertexBuffer/VertexBuffer.h"
-#include "../../../Core/GL/IndexBuffer/IndexBuffer.h"
 #include "../../../Core/GL/VertexBufferLayout/VertexBufferLayout.h"
+#include "../../../Core/GL/IndexBuffer/IndexBuffer.h"
+
+using namespace core::gl;
 
 struct RenderData
 {

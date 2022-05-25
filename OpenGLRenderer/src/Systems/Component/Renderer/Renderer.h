@@ -5,6 +5,10 @@
 #include "../../Shader/Shader.h"
 #include "../../../Core/GL/Texture/Texture.h"
 #include "../../../Core/GL/VertexArray/VertexArray.h"
+#include <Component/Component.h>
+#include <Shader/Shader.h>
+
+using namespace core::gl;
 
 class Renderer : public Component
 {
