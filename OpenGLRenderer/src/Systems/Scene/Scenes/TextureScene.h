@@ -1,11 +1,14 @@
 #pragma once
 
 #include "../Scene.h"
+#include "../Core/GL/Texture/Texture.h"
 
+class Camera;
 class GameVastu;
 class Renderer;
 class Shader;
-class Texture;
+
+using namespace core::gl;
 
 namespace scene
 {
@@ -15,6 +18,9 @@ namespace scene
 		float* vertexCoords;
 		float* textureCoords;
 		unsigned int* indices;
+
+		GameVastu* cameraVastu;
+		Camera* camera;
 
 		GameVastu* textureVastu;
 		Renderer* textureRenderer;

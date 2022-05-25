@@ -9,8 +9,12 @@ namespace scene
 	class Scene : public Component
 	{
 	private:
+		friend class HeirarchyWindow;
+
+	private:
 		bool m_Active;
 		std::string m_Name;
+		std::vector<GameVastu*> m_GameVastus;
 
 	public:
 		Scene(std::string name);
@@ -18,6 +22,9 @@ namespace scene
 
 		inline bool& IsActive() { return m_Active; }
 		inline std::string GetName() const { return m_Name; }
+
+		GameVastu* CreateGameVastu();
+		void DestroyGameVastu(GameVastu* gameVastu);
 	};
 }
 

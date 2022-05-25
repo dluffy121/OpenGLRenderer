@@ -1,4 +1,3 @@
-#include "../../Core/GL/OpenGLHelper.h"
 #include "Window.h"
 #include <GameVastu/GameVastuManager.h>
 #include <Component/Camera/Camera.h>
@@ -10,6 +9,7 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 	m_WindowId(rendererId),
 	m_Width(width),
 	m_Height(height),
+	m_Camera(NULL),
 	SelectedGameVastu(NULL)
 {
 	m_GLFWWindow = OpenGLHelper::CreateWindow(width, height, m_WindowId, sharedWindow);
@@ -20,10 +20,6 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 	CreateImGUIContext(sharedFontAtlas);
 
 	InstallCallbacks();
-
-	m_CameraVastu = GameVastuManager::getInstance()->CreateGameVastu();
-	m_Camera = new Camera(m_Width, m_Height);
-	m_CameraVastu->AddComponent(*m_Camera);
 
 	m_VAO = new VertexArray();
 
@@ -172,6 +168,9 @@ void Window::Update()
 
 void Window::Render()
 {
+	if (!m_Camera)
+		return;
+
 	m_VAO->Bind();
 
 	glm::mat4 vp = m_Camera->GetProjectionMatrix()

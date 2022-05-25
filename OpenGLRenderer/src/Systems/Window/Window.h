@@ -7,7 +7,6 @@
 #include <Action.h>
 #include "../Core/GL/VertexArray/VertexArray.h"
 
-class VertexArray;
 class GameVastu;
 class Component;
 class Camera;
@@ -35,7 +34,6 @@ private:
 
 	VertexArray* m_VAO;
 
-	GameVastu* m_CameraVastu;
 	Camera* m_Camera;
 
 	std::vector<Component*> m_Components;

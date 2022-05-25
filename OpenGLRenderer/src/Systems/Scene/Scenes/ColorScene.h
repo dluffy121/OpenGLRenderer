@@ -2,6 +2,7 @@
 
 #include "../Scene.h"
 
+class Camera;
 class GameVastu;
 class Renderer;
 class Shader;
@@ -13,6 +14,9 @@ namespace scene
 	private:
 		float* vertexCoords;
 		unsigned int* indices;
+
+		GameVastu* cameraVastu;
+		Camera* camera;
 
 		GameVastu* colorVastu;
 		Renderer* colorRenderer;

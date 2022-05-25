@@ -21,7 +21,7 @@ scene::TextureScene::TextureScene() :
 	textureCoords = new float[8]
 	{
 		//	Texture Coords	| Vertex Attrib Pointer
-			0.0f, 0.0f,		// 0
+		0.0f, 0.0f,		// 0
 			1.0f, 0.0f,		// 1
 			1.0f, 1.0f,		// 2
 			0.0f, 1.0f		// 3
@@ -30,10 +30,11 @@ scene::TextureScene::TextureScene() :
 	indices = new unsigned int[6]
 	{
 		0, 1, 2,
-		2, 3, 0
+			2, 3, 0
 	};
 
-	textureVastu = GameVastuManager::getInstance()->CreateGameVastu();
+	textureVastu = CreateGameVastu();
+	textureVastu->m_name = "Texture Renderer";
 	textureRenderer = new Renderer(*vertexCoords, 8, *textureCoords, 8, *indices, 6, false);
 	shader = new Shader(ShaderManager::getInstance()->LoadShader("resources/shaders/Texture.shader"));
 	texture = new Texture("resources/textures/Opengl.png");
@@ -47,6 +48,14 @@ scene::TextureScene::TextureScene() :
 
 	textureRenderer->SetShader(*shader);
 	textureRenderer->SetTexture(*texture);
+
+	cameraVastu = CreateGameVastu();
+	cameraVastu->m_name = "Camera";
+	auto window = WindowManager::getInstance()->GetCurrentWindow();
+	camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
+	cameraVastu->AddComponent(*camera);
+
+	WindowManager::getInstance()->GetCurrentWindow()->SetCamera(*camera);
 }
 
 scene::TextureScene::~TextureScene()
@@ -55,25 +64,7 @@ scene::TextureScene::~TextureScene()
 }
 
 void scene::TextureScene::OnGUI()
-{
-	Transform* textureTransform = textureVastu->m_transform;
-
-	ImGui::Begin("Texture");
-	ImGui::Text("Tranform");
-	glm::vec3 texpos = textureTransform->GetPosition();
-	float* texposArr = glm::value_ptr(texpos);
-	if (ImGui::DragFloat3("P", texposArr))
-		textureTransform->SetPosition(glm::make_vec3(texposArr));
-	glm::vec3 texrot = textureTransform->GetRotation();
-	float* texrotArr = glm::value_ptr(texrot);
-	if (ImGui::DragFloat3("R", texrotArr))
-		textureTransform->SetRotation(glm::make_vec3(texrotArr));
-	glm::vec3 texscale = textureTransform->GetScale();
-	float* texscaleArr = glm::value_ptr(texscale);
-	if (ImGui::DragFloat3("S", texscaleArr))
-		textureTransform->SetScale(glm::make_vec3(texscaleArr));
-	ImGui::End();
-}
+{}
 
 void scene::TextureScene::OnDestroy()
 {
@@ -83,5 +74,5 @@ void scene::TextureScene::OnDestroy()
 	delete shader;
 	delete texture;
 	delete textureRenderer;
-	GameVastuManager::getInstance()->DestroyGameVastu(textureVastu);
+	DestroyGameVastu(textureVastu);
 }
