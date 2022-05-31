@@ -4,39 +4,56 @@
 #include <string.h>
 
 Component::Component() :
-	gameVastu(nullptr)
-{
-	Id = reinterpret_cast<unsigned int>(this);
-}
+	Id(reinterpret_cast<unsigned int>(this)),
+	gameVastu(nullptr),
+	enabled(false),
+	name("Component")
+{}
 
 Component::~Component()
 {
 	WindowManager::getInstance()->GetCurrentWindow()->UnRegisterComponent(*this);
 }
 
-void Component::Awake()
+void Component::_Awake()
 {
+	Awake();
 }
 
-void Component::Update()
+void Component::_Update()
 {
-	if (!m_Enabled) return;
+	if (!enabled) return;
+
+	Update();
 }
 
-void Component::Render(const glm::mat4 vp)
+void Component::_Render()
 {
-	if (!m_Enabled) return;
+	if (!enabled) return;
+
+	Render();
 }
 
-void Component::OnGUI()
+void Component::_OnGUI()
 {
-	if (!m_Enabled) return;
+	if (!enabled) return;
+
+	OnGUI();
 }
 
-void Component::OnInspectorGUI()
+void Component::_OnInspectorGUI()
 {
+	ImGui::PushID(Id);
+	ImGui::Checkbox(name.c_str(), &enabled);
+
+	ImGui::Spacing();
+
+	OnInspectorGUI();
+
+	ImGui::PopID();
 }
 
-void Component::OnDestroy()
+void Component::_OnDestroy()
 {
+	OnDestroy();
 }

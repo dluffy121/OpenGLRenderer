@@ -1,8 +1,7 @@
 #pragma once
 
 #include <type_traits>
-#include <source_location>
-#include "glm/glm.hpp"
+#include <string>
 
 class GameVastu;
 
@@ -12,13 +11,14 @@ private:
 	friend class GameVastu;
 
 public:
-	bool m_Enabled;
+	bool enabled;
 
 protected:
 	GameVastu* gameVastu;
+	std::string name;
 
 private:
-	unsigned int Id;					// change to assign a proper generated unique Id
+	const unsigned int Id;					// change to assign a proper generated unique Id
 
 public:
 	Component();
@@ -27,12 +27,20 @@ public:
 	inline unsigned int GetId() const { return Id; }
 	inline GameVastu* GetGameVastu() { return gameVastu; }
 
-	virtual void Awake();
-	virtual void Update();
-	virtual void Render(const glm::mat4 vp);
-	virtual void OnGUI();
-	virtual void OnInspectorGUI();
-	virtual void OnDestroy();
+	void _Awake();
+	void _Update();
+	void _Render();
+	void _OnGUI();
+	void _OnInspectorGUI();
+	void _OnDestroy();
+
+protected:
+	virtual void Awake() {}
+	virtual void Update() {}
+	virtual void Render() {}
+	virtual void OnGUI() {}
+	virtual void OnInspectorGUI() {}
+	virtual void OnDestroy() {}
 };
 
 template<class T>
