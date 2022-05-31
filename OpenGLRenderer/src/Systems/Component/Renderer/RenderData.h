@@ -20,15 +20,21 @@ struct RenderData
 
 	void Bind()
 	{
-		m_vb->Bind();
-		m_layout->Bind();
-		m_ib->Bind();
+		if (m_vb)
+			m_vb->Bind();
+		if (m_layout)
+			m_layout->Bind();
+		if (m_ib)
+			m_ib->Bind();
 	}
 
 	void UnBind()
 	{
-		m_vb->UnBind();
-		m_layout->UnBind();
-		m_ib->UnBind();
+		if (m_vb)
+			m_vb->UnBind();
+		if (m_layout)
+			m_layout->UnBind();
+		if (m_ib)
+			m_ib->UnBind();
 	}
 };

@@ -1,64 +1,35 @@
 #include "Renderer.h"
 #include <GameVastu/GameVastu.h>
 #include "../../../Core/Logger.h"
+#include <Component/Camera/Camera.h>
 
-using namespace core;
-
-Renderer::Renderer(float& vertexCoords, unsigned int vcSize, unsigned int& triangleIndices, unsigned int tiSize, bool is3D)
-{
-	m_vertexCoords = &vertexCoords;
-	m_triangleIndices = &triangleIndices;
-	m_vertexCoordsSize = vcSize;
-	m_triangleIndicesSize = tiSize;
-
-	unsigned int dimensions = is3D ? 3 : 2;
-
-	VertexBuffer* vb = new VertexBuffer(m_vertexCoords, vcSize * sizeof(float));
-	IndexBuffer* ib = new IndexBuffer(m_triangleIndices, GL_UNSIGNED_INT, tiSize);
-	VertexBufferLayout* layout = new VertexBufferLayout();
-	layout->Push<float>(2);			// for Vertex coords
-
-	m_RenderData = new RenderData(*vb, *layout, *ib);
-}
-
-Renderer::Renderer(float& vertexCoords, unsigned int vcSize, float& textureCoords, unsigned int tcSize, unsigned int& triangleIndices, unsigned int tiSize, bool is3D)
-{
-	m_vertexCoords = &vertexCoords;
-	m_textureCoords = &textureCoords;
-	m_triangleIndices = &triangleIndices;
-	m_vertexCoordsSize = vcSize;
-	m_textureCoordsSize = tcSize;
-	m_triangleIndicesSize = tiSize;
-	m_triangleCount = tiSize / 3;
-
-	unsigned int dimensions = is3D ? 3 : 2;
-
-	int vbSize = vcSize + tcSize;
-
-	float* vertexData = MergeVertexCoordsNTextureCoords(is3D, vbSize, vertexCoords, textureCoords);
-
-	VertexBuffer* vb = new VertexBuffer(vertexData, vbSize * sizeof(float));
-	IndexBuffer* ib = new IndexBuffer(m_triangleIndices, GL_UNSIGNED_INT, tiSize);
-	VertexBufferLayout* layout = new VertexBufferLayout();
-	layout->Push<float>(2);			// for Vertex coords
-	layout->Push<float>(2);			// for Texture coords
-
-	m_RenderData = new RenderData(*vb, *layout, *ib);
-}
+Renderer::Renderer(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount) :
+	m_Vertices(vertices),
+	m_VertexCount(vertexCount),
+	m_Indices(indices),
+	m_IndexCount(indexCount),
+	m_triangleCount(indexCount / 3),
+	_Vertices(NULL),
+	_Indices(NULL),
+	m_Shader(NULL)
+{}
 
 Renderer::~Renderer()
-{
-	delete m_RenderData;
-}
+{}
 
 void Renderer::SetShader(Shader& shader)
 {
 	m_Shader = &shader;
 }
 
-void Renderer::SetTexture(Texture& texture)
+void Renderer::AddTexture(int samplerId, Texture& texture)
 {
-	m_Texture = &texture;
+	m_Textures[samplerId] = &texture;
+}
+
+void Renderer::RemoveTexture(int samplerId)
+{
+	m_Textures.erase(samplerId);
 }
 
 bool Renderer::BindShader() const
@@ -79,75 +50,158 @@ bool Renderer::UnBindShader() const
 	return true;
 }
 
-bool Renderer::BindTexture() const
+void Renderer::BindTextures() const
 {
-	if (m_Texture == NULL)
-		return false;
-
-	m_Texture->Bind();
-	return true;
+	for (auto& sampler : m_Textures)
+		sampler.second->BindToUnit(sampler.first);
 }
 
-bool Renderer::UnBindTexture() const
+void Renderer::UnBindTexture() const
 {
-	if (m_Texture == NULL)
-		return false;
-
-	m_Texture->UnBind();
-	return true;
+	for (auto& sampler : m_Textures)
+		sampler.second->UnBindFromUnit(sampler.first);
 }
 
-float* Renderer::MergeVertexCoordsNTextureCoords(bool is3D, int vbSize, float& vertexCoords, float& textureCoords)
+void Renderer::Render()
 {
-	float* vertexData = new float[vbSize];
-	unsigned int divisor = is3D ? 6 : 4;
-	unsigned int remainder = is3D ? 3 : 2;
-	int x = 0;
-	int y = 0;
-	for (int i = 0; i < vbSize; i++)
+	BindShader();
+	BindTextures();
+
+	auto window = WindowManager::getInstance()->GetCurrentWindow();
+
+	glm::mat4 mvp = window->GetCamera().GetVieProjectionwMatrix() * gameVastu->m_transform->GetTransformMatrix();
+
+	_Vertices = CopyArray(m_Vertices, m_VertexCount);
+
+	for (size_t i = 0; i < m_VertexCount; i++)
 	{
-		if (i % divisor < remainder)
-		{
-			vertexData[i] = (&vertexCoords)[x++];
-			continue;
-		}
-
-		vertexData[i] = (&textureCoords)[y++];
+		glm::vec4 position(m_Vertices[i].Position.x, m_Vertices[i].Position.y, m_Vertices[i].Position.z, 1.0f);
+		position = mvp * position;
+		_Vertices[i].Position.x = position[0];
+		_Vertices[i].Position.y = position[1];
+		_Vertices[i].Position.z = position[2];
 	}
 
-	return vertexData;
-}
+	_Indices = CopyArray(m_Indices, m_IndexCount);
+	window->AddBufferData(_Vertices, m_VertexCount, _Indices, m_IndexCount);;
 
-void Renderer::Render(const glm::mat4 vp)
-{
-	glm::mat4 mvp = gameVastu->m_transform->GetModelMatrix() * vp;
+	delete[] _Vertices;
+	delete[] _Indices;
 
-	BindShader();
-	BindTexture();
-	m_RenderData->Bind();
-
-	m_Shader->SetUniformMat4f("u_MVP", mvp);
-
-	GLLog(glDrawElements(GL_TRIANGLES, m_RenderData->m_ib->GetCount(), m_RenderData->m_ib->GetIndexType(), nullptr));	// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
-
-	m_RenderData->UnBind();
-	UnBindShader();
-	UnBindTexture();
+	//glm::mat4 mvp = window->GetCamera().GetVieProjectionwMatrix() * gameVastu->m_transform->GetTransformMatrix();
+	//m_Shader->SetUniformMat4f("u_MVP", mvp);
 }
 
 void Renderer::OnInspectorGUI()
 {
-	ImGui::Text("Shader Id");
-	ImGui::Text(std::to_string(gameVastu->GetId()).c_str());
-	ImGui::Text("Shader Path");
-	ImGui::Text(m_Shader->GetFilePath().c_str());
+	if (ImGui::CollapsingHeader("Render Info"))
+	{
+		ImGui::Text("Vertex Count: ");
+		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+		ImGui::Text(std::to_string(m_VertexCount).c_str());
+		ImGui::Text("Index Count: ");
+		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+		ImGui::Text(std::to_string(m_IndexCount).c_str());
+		ImGui::Text("Triangles: ");
+		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+		ImGui::Text(std::to_string(m_triangleCount).c_str());
+	}
 
-	ImGui::Text("Vertex Co-ordinates");
-	ImGui::Text(std::to_string(m_vertexCoordsSize).c_str());
-	ImGui::Text("Texture Co-ordinates");
-	ImGui::Text(std::to_string(m_textureCoordsSize).c_str());
-	ImGui::Text("Triangle Indices");
-	ImGui::Text(std::to_string(m_triangleIndicesSize).c_str());
-	ImGui::Text("Triangles");
-	ImGui::Text(std::to_string(m_triangleCount).c_str());
+	if (ImGui::CollapsingHeader("Shader Info"))
+	{
+		ImGui::Text("Shader Id: ");
+		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+		ImGui::Text(std::to_string(m_Shader->Id).c_str());
+		ImGui::Text("Shader Path: ");
+		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+		ImGui::Text(m_Shader->Path.c_str());
+	}
+
+	if (m_Textures.size() > 0)
+		if (ImGui::CollapsingHeader("Texture Info"))
+		{
+			for (auto& texture : m_Textures)
+			{
+				ImGui::Text("Sampler Id: ");
+				ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+				ImGui::Text(std::to_string(texture.first).c_str());
+				ImGui::Text("Texture Id: ");
+				ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+				ImGui::Text(std::to_string(texture.second->Id).c_str());
+				ImGui::Text("Texture Path: ");
+				ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+				ImGui::Text(texture.second->m_FilePath.c_str());
+			}
+		}
+
+	if (ImGui::CollapsingHeader("Vertices"))
+	{
+		if (ImGui::BeginTable("Vertices", 3))
+		{
+			ImGui::TableNextColumn();
+			ImGui::TableHeader("x");
+			ImGui::TableNextColumn();
+			ImGui::TableHeader("y");
+			ImGui::TableNextColumn();
+			ImGui::TableHeader("z");
+			for (size_t i = 0; i < m_VertexCount; i++)
+			{
+				ImGui::PushID(i);
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("x", &m_Vertices[i].Position.x);
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("y", &m_Vertices[i].Position.y);
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("z", &m_Vertices[i].Position.z);
+				ImGui::PopID();
+			}
+		}
+		ImGui::EndTable();
+	}
+
+	if (ImGui::CollapsingHeader("Colors"))
+	{
+		for (size_t i = 0; i < m_VertexCount; i++)
+		{
+			float color[4] = { m_Vertices[i].Color.x, m_Vertices[i].Color.y, m_Vertices[i].Color.z, m_Vertices[i].Color.w };
+			if (ImGui::ColorEdit4(std::to_string(i).c_str(), color));
+			{
+				m_Vertices[i].Color.x = color[0];
+				m_Vertices[i].Color.y = color[1];
+				m_Vertices[i].Color.z = color[2];
+				m_Vertices[i].Color.w = color[3];
+			}
+		}
+	}
+
+	if (ImGui::CollapsingHeader("Texture Coords"))
+	{
+		if (ImGui::BeginTable("Texture Coords", 2))
+		{
+			ImGui::TableNextColumn();
+			ImGui::TableHeader("x");
+			ImGui::TableNextColumn();
+			ImGui::TableHeader("y");
+			for (size_t i = 0; i < m_VertexCount; i++)
+			{
+				ImGui::PushID(i);
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("x", &m_Vertices[i].TexCoords.x, 0.01f, 0.0f, 1.0f);
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("y", &m_Vertices[i].TexCoords.y, 0.01f, 0.0f, 1.0f);
+				ImGui::PopID();
+			}
+		}
+		ImGui::EndTable();
+	}
+
+	if (ImGui::CollapsingHeader("Texture Index"))
+	{
+		for (size_t i = 0; i < m_VertexCount; i++)
+		{
+			ImGui::DragInt(std::to_string(i).c_str(), &m_Vertices[i].TexID);
+		}
+	}
 }
