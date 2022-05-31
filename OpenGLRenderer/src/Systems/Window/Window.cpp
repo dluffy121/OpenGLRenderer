@@ -162,13 +162,13 @@ void Window::Update()
 {
 	for (auto& component : m_Components)
 	{
-		component->Update();
+		component->_Update();
 	}
 }
 
 void Window::Render()
 {
-	if (!m_Camera)
+	if (!m_Camera || !m_Camera->enabled)
 		return;
 
 	m_VAO->Bind();
@@ -178,7 +178,7 @@ void Window::Render()
 
 	for (auto& component : m_Components)
 	{
-		component->Render(vp);
+		component->_Render();
 	}
 
 	m_VAO->UnBind();
@@ -188,7 +188,7 @@ void Window::RenderGUI()
 {
 	for (auto& component : m_Components)
 	{
-		component->OnGUI();
+		component->_OnGUI();
 	}
 
 	for (auto& guiWindow : m_GUIWindows)
@@ -228,7 +228,7 @@ void Window::RegisterComponent(Component& component)
 	if (std::find(m_Components.begin(), m_Components.end(), &component) != m_Components.end())
 		return;
 
-	component.Awake();
+	component._Awake();
 
 	m_Components.push_back(&component);
 }
