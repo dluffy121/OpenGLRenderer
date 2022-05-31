@@ -7,7 +7,7 @@
 namespace core::gl
 {
 	Texture::Texture(const std::string& texturePath) :
-		m_TextureId(0),
+		Id(GenerateTexture()),
 		m_FilePath(texturePath),
 		m_Width(0),
 		m_Height(0),
@@ -16,13 +16,12 @@ namespace core::gl
 		stbi_set_flip_vertically_on_load(1);
 		unsigned char* localBuffer = stbi_load(m_FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 0);	// 4 is for RGBA
 
-		Log("Texture with id: " << m_TextureId << std::endl
+		Log("Texture with id: " << Id << std::endl
 			<< "Load Status: " << (localBuffer != nullptr) << std::endl
 			<< "Resolution: " << m_Width << " x " << m_Height << std::endl
 			<< "Bits Per Pixel: " << m_BPP << std::endl);
 
-		GLLog(glGenTextures(1, &m_TextureId));
-		GLLog(glBindTexture(GL_TEXTURE_2D, m_TextureId));
+		GLLog(glBindTexture(GL_TEXTURE_2D, Id));
 
 		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
@@ -39,18 +38,36 @@ namespace core::gl
 
 	Texture::~Texture()
 	{
-		GLLog(glDeleteTextures(1, &m_TextureId));
+		GLLog(glDeleteTextures(1, &Id));
 	}
 
 	void Texture::Bind(unsigned int slot) const
 	{
-		ASSERT(glIsTexture(m_TextureId) == GL_TRUE);
+		ASSERT(glIsTexture(Id) == GL_TRUE);
 		GLLog(glActiveTexture(GL_TEXTURE0 + slot));			// since the value is just an integer we can specify slot by just adding
-		GLLog(glBindTexture(GL_TEXTURE_2D, m_TextureId));
+		GLLog(glBindTexture(GL_TEXTURE_2D, Id));
+	}
+
+	void Texture::BindToUnit(unsigned int unit) const
+	{
+		ASSERT(glIsTexture(Id) == GL_TRUE);
+		GLLog(glBindTextureUnit(unit, Id));
 	}
 
 	void Texture::UnBind() const
 	{
 		GLLog(glBindTexture(GL_TEXTURE_2D, 0));
+	}
+
+	void Texture::UnBindFromUnit(unsigned int unit) const
+	{
+		GLLog(glBindTextureUnit(unit, 0));
+	}
+
+	unsigned int Texture::GenerateTexture()
+	{
+		GLuint id;
+		GLLog(glGenTextures(1, &id));
+		return id;
 	}
 }

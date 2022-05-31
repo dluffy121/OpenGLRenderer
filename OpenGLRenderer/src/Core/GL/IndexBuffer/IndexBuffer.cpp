@@ -1,4 +1,3 @@
-#include <GL/glew.h>
 #include "IndexBuffer.h"
 #include "../Core/Logger.h"
 #include "../OpenGLHelper.h"
@@ -7,29 +6,45 @@
 namespace core::gl
 {
 	IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int type, unsigned int count) :
-		m_IndexType(type),
-		m_Count(count)
+		Id(GenerateBuffer()),
+		IndexType(type),
+		Count(count)
 	{
-		GLLog(glGenBuffers(1, &m_IndexBufferId));
-		GLLog(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferId));
-		unsigned int size = count * GetSizeOfType(type);
+		Bind();
+		GLsizeiptr size = count * GetSizeOfType(type);
 		GLLog(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * size, data, GL_STATIC_DRAW));
-		UnBind();
+	}
+
+	IndexBuffer::IndexBuffer(unsigned int type, unsigned int count) :
+		Id(GenerateBuffer()),
+		IndexType(type),
+		Count(count)
+	{
+		Bind();
+		GLsizeiptr size = count * GetSizeOfType(type);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * size, nullptr, GL_DYNAMIC_DRAW);
 	}
 
 	IndexBuffer::~IndexBuffer()
 	{
-		GLLog(glDeleteBuffers(1, &m_IndexBufferId));
-		std::cout << "Deleted IndexBuffer with id: " << m_IndexBufferId << std::endl;
+		GLLog(glDeleteBuffers(1, &Id));
+		std::cout << "Deleted IndexBuffer with id: " << Id << std::endl;
 	}
 
 	void IndexBuffer::Bind() const
 	{
-		GLLog(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferId));
+		GLLog(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Id));
 	}
 
 	void IndexBuffer::UnBind() const
 	{
 		GLLog(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	}
+
+	GLuint IndexBuffer::GenerateBuffer()
+	{
+		GLuint id;
+		GLLog(glGenBuffers(1, &id));
+		return id;
 	}
 }

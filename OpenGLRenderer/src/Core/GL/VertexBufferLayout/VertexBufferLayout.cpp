@@ -1,37 +1,41 @@
 #include "VertexBufferLayout.h"
 #include "../../Logger.h"
+#include <Window/WindowManager.h>
 
 namespace core::gl
 {
 	void VertexBufferLayout::Bind()
 	{
+		GLuint vaoId = WindowManager::getInstance()->GetCurrentWindow()->GetVertexArrayObject().GetId();
+
 		unsigned int offset = 0;
-		for (unsigned int i = 0; i < m_Elements.size(); i++)
+		unsigned int index = 0;
+		for (const auto& vbElement : m_Elements)
 		{
-			const auto& element = m_Elements[i];
+			const auto& element = vbElement.second;
 			if (element.isEnabled)
 				continue;
 
-			GLLog(glEnableVertexAttribArray(i));
-			GLLog(glVertexAttribPointer(i,
+			//GLLog(glEnableVertexAttribArray(i));
+			GLLog(glEnableVertexArrayAttrib(vaoId, index));
+			GLLog(glVertexAttribPointer(index,
 				element.count,
 				element.type,
 				element.normalized,
 				m_Stride,
 				(const void*)offset));
 			offset += element.count * GetSizeOfType(element.type);
-
-			EnableElement(i);
+			index++;
 		}
 	}
 
 	void VertexBufferLayout::UnBind()
 	{
 		unsigned int offset = 0;
-		for (unsigned int i = 0; i < m_Elements.size(); i++)
+		unsigned int index = 0;
+		for (const auto& vbElement : m_Elements)
 		{
-			GLLog(glDisableVertexAttribArray(i));
-			DisableElement(i);
+			GLLog(glDisableVertexAttribArray(index++));
 		}
 	}
 }

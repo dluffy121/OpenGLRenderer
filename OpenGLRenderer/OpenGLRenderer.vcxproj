@@ -295,6 +295,14 @@
     <Image Include="resources\textures\test.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\GL\IndexBuffer\IndexBuffer.h" />
+    <ClInclude Include="src\Core\GL\OpenGLHelper.h" />
+    <ClInclude Include="src\Core\GL\Texture\Texture.h" />
+    <ClInclude Include="src\Core\GL\VertexArray\VertexArray.h" />
+    <ClInclude Include="src\Core\GL\VertexBufferLayout\VertexBufferLayout.h" />
+    <ClInclude Include="src\Core\GL\VertexBuffer\VertexBuffer.h" />
+    <ClInclude Include="src\Core\Logger.h" />
+    <ClInclude Include="src\Core\Math.h" />
     <ClInclude Include="src\StaticMethods.h" />
     <ClInclude Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.h" />
     <ClInclude Include="src\Systems\GUI\Inspector\InspectorWindow.h" />
@@ -308,17 +316,12 @@
     <ClInclude Include="src\Systems\GameVastu\GameVastu.h" />
     <ClInclude Include="src\Systems\GameVastu\GameVastuManager.h" />
     <ClInclude Include="src\Systems\GUI\GUIWindow.h" />
-    <ClInclude Include="src\Core\GL\IndexBuffer\IndexBuffer.h" />
-    <ClInclude Include="src\Core\Logger.h" />
     <ClInclude Include="src\Macros.h" />
-    <ClInclude Include="src\Core\Math.h" />
-    <ClInclude Include="src\Core\GL\OpenGLHelper.h" />
     <ClInclude Include="src\Systems\Component\Renderer\RenderData.h" />
     <ClInclude Include="src\Systems\Component\Renderer\Renderer.h" />
     <ClInclude Include="src\Systems\Shader\Shader.h" />
     <ClInclude Include="src\Systems\Shader\ShaderAsset.h" />
     <ClInclude Include="src\Systems\Shader\ShaderManager.h" />
-    <ClInclude Include="src\Core\GL\Texture\Texture.h" />
     <ClInclude Include="src\Systems\GameVastu\Transform.h" />
     <ClInclude Include="src\vendor\glm\common.hpp" />
     <ClInclude Include="src\vendor\glm\detail\compute_common.hpp" />
@@ -612,20 +615,21 @@
     <ClInclude Include="src\vendor\imgui\imstb_textedit.h" />
     <ClInclude Include="src\vendor\imgui\imstb_truetype.h" />
     <ClInclude Include="src\vendor\stb_image\stb_image.h" />
-    <ClInclude Include="src\Core\GL\VertexArray\VertexArray.h" />
-    <ClInclude Include="src\Core\GL\VertexBuffer\VertexBuffer.h" />
-    <ClInclude Include="src\Core\GL\VertexBufferLayout\VertexBufferLayout.h" />
     <ClInclude Include="src\Systems\Window\Window.h" />
     <ClInclude Include="src\Systems\Window\WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\GL\IndexBuffer\IndexBuffer.cpp" />
+    <ClCompile Include="src\Core\GL\OpenGLHelper.cpp" />
+    <ClCompile Include="src\Core\GL\Texture\Texture.cpp" />
+    <ClCompile Include="src\Core\GL\VertexArray\VertexArray.cpp" />
+    <ClCompile Include="src\Core\GL\VertexBufferLayout\VertexBufferLayout.cpp" />
+    <ClCompile Include="src\Core\GL\VertexBuffer\VertexBuffer.cpp" />
+    <ClCompile Include="src\Core\Logger.cpp" />
     <ClCompile Include="src\Systems\Component\Camera\Camera.cpp" />
     <ClCompile Include="src\Systems\Component\Component.cpp" />
     <ClCompile Include="src\Systems\GameVastu\GameVastu.cpp" />
     <ClCompile Include="src\Systems\GameVastu\GameVastuManager.cpp" />
-    <ClCompile Include="src\Core\GL\IndexBuffer\IndexBuffer.cpp" />
-    <ClCompile Include="src\Core\Logger.cpp" />
-    <ClCompile Include="src\Core\GL\OpenGLHelper.cpp" />
     <ClCompile Include="src\OpenGLRenderer.cpp" />
     <ClCompile Include="src\Systems\Component\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.cpp" />
@@ -637,7 +641,6 @@
     <ClCompile Include="src\Systems\Shader\Shader.cpp" />
     <ClCompile Include="src\Systems\Shader\ShaderAsset.cpp" />
     <ClCompile Include="src\Systems\Shader\ShaderManager.cpp" />
-    <ClCompile Include="src\Core\GL\Texture\Texture.cpp" />
     <ClCompile Include="src\Systems\GameVastu\Transform.cpp" />
     <ClCompile Include="src\vendor\glm\detail\glm.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui.cpp" />
@@ -648,9 +651,6 @@
     <ClCompile Include="src\vendor\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\vendor\stb_image\stb_image.cpp" />
-    <ClCompile Include="src\Core\GL\VertexArray\VertexArray.cpp" />
-    <ClCompile Include="src\Core\GL\VertexBuffer\VertexBuffer.cpp" />
-    <ClCompile Include="src\Core\GL\VertexBufferLayout\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Systems\Window\Window.cpp" />
     <ClCompile Include="src\Systems\Window\WindowManager.cpp" />
   </ItemGroup>

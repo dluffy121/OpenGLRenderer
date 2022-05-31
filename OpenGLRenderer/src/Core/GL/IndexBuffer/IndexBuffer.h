@@ -1,22 +1,25 @@
 #pragma once
 
+#include <GL/glew.h>
+
 namespace core::gl
 {
 	class IndexBuffer
 	{
-	private:
-		unsigned int m_IndexBufferId;
-		unsigned int m_IndexType;
-		unsigned int m_Count;
+	public:
+		const GLuint Id;
+		const unsigned int IndexType;
+		const unsigned int Count;
 
 	public:
 		IndexBuffer(const unsigned int* data, unsigned int type, unsigned int count);
+		IndexBuffer(unsigned int type, unsigned int count);
 		~IndexBuffer();
 
 		void Bind() const;
 		void UnBind() const;
 
-		inline unsigned int GetIndexType() const { return m_IndexType; }
-		inline unsigned int GetCount() const { return m_Count; }
+	private:
+		GLuint GenerateBuffer();
 	};
 }
