@@ -26,7 +26,8 @@ public:
 	void WindowLoop();
 	void Exit();
 
-	GameVastu* SelectedGameVastu(GameVastu* gameVastu = NULL);
+	void SelectedGameVastu(GameVastu* gameVastu);
+	GameVastu* SelectedGameVastu();
 
 	inline Window*& GetCurrentWindow() { return m_currentWindow; }
 
