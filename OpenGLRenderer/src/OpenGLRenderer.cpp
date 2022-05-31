@@ -46,8 +46,8 @@ int main(void)
 	if (!OpenGLHelper::InitializeGLEW())
 		return -1;
 
-	Window* window1 = windowManager->GetWindowInstance("Main Window", 1280, 960, window, globalFontAtlas);
-	Window* window2 = windowManager->GetWindowInstance("Second Window", 640, 480, window, globalFontAtlas);
+	Window* window1 = windowManager->GetWindowInstance("Main Window", 960, 960, window, globalFontAtlas);
+	Window* window2 = windowManager->GetWindowInstance("Second Window", 960, 480, window, globalFontAtlas);
 
 	fprintf(stdout, "Status: Using OpenGL version %s\n", glGetString(GL_VERSION));
 
@@ -57,10 +57,10 @@ int main(void)
 		// -------------+------------------------------
 		//				|	Vertex		|	Tex Coords
 		// -------------+---------------+--------------
-		// 0			|	-0.5, -0.5, |	0.0f, 0.0f,		
-		// 1			|	 0.5, -0.5, |	1.0f, 0.0f,		
-		// 2			|	 0.5,  0.5,	|	1.0f, 1.0f,		
-		// 3			|	-0.5,  0.5, |	0.0f, 1.0f		
+		// 0			|	-0.5, -0.5, |	0.0f, 0.0f,
+		// 1			|	 0.5, -0.5, |	1.0f, 0.0f,
+		// 2			|	 0.5,  0.5,	|	1.0f, 1.0f,
+		// 3			|	-0.5,  0.5, |	0.0f, 1.0f
 
 		ShaderAsset shaderAsset1 = shaderManager->CreateShaderAsset("resources/shaders/Texture.shader");
 		ShaderAsset shaderAsset2 = shaderManager->CreateShaderAsset("resources/shaders/Color.shader");
