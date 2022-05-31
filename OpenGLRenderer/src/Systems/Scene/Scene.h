@@ -6,7 +6,7 @@
 
 namespace scene
 {
-	class Scene : public Component
+	class Scene
 	{
 	private:
 		friend class HeirarchyWindow;
@@ -24,7 +24,9 @@ namespace scene
 		inline std::string GetName() const { return m_Name; }
 
 		GameVastu* CreateGameVastu();
-		void DestroyGameVastu(GameVastu* gameVastu);
+		void DestroyGameVastu(GameVastu*& gameVastu);
+
+		virtual void Update() {}
 	};
 }
 

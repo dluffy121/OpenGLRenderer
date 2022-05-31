@@ -5,9 +5,7 @@
 scene::Scene::Scene(std::string name) :
 	m_Active(true),
 	m_Name(name)
-{
-	WindowManager::getInstance()->GetCurrentWindow()->RegisterComponent(*this);
-}
+{}
 
 scene::Scene::~Scene()
 {
@@ -21,17 +19,26 @@ GameVastu* scene::Scene::CreateGameVastu()
 	return gameVastu;
 }
 
-void scene::Scene::DestroyGameVastu(GameVastu* gameVastu)
+void scene::Scene::DestroyGameVastu(GameVastu*& gameVastu)
 {
+	if (!gameVastu)
+		return;
+
+	unsigned int id = gameVastu->Id;
+
 	size_t size = m_GameVastus.size();
 	size_t i = 0;
 	for (; i < size; i++)
-		if (m_GameVastus[i]->GetId() == gameVastu->GetId())		
+		if (m_GameVastus[i]->Id == id)
 			break;
 
 	if (i == size)
 		return;
 
+	if (WindowManager::getInstance()->SelectedGameVastu() && WindowManager::getInstance()->SelectedGameVastu()->Id == id)
+		WindowManager::getInstance()->SelectedGameVastu(NULL);
+
 	m_GameVastus.erase(m_GameVastus.begin() - i);
 	GameVastuManager::getInstance()->DestroyGameVastu(gameVastu);
+	gameVastu = NULL;
 }

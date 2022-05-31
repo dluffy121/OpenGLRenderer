@@ -1,6 +1,9 @@
 #pragma once
 
 #include "../Scene.h"
+#include "../Core/Math.h"
+
+using namespace core;
 
 class Camera;
 class GameVastu;
@@ -12,21 +15,27 @@ namespace scene
 	class ColorScene : public Scene
 	{
 	private:
-		float* vertexCoords;
-		unsigned int* indices;
-
 		GameVastu* cameraVastu;
 		Camera* camera;
 
-		GameVastu* colorVastu;
-		Renderer* colorRenderer;
+		GameVastu* colorVastu1;
+		Renderer* colorRenderer1;
+		GameVastu* colorVastu2;
+		Renderer* colorRenderer2;
+		GameVastu* colorVastu3;
+		Renderer* colorRenderer3;
+		GameVastu* colorVastu4;
+		Renderer* colorRenderer4;
+		GameVastu* colorVastu5;
+		Renderer* colorRenderer5;
 
 		Shader* shader;
 
-		float time ;
-		float timeDelta;
+		unsigned int* indices;
+		Vertex* vertices1;
+		Vertex* vertices2;
 
-		float r;
+		float timeDelta;
 		float increment;
 
 	public:
@@ -34,7 +43,5 @@ namespace scene
 		~ColorScene();
 
 		void Update() override;
-		void OnGUI() override;
-		void OnDestroy() override;
 	};
 }

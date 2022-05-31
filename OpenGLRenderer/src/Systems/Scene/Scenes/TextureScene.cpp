@@ -5,74 +5,85 @@
 #include <Component/Renderer/Renderer.h>
 #include <Component/Camera/Camera.h>
 #include <GameVastu/GameVastu.h>
+#include "../../../Macros.h"
 
-scene::TextureScene::TextureScene() :
-	Scene("TextureScene")
+namespace scene
 {
-	vertexCoords = new float[8]
+	TextureScene::TextureScene() :
+		Scene("TextureScene")
 	{
-		//	Vertex Coords	| Vertex Attrib Pointer
-		   -115.0f, -49.0f,  // 0
-			115.0f, -49.0f,	 // 1
-			115.0f,  49.0f,	 // 2
-		   -115.0f,  49.0f	 // 3
-	};
+		texture1 = new Texture("resources/textures/Opengl.png");
+		texture2 = new Texture("resources/textures/test.png");
 
-	textureCoords = new float[8]
-	{
-		//	Texture Coords	| Vertex Attrib Pointer
-		0.0f, 0.0f,		// 0
-			1.0f, 0.0f,		// 1
-			1.0f, 1.0f,		// 2
-			0.0f, 1.0f		// 3
-	};
+		shader = new Shader("resources/shaders/Texture.shader");
 
-	indices = new unsigned int[6]
-	{
-		0, 1, 2,
+		int samplers[2] = { 0, 1 };
+		shader->Bind();
+		shader->SetUniform1iv("u_Textures", samplers, 2);
+		shader->UnBind();
+
+		int i = 0;
+
+		indices = new unsigned int[6]
+		{
+			0, 1, 2,
 			2, 3, 0
-	};
+		};
 
-	textureVastu = CreateGameVastu();
-	textureVastu->m_name = "Texture Renderer";
-	textureRenderer = new Renderer(*vertexCoords, 8, *textureCoords, 8, *indices, 6, false);
-	shader = new Shader(ShaderManager::getInstance()->LoadShader("resources/shaders/Texture.shader"));
-	texture = new Texture("resources/textures/Opengl.png");
-	textureVastu->AddComponent(*textureRenderer);
+		vertices1 = new Vertex[4]
+		{
+			{ {   0.0f,   0.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 1 },
+			{ {   0.0f,  98.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, 1 },
+			{ { 230.0f,  98.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 1 },
+			{ { 230.0f,   0.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, 1 }
+		};
 
-	texture->Bind();
-	shader->Bind();
-	shader->SetUniform1i("u_Texture", 0);
-	shader->UnBind();
-	texture->UnBind();
+		textureVastu1 = CreateGameVastu();
+		textureVastu1->m_name = "Texture Renderer 1";
+		textureRenderer1 = new Renderer(vertices1, 4, indices, 6);
+		textureRenderer1->SetShader(*shader);
+		textureRenderer1->AddTexture(samplers[i++], *texture1);
+		textureVastu1->AddComponent(*textureRenderer1);
 
-	textureRenderer->SetShader(*shader);
-	textureRenderer->SetTexture(*texture);
+		vertices2 = new Vertex[4]
+		{
+			{ {   0.0f,   0.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 2 },
+			{ {   0.0f,  98.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, 2 },
+			{ { 500.0f,  98.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 2 },
+			{ { 500.0f,   0.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, 2 }
+		};
 
-	cameraVastu = CreateGameVastu();
-	cameraVastu->m_name = "Camera";
-	auto window = WindowManager::getInstance()->GetCurrentWindow();
-	camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
-	cameraVastu->AddComponent(*camera);
+		textureVastu2 = CreateGameVastu();
+		textureVastu2->m_name = "Texture Renderer 2";
+		textureRenderer2 = new Renderer(vertices2, 4, indices, 6);
+		textureRenderer2->SetShader(*shader);
+		textureRenderer2->AddTexture(samplers[i++], *texture2);
+		textureVastu2->AddComponent(*textureRenderer2);
 
-	WindowManager::getInstance()->GetCurrentWindow()->SetCamera(*camera);
-}
+		cameraVastu = CreateGameVastu();
+		cameraVastu->m_name = "Camera";
+		auto window = WindowManager::getInstance()->GetCurrentWindow();
+		camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
+		cameraVastu->AddComponent(*camera);
 
-scene::TextureScene::~TextureScene()
-{
-	OnDestroy();
-}
+		WindowManager::getInstance()->GetCurrentWindow()->SetCamera(camera);
+	}
 
-void scene::TextureScene::OnGUI()
-{}
-
-void scene::TextureScene::OnDestroy()
-{
-	delete[] vertexCoords;
-	delete[] textureCoords;
-	delete[] indices;
-	delete shader;
-	delete texture;
-	delete textureRenderer;
-	DestroyGameVastu(textureVastu);
+	TextureScene::~TextureScene()
+	{
+		delete shader;
+		delete[] indices;
+		delete[] vertices1;
+		delete[] vertices2;
+		delete texture1;
+		delete textureRenderer1;
+		DestroyGameVastu(textureVastu1);
+		delete texture2;
+		delete textureRenderer2;
+		DestroyGameVastu(textureVastu2);
+		auto windowCamera = &WindowManager::getInstance()->GetCurrentWindow()->GetCamera();
+		if (windowCamera && windowCamera->GetId() == camera->GetId())
+			WindowManager::getInstance()->GetCurrentWindow()->SetCamera(NULL);
+		DestroyGameVastu(cameraVastu);
+	}
 }
