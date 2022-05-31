@@ -32,12 +32,19 @@ Camera::~Camera()
 
 glm::mat4 Camera::GetProjectionMatrix()
 {
+	UpdateProjectionMatrix();
 	return m_ProjectionMatrix;
 }
 
 glm::mat4 Camera::GetViewMatrix()
 {
-	return gameVastu->m_transform->GetPositionMatrix() * gameVastu->m_transform->GetRotationMatrix();
+	UpdateViewMatrix();
+	return m_ViewnMatrix;
+}
+
+glm::mat4 Camera::GetVieProjectionwMatrix()
+{
+	return GetProjectionMatrix() * GetViewMatrix();
 }
 
 void Camera::UpdateProjectionMatrix()
@@ -45,45 +52,43 @@ void Camera::UpdateProjectionMatrix()
 	m_ProjectionMatrix = glm::ortho(m_Left, m_Right, m_Bottom, m_Top, m_NearClipPlane, m_FarClipPlane);	// Providing int to this method does not produce desired output
 }
 
+void Camera::UpdateViewMatrix()
+{
+	m_ViewnMatrix = gameVastu->m_transform->GetPositionMatrix() * gameVastu->m_transform->GetRotationMatrix();
+}
+
 void Camera::SetOrthoMultiplier(float orthoMultiplier)
 {
 	m_OrthoMultiplier = orthoMultiplier;
-	UpdateProjectionMatrix();
 }
 
 void Camera::SetNearClipPlane(float nearClipPlane)
 {
 	m_NearClipPlane = nearClipPlane;
-	UpdateProjectionMatrix();
 }
 
 void Camera::SetFarClipPlane(float farClipPlane)
 {
 	m_FarClipPlane = farClipPlane;
-	UpdateProjectionMatrix();
 }
 
 void Camera::SetLeft(float left)
 {
 	m_Left = left;
-	UpdateProjectionMatrix();
 }
 
 void Camera::SetRight(float right)
 {
 	m_Right = right;
-	UpdateProjectionMatrix();
 }
 void Camera::SetBottom(float bottom)
 {
 	m_Bottom = bottom;
-	UpdateProjectionMatrix();
 }
 
 void Camera::SetTop(float top)
 {
 	m_Top = top;
-	UpdateProjectionMatrix();
 }
 
 void Camera::OnInspectorGUI()

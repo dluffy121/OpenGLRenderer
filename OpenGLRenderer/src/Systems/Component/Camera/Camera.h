@@ -7,6 +7,7 @@ class Camera : public Component
 {
 private:
 	glm::mat4 m_ProjectionMatrix;
+	glm::mat4 m_ViewnMatrix;
 	float m_OrthoMultiplier;
 	float m_NearClipPlane;
 	float m_FarClipPlane;
@@ -22,6 +23,7 @@ public:
 
 	glm::mat4 GetProjectionMatrix();
 	glm::mat4 GetViewMatrix();
+	glm::mat4 GetVieProjectionwMatrix();
 
 	inline float GetOrthoMultiplier() { return m_OrthoMultiplier; }
 	inline float GetNearClipPlane() { return m_NearClipPlane; }
@@ -43,4 +45,5 @@ public:
 
 private:
 	void UpdateProjectionMatrix();
+	void UpdateViewMatrix();
 };
