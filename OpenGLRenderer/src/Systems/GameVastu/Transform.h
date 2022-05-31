@@ -13,7 +13,7 @@ private:
 
 	glm::mat4 m_PositionMatrix;
 	glm::mat4 m_RotationMatrix;
-	glm::mat4 m_modelMatrix;
+	glm::mat4 m_TransformMatrix;
 
 public:
 	Transform();
@@ -28,7 +28,9 @@ public:
 	inline glm::vec3 GetRotation() { return m_Rotation; };
 	inline glm::mat4 GetRotationMatrix() { return m_RotationMatrix; };
 	inline glm::vec3 GetScale() { return m_Scale; };
-	inline glm::mat4 GetModelMatrix() { return m_modelMatrix; }
+	inline glm::mat4 GetTransformMatrix() { return m_TransformMatrix; }
+
+	void OnInspectorGUI();
 
 private:
 	void UpdateModelMatrix();

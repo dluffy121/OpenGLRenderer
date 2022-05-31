@@ -2,6 +2,8 @@
 #include <iostream>
 #include <glm/gtx/transform.hpp>
 #include <corecrt_math.h>
+#include <imgui/imgui.h>
+#include <glm/gtx/string_cast.hpp>
 
 Transform::Transform() :
 	m_Position(glm::vec3(0.0f)),
@@ -9,7 +11,7 @@ Transform::Transform() :
 	m_Scale(glm::vec3(1.0f)),
 	m_PositionMatrix(glm::mat4(1)),
 	m_RotationMatrix(glm::mat4(1)),
-	m_modelMatrix(glm::mat4(1))
+	m_TransformMatrix(glm::mat4(1))
 {}
 
 Transform::~Transform()
@@ -62,5 +64,32 @@ void Transform::SetScale(glm::vec3 scale)
 
 void Transform::UpdateModelMatrix()
 {
-	m_modelMatrix = glm::scale(m_PositionMatrix * m_RotationMatrix, m_Scale);
+	m_TransformMatrix = glm::scale(m_PositionMatrix * m_RotationMatrix, m_Scale);
+}
+
+void Transform::OnInspectorGUI()
+{
+	if (ImGui::CollapsingHeader("Position Matrix"))
+	{
+		ImGui::Text(glm::to_string(m_PositionMatrix[0]).c_str());
+		ImGui::Text(glm::to_string(m_PositionMatrix[1]).c_str());
+		ImGui::Text(glm::to_string(m_PositionMatrix[2]).c_str());
+		ImGui::Text(glm::to_string(m_PositionMatrix[3]).c_str());
+	}
+
+	if (ImGui::CollapsingHeader("Rotation Matrix"))
+	{
+		ImGui::Text(glm::to_string(m_RotationMatrix[0]).c_str());
+		ImGui::Text(glm::to_string(m_RotationMatrix[1]).c_str());
+		ImGui::Text(glm::to_string(m_RotationMatrix[2]).c_str());
+		ImGui::Text(glm::to_string(m_RotationMatrix[3]).c_str());
+	}
+
+	if (ImGui::CollapsingHeader("Transform Matrix"))
+	{
+		ImGui::Text(glm::to_string(m_TransformMatrix[0]).c_str());
+		ImGui::Text(glm::to_string(m_TransformMatrix[1]).c_str());
+		ImGui::Text(glm::to_string(m_TransformMatrix[2]).c_str());
+		ImGui::Text(glm::to_string(m_TransformMatrix[3]).c_str());
+	}
 }

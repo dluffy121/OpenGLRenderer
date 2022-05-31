@@ -2,12 +2,9 @@
 #include <type_traits>
 
 GameVastu::GameVastu() :
-	m_transform(new Transform())
-{
-#pragma warning (disable : 4311 4302)
-	Id = reinterpret_cast<unsigned int>(this);
-#pragma warning (default : 4311 4302)
-}
+	m_transform(new Transform()),
+	Id(reinterpret_cast<unsigned int>(this))
+{}
 
 GameVastu::GameVastu(const GameVastu& gameVastu) :
 	Id(gameVastu.Id),

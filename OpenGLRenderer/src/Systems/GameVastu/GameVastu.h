@@ -16,9 +16,9 @@ private:
 public:
 	Transform* m_transform;
 	std::string m_name;
+	const unsigned int Id;	// change to assign a proper generated unique Id
 
 private:
-	unsigned int Id;	// change to assign a proper generated unique Id
 	std::unordered_map<size_t, Component*> m_Components; // use shared pointer
 
 	~GameVastu();
@@ -26,8 +26,6 @@ private:
 public:
 	GameVastu();
 	GameVastu(const GameVastu& gameVastu);
-
-	inline unsigned int GetId() const { return Id; };
 
 	template <typename T>
 	void CreateComponent(Component& component)
@@ -61,6 +59,8 @@ public:
 		}
 
 		component.gameVastu = this;
+		component.name = GetTypeName<T>();
+		component.enabled = true;
 		WindowManager::getInstance()->GetCurrentWindow()->RegisterComponent(component);
 
 		m_Components[type] = &component;

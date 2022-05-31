@@ -12,7 +12,7 @@ GameVastuManager* GameVastuManager::getInstance()
 GameVastu* GameVastuManager::CreateGameVastu()
 {
 	GameVastu* gameVastu = new GameVastu();
-	unsigned int id = gameVastu->GetId();
+	unsigned int id = gameVastu->Id;
 
 	ASSERT(m_GameVastus.find(id) == m_GameVastus.end());
 
@@ -23,7 +23,7 @@ GameVastu* GameVastuManager::CreateGameVastu()
 
 void GameVastuManager::DestroyGameVastu(GameVastu*& gameVastu)
 {
-	m_GameVastus.erase(gameVastu->GetId());
+	m_GameVastus.erase(gameVastu->Id);
 
 	delete gameVastu;
 }
