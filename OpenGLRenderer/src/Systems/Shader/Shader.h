@@ -8,23 +8,23 @@
 
 class Shader
 {
+public:
+	const unsigned int Id;
+	const std::string Path;
+
 private:
-	std::string filePath;
-	unsigned int shaderId;
 	std::unordered_map<std::string, int> uniformLocationCache;
 
 public:
-	Shader(unsigned int shaderId);
+	Shader(const std::string& filePath);
 	~Shader();
 
 	void Bind() const;
 	void UnBind() const;
 
-	inline const std::string& GetFilePath() { return filePath; }
-	inline unsigned int GetShaderId() { return shaderId; }
-
 	// Set Uniform
 	void SetUniform1i(const std::string& name, int value);
+	void SetUniform1iv(const std::string& name, int* value, unsigned int size);
 	void SetUniform1f(const std::string& name, float value);
 	void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 	void SetUniformMat4f(const std::string& name, const glm::mat4& matrix);
