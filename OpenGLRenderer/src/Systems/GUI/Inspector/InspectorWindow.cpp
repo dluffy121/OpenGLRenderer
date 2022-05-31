@@ -25,7 +25,7 @@ void InspectorWindow::Draw(Window* window)
 	Transform* transform = gameVastu->m_transform;
 
 	ImGui::Text("Id:");
-	std::string id = std::to_string(gameVastu->GetId());
+	std::string id = std::to_string(gameVastu->Id);
 	ImGui::Text(id.c_str());
 
 	ImGui::Separator();
@@ -36,19 +36,18 @@ void InspectorWindow::Draw(Window* window)
 		float* posArr = glm::value_ptr(pos);
 		if (ImGui::DragFloat3("P", posArr))
 			transform->SetPosition(glm::make_vec3(posArr));
-		//delete posArr;
 
 		glm::vec3 rot = transform->GetRotation();
 		float* rotArr = glm::value_ptr(rot);
 		if (ImGui::DragFloat3("R", rotArr))
 			transform->SetRotation(glm::make_vec3(rotArr));
-		//delete rotArr;
 
 		glm::vec3 scale = transform->GetScale();
 		float* scaleArr = glm::value_ptr(scale);
 		if (ImGui::DragFloat3("S", scaleArr))
 			transform->SetScale(glm::make_vec3(scaleArr));
-		//delete scaleArr;
+
+		transform->OnInspectorGUI();
 	}
 
 	ImGui::Separator();
@@ -56,7 +55,7 @@ void InspectorWindow::Draw(Window* window)
 	{
 		for (auto& component : gameVastu->m_Components)
 		{
-			component.second->OnInspectorGUI();
+			component.second->_OnInspectorGUI();
 			ImGui::Separator();
 		}
 	}

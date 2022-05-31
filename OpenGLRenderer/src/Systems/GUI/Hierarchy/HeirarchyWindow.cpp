@@ -17,23 +17,26 @@ void HeirarchyWindow::Draw(Window* window)
 
 	std::unordered_map<std::string, scene::Scene*>& scenes = window->GetAllScenes();
 
-	for (auto& scene: scenes)
+	GameVastu* seletedGameVastu = window->SelectedGameVastu;
+
+	for (auto& scene : scenes)
 	{
-		ImGui::BeginListBox(scene.first.c_str());
-
-		for (auto& gameVastu : scene.second->m_GameVastus)
+		if (ImGui::CollapsingHeader(scene.first.c_str()))
 		{
-			if (window->SelectedGameVastu && window->SelectedGameVastu->GetId() == gameVastu->GetId())
+			ImGui::Indent();
+			for (auto& gameVastu : scene.second->m_GameVastus)
 			{
-				ImGui::Selectable(gameVastu->m_name.c_str(), true);
-				continue;
+				if (seletedGameVastu && seletedGameVastu->Id == gameVastu->Id)
+				{
+					ImGui::Selectable(gameVastu->m_name.c_str(), true);
+					continue;
+				}
+
+				if (ImGui::Selectable(gameVastu->m_name.c_str(), false))
+					window->SelectedGameVastu = gameVastu;
 			}
-
-			if (ImGui::Selectable(gameVastu->m_name.c_str(), false))
-				window->SelectedGameVastu = gameVastu;
+			ImGui::Unindent();
 		}
-
-		ImGui::EndListBox();
 	}
 
 	ImGui::End();
