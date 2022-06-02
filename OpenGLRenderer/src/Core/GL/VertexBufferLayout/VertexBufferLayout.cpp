@@ -6,8 +6,6 @@ namespace core::gl
 {
 	void VertexBufferLayout::Bind()
 	{
-		GLuint vaoId = WindowManager::getInstance()->GetCurrentWindow()->GetVertexArrayObject().GetId();
-
 		unsigned int offset = 0;
 		unsigned int index = 0;
 		for (const auto& vbElement : m_Elements)
@@ -16,8 +14,7 @@ namespace core::gl
 			if (element.isEnabled)
 				continue;
 
-			//GLLog(glEnableVertexAttribArray(i));
-			GLLog(glEnableVertexArrayAttrib(vaoId, index));
+			GLLog(glEnableVertexAttribArray(index));
 			GLLog(glVertexAttribPointer(index,
 				element.count,
 				element.type,
