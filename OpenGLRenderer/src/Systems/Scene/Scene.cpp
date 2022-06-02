@@ -38,7 +38,7 @@ void scene::Scene::DestroyGameVastu(GameVastu*& gameVastu)
 	if (WindowManager::getInstance()->SelectedGameVastu() && WindowManager::getInstance()->SelectedGameVastu()->Id == id)
 		WindowManager::getInstance()->SelectedGameVastu(NULL);
 
-	m_GameVastus.erase(m_GameVastus.begin() - i);
+	m_GameVastus.erase(m_GameVastus.begin() + i);
 	GameVastuManager::getInstance()->DestroyGameVastu(gameVastu);
 	gameVastu = NULL;
 }
