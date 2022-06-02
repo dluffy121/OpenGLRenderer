@@ -3,6 +3,7 @@
 #include "../Systems/GameVastu/GameVastu.h"
 #include "../../GameVastu/Transform.h"
 #include <glm/gtc/type_ptr.inl>
+#include <string>
 
 InspectorWindow::InspectorWindow() :
 	GUIWindow("InspectorWindow")
@@ -15,6 +16,16 @@ void InspectorWindow::Draw(Window* window)
 {
 	ImGui::Begin("Inspector");
 
+	BatchRenderer& batchRender = *WindowManager::getInstance()->GetCurrentWindow()->GetBatchRenderer();
+	ImGui::Text("Draw Calls: ");
+	ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+	ImGui::Text(std::to_string(batchRender.GetDrawCount()).c_str());
+	ImGui::Text("Total Draw Calls: ");
+	ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+	ImGui::Text(std::to_string(batchRender.GetTotalDrawCalls()).c_str());
+
+	ImGui::Separator();
+
 	GameVastu* gameVastu = WindowManager::getInstance()->SelectedGameVastu();
 	if (!gameVastu)
 	{
@@ -25,8 +36,8 @@ void InspectorWindow::Draw(Window* window)
 	Transform* transform = gameVastu->m_transform;
 
 	ImGui::Text("Id:");
-	std::string id = std::to_string(gameVastu->Id);
-	ImGui::Text(id.c_str());
+	ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
+	ImGui::Text(std::to_string(gameVastu->Id).c_str());
 
 	ImGui::Separator();
 

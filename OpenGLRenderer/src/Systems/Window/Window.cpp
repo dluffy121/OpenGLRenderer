@@ -6,15 +6,14 @@
 #include "../../Core/Logger.h"
 #include <algorithm>
 #include <iterator>
+#include <imgui/imgui_impl_opengl3.h>
 
 Window::Window(const std::string& rendererId, int width, int height, GLFWwindow* sharedWindow, ImFontAtlas* sharedFontAtlas) :
 	m_WindowId(rendererId),
 	m_Width(width),
 	m_Height(height),
 	m_Camera(NULL),
-	SelectedGameVastu(NULL),
-	m_IndexCount(0),
-	m_buffersBound(false)
+	SelectedGameVastu(NULL)
 {
 	m_GLFWWindow = OpenGLHelper::CreateWindow(width, height, m_WindowId, sharedWindow);
 	glfwMakeContextCurrent(m_GLFWWindow);
@@ -25,11 +24,7 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 
 	InstallCallbacks();
 
-	m_VAO = new VertexArray();
-	m_VertexBuffer = new VertexBuffer(MAX_VERTEX_COUNT * sizeof(Vertex));
-	m_IndexBuffer = new IndexBuffer(GL_UNSIGNED_INT, MAX_QUAD_INDEX_COUNT > MAX_TRI_INDEX_COUNT ? MAX_QUAD_INDEX_COUNT : MAX_TRI_INDEX_COUNT);
-	m_VBLayout = new VertexBufferLayout();
-	m_VBLayout->Push<Vertex>(m_VertexBuffer->Id, 1);
+	m_BatchRenderer = new BatchRenderer();
 
 	if (!m_GLFWWindow)
 	{
@@ -44,10 +39,7 @@ Window::~Window()
 	for (auto& scene : m_Scenes)
 		delete scene.second;
 
-	delete m_VertexBuffer;
-	delete m_IndexBuffer;
-	delete m_VBLayout;
-	delete m_VAO;
+	delete m_BatchRenderer;
 
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -160,6 +152,7 @@ void Window::CharCallback(GLFWwindow* glfwWindow, unsigned int c)
 
 void Window::NewFrame()
 {
+	m_BatchRenderer->Reset();
 	m_Frames++;
 }
 
@@ -188,21 +181,12 @@ void Window::Render()
 {
 	if (!FindAndSelectCamera()) return;
 
-	if (!m_buffersBound)
-	{
-		m_VAO->Bind();
-		m_VertexBuffer->Bind();
-		m_IndexBuffer->Bind();
-		m_VBLayout->Bind();
-		m_buffersBound = true;
-	}
-
 	for (auto& component : m_Components)
 	{
 		component->_Render();
 	}
 
-	CheckBuffer(0, 0, m_VertexCount * sizeof(Vertex), m_IndexCount * sizeof(unsigned int));
+	m_BatchRenderer->Draw();
 }
 
 bool Window::FindAndSelectCamera()
@@ -225,6 +209,12 @@ bool Window::FindAndSelectCamera()
 
 void Window::RenderGUI()
 {
+	ImGui::SetCurrentContext(m_ImGuiContext);
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
 	for (auto& component : m_Components)
 	{
 		component->_OnGUI();
@@ -234,6 +224,9 @@ void Window::RenderGUI()
 	{
 		guiWindow->Draw(this);
 	}
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void Window::RegisterGUIWindow(GUIWindow& window)
@@ -329,65 +322,4 @@ bool Window::IsSceneActive(const std::string& sceneName)
 bool Window::IsSceneActive(const scene::Scene& scene)
 {
 	return IsSceneActive(scene.GetName());
-}
-
-void Window::AddBufferData(Vertex*& vertices, unsigned int vCount, unsigned int*& indices, unsigned int iCount)
-{
-	AddIndices(indices, iCount);
-	AddVertices(vertices, vCount);
-}
-
-void Window::AddVertices(Vertex*& vertices, unsigned int count)
-{
-	unsigned long long vbSize = count * sizeof(Vertex);
-	unsigned long long vbOffset = UpdateVertexBufferOffset(vbSize);
-
-	std::vector<Vertex> vecVertices(vertices, vertices + count);
-
-	GLLog(glBufferSubData(GL_ARRAY_BUFFER, vbOffset, vbSize, vertices));
-
-	m_VertexCount += count;
-}
-
-void Window::AddIndices(unsigned int*& indices, unsigned int count)
-{
-	unsigned long long ibSize = count * sizeof(unsigned int);
-	unsigned long long ibOffset = UpdateIndexBufferOffset(ibSize);
-
-	for (size_t i = 0; i < count; i++)
-		indices[i] += m_VertexCount;
-
-	std::vector<unsigned int> vecIndices(indices, indices + count);
-
-	GLLog(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, ibOffset, ibSize, indices));
-
-	m_IndexCount += count;
-}
-
-unsigned long long Window::UpdateVertexBufferOffset(unsigned long long size)
-{
-	unsigned long long vbOffset = m_VBOffset;
-	m_VBOffset += size;
-	return vbOffset;
-}
-
-unsigned long long Window::UpdateIndexBufferOffset(unsigned long long size)
-{
-	unsigned long long ibOffset = m_IBOffset;
-	m_IBOffset += size;
-	return ibOffset;
-}
-
-void Window::CheckBuffer(uint8_t vbOffset, uint8_t ibOffset, uint8_t vbSize, uint8_t ibSize) const
-{
-	Vertex* vertices = new Vertex[m_VertexCount];
-	glGetBufferSubData(GL_ARRAY_BUFFER, 0, m_VBOffset, (Vertex*)vertices);
-	unsigned int* indices = new unsigned int[m_IndexCount];
-	glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, m_IBOffset, (unsigned int*)indices);
-
-	std::vector<Vertex> vecVertices(vertices, vertices + m_VertexCount);
-	std::vector<unsigned int> vecIndices(indices, indices + m_IndexCount);
-
-	delete[] vertices;
-	delete[] indices;
 }

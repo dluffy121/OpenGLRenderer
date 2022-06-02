@@ -64,7 +64,6 @@ void Renderer::UnBindTexture() const
 
 void Renderer::Render()
 {
-	BindShader();
 	BindTextures();
 
 	auto window = WindowManager::getInstance()->GetCurrentWindow();
@@ -83,7 +82,8 @@ void Renderer::Render()
 	}
 
 	_Indices = CopyArray(m_Indices, m_IndexCount);
-	window->AddBufferData(_Vertices, m_VertexCount, _Indices, m_IndexCount);;
+
+	window->GetBatchRenderer()->Draw(*m_Shader, _Vertices, m_VertexCount, _Indices, m_IndexCount);
 
 	delete[] _Vertices;
 	delete[] _Indices;
@@ -165,7 +165,7 @@ void Renderer::OnInspectorGUI()
 		for (size_t i = 0; i < m_VertexCount; i++)
 		{
 			float color[4] = { m_Vertices[i].Color.x, m_Vertices[i].Color.y, m_Vertices[i].Color.z, m_Vertices[i].Color.w };
-			if (ImGui::ColorEdit4(std::to_string(i).c_str(), color));
+			if (ImGui::ColorEdit4(std::to_string(i).c_str(), color))
 			{
 				m_Vertices[i].Color.x = color[0];
 				m_Vertices[i].Color.y = color[1];

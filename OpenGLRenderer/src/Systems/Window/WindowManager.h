@@ -5,10 +5,6 @@
 
 class WindowManager
 {
-public:
-	std::vector<Action> UpdateActions;
-	std::vector<std::function<void(const Window&)>> UpdateActionsRenderGUI;
-
 private:
 	int rendererCount;
 	std::vector<Window*> m_WindowCollection;

@@ -104,20 +104,7 @@ void WindowManager::WindowLoop()
 
 			m_currentWindow->Update();
 			m_currentWindow->Render();
-
-			ImGui::SetCurrentContext(m_currentWindow->GetImGuiContext());
-
-			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplGlfw_NewFrame();
-			ImGui::NewFrame();
-
-			for (auto& raction : UpdateActionsRenderGUI)
-				raction(*m_currentWindow);
-
 			m_currentWindow->RenderGUI();
-
-			ImGui::Render();
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			glfwSwapBuffers(glfwWindow);
 
@@ -132,10 +119,6 @@ void WindowManager::WindowLoop()
 				i--;
 			}
 		}
-
-		if (!windowClosed)
-			for (auto& action : UpdateActions)
-				action();
 
 		windowClosed = false;
 		i = 0;
