@@ -73,6 +73,7 @@ public:
 
 	inline Camera& GetCamera() const { return *m_Camera; }
 	inline void SetCamera(Camera* camera) { m_Camera = camera; }
+	bool FindAndSelectCamera();
 
 	inline std::string GetWindowId() const { return m_WindowId; }
 	inline GLFWwindow* GetGLFWWindow() const { return m_GLFWWindow; }

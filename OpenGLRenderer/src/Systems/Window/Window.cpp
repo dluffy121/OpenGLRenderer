@@ -186,8 +186,7 @@ void Window::Update()
 
 void Window::Render()
 {
-	if (!m_Camera || !m_Camera->enabled)
-		return;
+	if (!FindAndSelectCamera()) return;
 
 	if (!m_buffersBound)
 	{
@@ -204,13 +203,24 @@ void Window::Render()
 	}
 
 	CheckBuffer(0, 0, m_VertexCount * sizeof(Vertex), m_IndexCount * sizeof(unsigned int));
+}
 
-	GLLog(glDrawElements(GL_TRIANGLES, m_IndexCount, m_IndexBuffer->IndexType, nullptr));	// this method will draw from binded element buffer array https://docs.gl/gl4/glDrawElements
+bool Window::FindAndSelectCamera()
+{
+	if (!m_Camera || !m_Camera->enabled)
+	{
+		for (auto component : m_Components)
+		{
+			if (component->GetName() == CAMERA_TYPE_NAME)
+			{
+				m_Camera = dynamic_cast<Camera*>(component);
+				if (m_Camera->enabled)
+					return true;
+			}
+		}
+	}
 
-	m_VertexCount = 0;
-	m_IndexCount = 0;
-	m_VBOffset = 0;
-	m_IBOffset = 0;
+	return false;
 }
 
 void Window::RenderGUI()
@@ -268,6 +278,9 @@ void Window::UnRegisterComponent(Component& component)
 
 	if (size == 0)
 		return;
+
+	if (m_Camera && m_Camera->GetId() == component.GetId())
+		m_Camera = NULL;
 
 	for (size_t i = 0; i < size; ++i)
 	{

@@ -59,7 +59,7 @@ public:
 		}
 
 		component.gameVastu = this;
-		component.name = GetTypeName<T>();
+		component.name = GetTypeName<T>().erase(0, 6);
 		component.enabled = true;
 		WindowManager::getInstance()->GetCurrentWindow()->RegisterComponent(component);
 

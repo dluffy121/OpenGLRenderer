@@ -24,6 +24,7 @@ public:
 	Component();
 	virtual ~Component();
 
+	inline const std::string& GetName() const { return name; }
 	inline unsigned int GetId() const { return Id; }
 	inline GameVastu* GetGameVastu() { return gameVastu; }
 
