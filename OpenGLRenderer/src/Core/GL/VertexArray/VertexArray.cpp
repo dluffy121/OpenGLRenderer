@@ -4,24 +4,29 @@
 namespace core::gl
 {
 	VertexArray::VertexArray() :
-		m_VertexArrayObjectId(0)
-	{
-		GLLog(glGenVertexArrays(1, &m_VertexArrayObjectId));
-	}
+		Id(GenerateVAO())
+	{}
 
 	VertexArray::~VertexArray()
 	{
-		GLLog(glDeleteVertexArrays(1, &m_VertexArrayObjectId));
-		std::cout << "Deleted VertexArray with id: " << m_VertexArrayObjectId << std::endl;
+		GLLog(glDeleteVertexArrays(1, &Id));
+		std::cout << "Deleted VertexArray with id: " << Id << std::endl;
 	}
 
 	void VertexArray::Bind() const
 	{
-		GLLog(glBindVertexArray(m_VertexArrayObjectId));
+		GLLog(glBindVertexArray(Id));
 	}
 
 	void VertexArray::UnBind() const
 	{
 		GLLog(glBindVertexArray(0));
+	}
+
+	GLuint VertexArray::GenerateVAO()
+	{
+		GLuint id;
+		GLLog(glGenVertexArrays(1, &id));
+		return id;
 	}
 }
