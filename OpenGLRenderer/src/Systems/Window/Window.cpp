@@ -191,16 +191,16 @@ void Window::Render()
 
 bool Window::FindAndSelectCamera()
 {
-	if (!m_Camera || !m_Camera->enabled)
+	if (m_Camera && m_Camera->enabled)
+		return true;
+
+	for (auto component : m_Components)
 	{
-		for (auto component : m_Components)
+		if (component->GetName() == CAMERA_TYPE_NAME)
 		{
-			if (component->GetName() == CAMERA_TYPE_NAME)
-			{
-				m_Camera = dynamic_cast<Camera*>(component);
-				if (m_Camera->enabled)
-					return true;
-			}
+			m_Camera = dynamic_cast<Camera*>(component);
+			if (m_Camera->enabled)
+				return true;
 		}
 	}
 
