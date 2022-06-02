@@ -3,13 +3,12 @@
 #include <fstream>
 #include <sstream>
 #include "../../Core/Logger.h"
-#include "ShaderManager.h"
 
 using namespace core;
 
-Shader::Shader(const std::string& filePath) :
-	Path(filePath),
-	Id(ShaderManager::getInstance()->LoadShader(filePath))
+Shader::Shader(unsigned int id, const std::string& filePath) :
+	Id(id),
+	Path(filePath)
 {}
 
 Shader::~Shader()
@@ -62,10 +61,10 @@ void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& matrix)
 
 GLint Shader::GetUniformLocation(const std::string& name)
 {
-	if (uniformLocationCache.find(name) != uniformLocationCache.end())
-		return uniformLocationCache[name];
+	if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+		return m_UniformLocationCache[name];
 
 	GLLog(GLint location = glGetUniformLocation(Id, name.c_str()));
-	uniformLocationCache[name] = location;
+	m_UniformLocationCache[name] = location;
 	return location;
 }

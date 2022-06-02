@@ -1,5 +1,4 @@
 #include "ShaderManager.h"
-#include "Shader.h"
 #include "../../Core/Logger.h"
 
 using namespace core;
@@ -34,8 +33,16 @@ ShaderAsset* ShaderManager::GetShaderAsset(const std::string& shaderPath)
 	return m_ShaderAssetCollection[shaderPath];
 }
 
-unsigned int ShaderManager::LoadShader(ShaderAsset& shaderAsset)
+Shader* ShaderManager::LoadShader(ShaderAsset& shaderAsset)
 {
+	auto shaderPath = shaderAsset.GetPath();
+	if (m_ShaderCache[shaderPath])
+	{
+		auto shader = m_ShaderCache[shaderPath];
+		shader->m_RefCount++;
+		return shader;
+	}
+
 	GLLog(unsigned int program = glCreateProgram());
 
 	shaderAsset.Compile();
@@ -45,14 +52,40 @@ unsigned int ShaderManager::LoadShader(ShaderAsset& shaderAsset)
 	GLLog(glLinkProgram(program));
 	GLLog(glValidateProgram(program));
 
-	return program;
+	auto shader = new Shader(program, shaderPath);
+	shader->m_RefCount++;
+	m_ShaderCache[shaderPath] = shader;
+
+	return shader;
 }
 
-unsigned int ShaderManager::LoadShader(const std::string& shaderPath)
+Shader* ShaderManager::LoadShader(const std::string& shaderPath)
 {
+	if (m_ShaderCache[shaderPath])
+	{
+		auto shader = m_ShaderCache[shaderPath];
+		shader->m_RefCount++;
+		return shader;
+	}
+
 	ShaderAsset* shaderAsset = GetShaderAsset(shaderPath);
-	if (shaderAsset == nullptr)
-		return 0;
+	ASSERT(shaderAsset != nullptr);
 
 	return LoadShader(*shaderAsset);
+}
+
+void ShaderManager::UnLoadShader(Shader* shader)
+{
+	if (--(shader->m_RefCount)) return;
+
+	m_ShaderCache.erase(shader->Path);
+	delete shader;
+}
+
+void ShaderManager::UnLoadShader(const std::string& shaderPath)
+{
+	if (!m_ShaderCache[shaderPath])
+		return;
+
+	UnLoadShader(m_ShaderCache[shaderPath]);
 }

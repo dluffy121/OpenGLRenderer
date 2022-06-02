@@ -4,21 +4,25 @@
 #include <string>
 #include <unordered_map>
 #include "glm/glm.hpp"
-#include "../Utils/Action.h"
 
 class Shader
 {
+private:
+	friend class ShaderManager;
+
 public:
 	const unsigned int Id;
 	const std::string Path;
 
 private:
-	std::unordered_map<std::string, int> uniformLocationCache;
+	std::unordered_map<std::string, int> m_UniformLocationCache;
+	unsigned int m_RefCount;
 
-public:
-	Shader(const std::string& filePath);
+private:
+	Shader(unsigned int id, const std::string& filePath);
 	~Shader();
 
+public:
 	void Bind() const;
 	void UnBind() const;
 

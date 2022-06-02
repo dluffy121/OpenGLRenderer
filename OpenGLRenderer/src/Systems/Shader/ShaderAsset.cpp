@@ -9,11 +9,11 @@
 using namespace core;
 
 ShaderAsset::ShaderAsset(const std::string& shaderPath) :
-	shaderPath(shaderPath),
-	VertexShader(0),
-	FragmentShader(0)
+	m_Path(shaderPath),
+	m_VertexShader(0),
+	m_FragmentShader(0)
 {
-	programSource = ParseShader();
+	m_ProgramSource = ParseShader();
 }
 
 ShaderAsset::~ShaderAsset()
@@ -22,13 +22,13 @@ ShaderAsset::~ShaderAsset()
 
 void ShaderAsset::Compile()
 {
-	VertexShader = CompileShader(GL_VERTEX_SHADER, programSource.VertexSource);
-	FragmentShader = CompileShader(GL_FRAGMENT_SHADER, programSource.FragmentSource);
+	m_VertexShader = CompileShader(GL_VERTEX_SHADER, m_ProgramSource.VertexSource);
+	m_FragmentShader = CompileShader(GL_FRAGMENT_SHADER, m_ProgramSource.FragmentSource);
 }
 
 ShaderProgramSource ShaderAsset::ParseShader()
 {
-	std::ifstream stream(shaderPath);
+	std::ifstream stream(m_Path);
 
 	std::string line;
 	std::stringstream ss[2];

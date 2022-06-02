@@ -17,10 +17,10 @@ enum class ShaderType
 class ShaderAsset
 {
 private:
-	std::string shaderPath;
-	ShaderProgramSource programSource;
-	unsigned int VertexShader;
-	unsigned int FragmentShader;
+	const std::string m_Path;
+	ShaderProgramSource m_ProgramSource;
+	unsigned int m_VertexShader;
+	unsigned int m_FragmentShader;
 
 public:
 	ShaderAsset(const std::string& shaderPath);
@@ -28,8 +28,9 @@ public:
 
 	void Compile();
 
-	inline unsigned int GetVertexShader() const { return VertexShader; }
-	inline unsigned int GetFragmentShader() const { return FragmentShader; }
+	inline const std::string& GetPath() const { return m_Path; }
+	inline unsigned int GetVertexShader() const { return m_VertexShader; }
+	inline unsigned int GetFragmentShader() const { return m_FragmentShader; }
 
 private:
 	ShaderProgramSource ParseShader();
