@@ -12,4 +12,8 @@ GameVastu::GameVastu(const GameVastu& gameVastu) :
 {}
 
 GameVastu::~GameVastu()
-{}
+{
+	for (auto& components : m_Components)
+		delete components.second;
+	m_Components.clear();
+}
