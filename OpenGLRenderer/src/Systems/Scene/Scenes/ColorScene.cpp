@@ -38,7 +38,7 @@ namespace scene
 
 		increment = timeDelta = 0.00694444f;
 
-		shader = new Shader("resources/shaders/Texture.shader");
+		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/Color.shader");
 
 		colorVastu1 = CreateGameVastu();
 		colorVastu1->m_name = "Color Renderer 1";
@@ -75,31 +75,20 @@ namespace scene
 		auto window = WindowManager::getInstance()->GetCurrentWindow();
 		camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
 		cameraVastu->AddComponent(*camera);
-
-		WindowManager::getInstance()->GetCurrentWindow()->SetCamera(camera);
 	}
 
 	ColorScene::~ColorScene()
 	{
-		delete shader;
+		ShaderManager::getInstance()->UnLoadShader(shader);
 		delete[] vertices1;
 		delete[] indices;
 		delete[] vertices2;
 
-		delete colorRenderer1;
 		DestroyGameVastu(colorVastu1);
-		delete colorRenderer2;
 		DestroyGameVastu(colorVastu2);
-		delete colorRenderer3;
 		DestroyGameVastu(colorVastu3);
-		delete colorRenderer4;
 		DestroyGameVastu(colorVastu4);
-		delete colorRenderer5;
 		DestroyGameVastu(colorVastu5);
-
-		auto windowCamera = &WindowManager::getInstance()->GetCurrentWindow()->GetCamera();
-		if (windowCamera && windowCamera->GetId() == camera->GetId())
-			WindowManager::getInstance()->GetCurrentWindow()->SetCamera(NULL);
 		DestroyGameVastu(cameraVastu);
 	}
 

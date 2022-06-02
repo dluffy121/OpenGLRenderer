@@ -12,10 +12,16 @@ namespace scene
 	TextureScene::TextureScene() :
 		Scene("TextureScene")
 	{
+		cameraVastu = CreateGameVastu();
+		cameraVastu->m_name = "Camera";
+		auto window = WindowManager::getInstance()->GetCurrentWindow();
+		camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
+		cameraVastu->AddComponent(*camera);
+
 		texture1 = new Texture("resources/textures/Opengl.png");
 		texture2 = new Texture("resources/textures/test.png");
 
-		shader = new Shader("resources/shaders/Texture.shader");
+		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/Texture.shader");
 
 		int samplers[2] = { 0, 1 };
 		shader->Bind();
@@ -27,7 +33,7 @@ namespace scene
 		indices = new unsigned int[6]
 		{
 			0, 1, 2,
-			2, 3, 0
+				2, 3, 0
 		};
 
 		vertices1 = new Vertex[4]
@@ -59,31 +65,17 @@ namespace scene
 		textureRenderer2->SetShader(*shader);
 		textureRenderer2->AddTexture(samplers[i++], *texture2);
 		textureVastu2->AddComponent(*textureRenderer2);
-
-		cameraVastu = CreateGameVastu();
-		cameraVastu->m_name = "Camera";
-		auto window = WindowManager::getInstance()->GetCurrentWindow();
-		camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
-		cameraVastu->AddComponent(*camera);
-
-		WindowManager::getInstance()->GetCurrentWindow()->SetCamera(camera);
 	}
 
 	TextureScene::~TextureScene()
 	{
-		delete shader;
+		ShaderManager::getInstance()->UnLoadShader(shader);
 		delete[] indices;
 		delete[] vertices1;
 		delete[] vertices2;
-		delete texture1;
-		delete textureRenderer1;
+
 		DestroyGameVastu(textureVastu1);
-		delete texture2;
-		delete textureRenderer2;
 		DestroyGameVastu(textureVastu2);
-		auto windowCamera = &WindowManager::getInstance()->GetCurrentWindow()->GetCamera();
-		if (windowCamera && windowCamera->GetId() == camera->GetId())
-			WindowManager::getInstance()->GetCurrentWindow()->SetCamera(NULL);
 		DestroyGameVastu(cameraVastu);
 	}
 }
