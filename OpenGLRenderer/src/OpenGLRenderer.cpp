@@ -49,6 +49,12 @@ int main(void)
 	Window* window1 = windowManager->GetWindowInstance("Main Window", 960, 960, window, globalFontAtlas);
 	Window* window2 = windowManager->GetWindowInstance("Second Window", 960, 480, window, globalFontAtlas);
 
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
+	glCullFace(GL_BACK);
+
+	glEnable(GL_DEPTH_CLAMP);
+
 	fprintf(stdout, "Status: Using OpenGL version %s\n", glGetString(GL_VERSION));
 
 	{
