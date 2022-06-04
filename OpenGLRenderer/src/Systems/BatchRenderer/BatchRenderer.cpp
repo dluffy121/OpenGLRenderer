@@ -63,18 +63,28 @@ void BatchRenderer::Draw(Shader& shader, Vertex*& vertices, unsigned int vCount,
 		m_Shader->Bind();
 	}
 
-	if (m_Shader->Id != (&shader)->Id)
+	if (Enable)
 	{
-		Draw();
+		if (m_Shader->Id != (&shader)->Id)
+		{
+			Draw();
 
-		m_Shader = &shader;
-		m_Shader->Bind();
+			m_Shader = &shader;
+			m_Shader->Bind();
+		}
+
+		//CheckBuffer(0, 0, m_VertexCount * sizeof(Vertex), m_IndexCount * sizeof(unsigned int));
+
+		AddIndices(indices, iCount);
+		AddVertices(vertices, vCount);
 	}
+	else
+	{
+		AddIndices(indices, iCount);
+		AddVertices(vertices, vCount);
 
-	//CheckBuffer(0, 0, m_VertexCount * sizeof(Vertex), m_IndexCount * sizeof(unsigned int));
-
-	AddIndices(indices, iCount);
-	AddVertices(vertices, vCount);
+		Draw();
+	}
 }
 
 void BatchRenderer::AddVertices(Vertex*& vertices, unsigned int count)

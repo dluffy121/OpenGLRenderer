@@ -186,7 +186,8 @@ void Window::Render()
 		component->_Render();
 	}
 
-	m_BatchRenderer->Draw();
+	if (m_BatchRenderer->Enable)
+		m_BatchRenderer->Draw();
 }
 
 bool Window::FindAndSelectCamera()

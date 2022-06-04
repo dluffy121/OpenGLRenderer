@@ -16,6 +16,9 @@ const size_t MAX_QUAD_INDEX_COUNT = MAX_QUAD_COUNT * 6;
 
 class BatchRenderer
 {
+public:
+	bool Enable;
+
 private:
 	const size_t MaxVertexCount = MAX_VERTEX_COUNT;
 	const size_t MaxIndexCount = MAX_QUAD_INDEX_COUNT;
