@@ -68,17 +68,21 @@ void Renderer::Render()
 
 	auto window = WindowManager::getInstance()->GetCurrentWindow();
 
-	glm::mat4 mvp = window->GetCamera().GetVieProjectionwMatrix() * gameVastu->m_transform->GetTransformMatrix();
+	glm::mat4 mvp = window->GetCamera().GetProjectionMatrix() * window->GetCamera().GetViewMatrix() * gameVastu->m_transform->GetTransformMatrix();
 
 	_Vertices = CopyArray(m_Vertices, m_VertexCount);
+
+	bool ortho = window->GetCamera().GetOrtho();
+	float orthoMultiplier = window->GetCamera().GetOrthoMultiplier();
 
 	for (size_t i = 0; i < m_VertexCount; i++)
 	{
 		glm::vec4 position(m_Vertices[i].Position.x, m_Vertices[i].Position.y, m_Vertices[i].Position.z, 1.0f);
 		position = mvp * position;
-		_Vertices[i].Position.x = position[0];
-		_Vertices[i].Position.y = position[1];
-		_Vertices[i].Position.z = position[2];
+		_Vertices[i].Position.x = position.x;
+		_Vertices[i].Position.y = position.y;
+		_Vertices[i].Position.z = position.z;
+		_Vertices[i].Position.w = ortho ? position.w / orthoMultiplier : 0 - position.w;
 	}
 
 	_Indices = CopyArray(m_Indices, m_IndexCount);
@@ -87,9 +91,6 @@ void Renderer::Render()
 
 	delete[] _Vertices;
 	delete[] _Indices;
-
-	//glm::mat4 mvp = window->GetCamera().GetVieProjectionwMatrix() * gameVastu->m_transform->GetTransformMatrix();
-	//m_Shader->SetUniformMat4f("u_MVP", mvp);
 }
 
 void Renderer::OnInspectorGUI()
@@ -139,21 +140,21 @@ void Renderer::OnInspectorGUI()
 		if (ImGui::BeginTable("Vertices", 3))
 		{
 			ImGui::TableNextColumn();
-			ImGui::TableHeader("x");
+			ImGui::TableHeader("X");
 			ImGui::TableNextColumn();
-			ImGui::TableHeader("y");
+			ImGui::TableHeader("Y");
 			ImGui::TableNextColumn();
-			ImGui::TableHeader("z");
+			ImGui::TableHeader("Z");
 			for (size_t i = 0; i < m_VertexCount; i++)
 			{
 				ImGui::PushID(i);
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("x", &m_Vertices[i].Position.x);
+				ImGui::DragFloat("X", &m_Vertices[i].Position.x);
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("y", &m_Vertices[i].Position.y);
+				ImGui::DragFloat("Y", &m_Vertices[i].Position.y);
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("z", &m_Vertices[i].Position.z);
+				ImGui::DragFloat("Z", &m_Vertices[i].Position.z);
 				ImGui::PopID();
 			}
 		}
@@ -180,17 +181,17 @@ void Renderer::OnInspectorGUI()
 		if (ImGui::BeginTable("Texture Coords", 2))
 		{
 			ImGui::TableNextColumn();
-			ImGui::TableHeader("x");
+			ImGui::TableHeader("X");
 			ImGui::TableNextColumn();
-			ImGui::TableHeader("y");
+			ImGui::TableHeader("Y");
 			for (size_t i = 0; i < m_VertexCount; i++)
 			{
 				ImGui::PushID(i);
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("x", &m_Vertices[i].TexCoords.x, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("X", &m_Vertices[i].TexCoords.x, 0.01f, 0.0f, 1.0f);
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("y", &m_Vertices[i].TexCoords.y, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Y", &m_Vertices[i].TexCoords.y, 0.01f, 0.0f, 1.0f);
 				ImGui::PopID();
 			}
 		}
