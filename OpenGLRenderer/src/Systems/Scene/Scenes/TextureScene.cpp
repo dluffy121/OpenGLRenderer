@@ -30,6 +30,9 @@ namespace scene
 
 		int i = 0;
 
+		float width = (float)texture1->GetWidth() / (float)texture1->GetHeight();
+		float height = 1 / width;
+
 		indices = new unsigned int[6]
 		{
 			0, 1, 2,
@@ -38,10 +41,10 @@ namespace scene
 
 		vertices1 = new Vertex[4]
 		{
-			{ {   0.0f,   0.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 1 },
-			{ {   0.0f,  98.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, 1 },
-			{ { 230.0f,  98.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 1 },
-			{ { 230.0f,   0.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, 1 }
+			{ {  0.0f,   0.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 1 },
+			{ {  0.0f, height, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, 1 },
+			{ { width, height, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 1 },
+			{ { width,   0.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, 1 }
 		};
 
 		textureVastu1 = CreateGameVastu();
@@ -51,12 +54,15 @@ namespace scene
 		textureRenderer1->AddTexture(samplers[i++], *texture1);
 		textureVastu1->AddComponent(*textureRenderer1);
 
+		width = (float)texture2->GetWidth() / (float)texture2->GetHeight();
+		height = 1 / width;
+
 		vertices2 = new Vertex[4]
 		{
-			{ {   0.0f,   0.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 2 },
-			{ {   0.0f,  98.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, 2 },
-			{ { 500.0f,  98.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 2 },
-			{ { 500.0f,   0.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, 2 }
+			{ {  0.0f,   0.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 2 },
+			{ {  0.0f, height,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, 2 },
+			{ { width, height,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 2 },
+			{ { width,   0.0f,  0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, 2 }
 		};
 
 		textureVastu2 = CreateGameVastu();

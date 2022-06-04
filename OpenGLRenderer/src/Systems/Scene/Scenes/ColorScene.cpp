@@ -11,77 +11,95 @@ namespace scene
 	ColorScene::ColorScene() :
 		Scene("ColorScene")
 	{
-		Vec4 color1{ 0.8f,0.25f,0.1f,1.0f };
-		Vec4 color2{ 0.1f,0.25f,0.8f,1.0f };
+		Vec4 color1{ 0.8f, 0.25f, 0.1f, 1.0f };
+		Vec4 color2{ 0.1f, 0.25f, 0.8f, 1.0f };
 
-		vertices1 = new Vertex[4]
+		vertices1 = new Vertex[8]
 		{
-			{ {   0.0,	  0.0,  0.0f}, color1, {0.0f, 0.0f}, 0 },
-			{ {   0.0,	100.0,  0.0f}, color1, {1.0f, 0.0f}, 0 },
-			{ { 100.0,  100.0,  0.0f}, color1, {1.0f, 1.0f}, 0 },
-			{ { 100.0,	  0.0,  0.0f}, color1, {0.0f, 1.0f}, 0 },
+			{ { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.5, 1.0}, {0.0, 0.0}, 0 }, // 0
+			{ { 0.0, 1.0, 0.0 }, { 0.0, 0.0, 1.0, 1.0}, {1.0, 0.0}, 0 }, // 1
+			{ { 1.0, 1.0, 0.0 }, { 0.0, 0.5, 0.5, 1.0}, {1.0, 1.0}, 0 }, // 2
+			{ { 1.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0, 1.0}, {0.0, 1.0}, 0 }, // 3
+
+			{ { 0.0, 0.0, 1.0 }, { 0.5, 0.5, 0.0, 1.0}, {0.0, 0.0}, 0 }, // 4
+			{ { 0.0, 1.0, 1.0 }, { 1.0, 0.0, 0.0, 1.0}, {1.0, 0.0}, 0 }, // 5
+			{ { 1.0, 1.0, 1.0 }, { 0.5, 0.0, 0.0, 1.0}, {1.0, 1.0}, 0 }, // 6
+			{ { 1.0, 0.0, 1.0 }, { 1.0, 1.0, 0.0, 1.0}, {0.0, 1.0}, 0 }  // 7
+		};
+
+		indices1 = new unsigned int[36]
+		{
+			// Front
+			0, 1, 2,
+				2, 3, 0,
+
+				// Top
+				1, 5, 6,
+				6, 2, 1,
+
+				// Back
+				7, 6, 5,
+				5, 4, 7,
+
+				// Bottom
+				4, 0, 3,
+				3, 7, 4,
+
+				// Left
+				4, 5, 1,
+				1, 0, 4,
+
+				// Right
+				3, 2, 6,
+				6, 7, 3
 		};
 
 		vertices2 = new Vertex[4]
 		{
-			{ { 150.0,	  0.0,  0.0f}, color2, {0.0f, 0.0f}, 0 },
-			{ { 150.0,	100.0,  0.0f}, color2, {1.0f, 0.0f}, 0 },
-			{ { 250.0,  100.0,  0.0f}, color2, {1.0f, 1.0f}, 0 },
-			{ { 250.0,	  0.0,  0.0f}, color2, {0.0f, 1.0f}, 0 }
+			{ {   0.0,	  0.0,  0.0f}, color2, {0.0f, 0.0f}, 0 },
+			{ {   0.0,	100.0,  0.0f}, color2, {1.0f, 0.0f}, 0 },
+			{ { 100.0,  100.0,  0.0f}, color2, {1.0f, 1.0f}, 0 },
+			{ { 100.0,	  0.0,  0.0f}, color2, {0.0f, 1.0f}, 0 }
 		};
 
-		indices = new unsigned int[6]
+		indices2 = new unsigned int[6]
 		{
 			0, 1, 2,
-			2, 3, 0,
+				2, 3, 0,
 		};
 
 		increment = timeDelta = 0.00694444f;
 
-		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/Color.shader");
+		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/Texture.shader");
 
 		colorVastu1 = CreateGameVastu();
 		colorVastu1->m_name = "Color Renderer 1";
-		colorRenderer1 = new Renderer(vertices1, 4, indices, 6);
+		colorRenderer1 = new Renderer(vertices1, 8, indices1, 36);
 		colorVastu1->AddComponent(*colorRenderer1);
 		colorRenderer1->SetShader(*shader);
+		colorVastu1->m_transform->SetPosition({ -2.0f, 0.0f, 0.f });
 
 		colorVastu2 = CreateGameVastu();
 		colorVastu2->m_name = "Color Renderer 2";
-		colorRenderer2 = new Renderer(vertices1, 4, indices, 6);
+		colorRenderer2 = new Renderer(vertices1, 8, indices1, 36);
 		colorVastu2->AddComponent(*colorRenderer2);
 		colorRenderer2->SetShader(*shader);
-
-		colorVastu3 = CreateGameVastu();
-		colorVastu3->m_name = "Color Renderer 3";
-		colorRenderer3 = new Renderer(vertices1, 4, indices, 6);
-		colorVastu3->AddComponent(*colorRenderer3);
-		colorRenderer3->SetShader(*shader);
-
-		colorVastu4 = CreateGameVastu();
-		colorVastu4->m_name = "Color Renderer 4";
-		colorRenderer4 = new Renderer(vertices2, 4, indices, 6);
-		colorVastu4->AddComponent(*colorRenderer4);
-		colorRenderer4->SetShader(*shader);
-
-		colorVastu5 = CreateGameVastu();
-		colorVastu5->m_name = "Color Renderer 5";
-		colorRenderer5 = new Renderer(vertices2, 4, indices, 6);
-		colorVastu5->AddComponent(*colorRenderer5);
-		colorRenderer5->SetShader(*shader);
+		colorVastu2->m_transform->SetPosition({ 1.0f, 0.0f, 0.f });
 
 		cameraVastu = CreateGameVastu();
 		cameraVastu->m_name = "Camera";
 		auto window = WindowManager::getInstance()->GetCurrentWindow();
 		camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
 		cameraVastu->AddComponent(*camera);
+		cameraVastu->m_transform->SetPosition({ 0.0f, 0.0f, -10.f });
 	}
 
 	ColorScene::~ColorScene()
 	{
 		ShaderManager::getInstance()->UnLoadShader(shader);
+		delete[] indices1;
+		delete[] indices2;
 		delete[] vertices1;
-		delete[] indices;
 		delete[] vertices2;
 
 		DestroyGameVastu(colorVastu1);
@@ -94,15 +112,15 @@ namespace scene
 
 	void ColorScene::Update()
 	{
-		for (size_t i = 0; i < 4; i++)
-		{
-			if (vertices1[i].Color.y > 1)
-				increment = -timeDelta;
-			else if (vertices1[i].Color.y < 0)
-				increment = timeDelta;
+		//for (size_t i = 0; i < 4; i++)
+		//{
+		//	if (vertices1[i].Color.y > 1)
+		//		increment = -timeDelta;
+		//	else if (vertices1[i].Color.y < 0)
+		//		increment = timeDelta;
 
-			vertices1[i].Color.y += increment;
-			vertices2[i].Color.y += increment;
-		}
+		//	vertices1[i].Color.y += increment;
+		//	vertices2[i].Color.y += increment;
+		//}
 	}
 }

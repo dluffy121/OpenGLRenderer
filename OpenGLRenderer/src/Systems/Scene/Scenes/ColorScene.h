@@ -31,7 +31,8 @@ namespace scene
 
 		Shader* shader;
 
-		unsigned int* indices;
+		unsigned int* indices1;
+		unsigned int* indices2;
 		Vertex* vertices1;
 		Vertex* vertices2;
 
