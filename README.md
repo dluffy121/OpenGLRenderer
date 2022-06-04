@@ -11,7 +11,7 @@ A Learning project to not only learn about the OpenGL Graphics Library but also 
 5. Attaching Components to it, like
 
     - Renderer \- uses Vertex Coordinates, Color, Texture Coordinates, Texture Samplers, and Triangle Indices to render objects
-    - Camera \- Orthographic Camera support with near and far clipping planes
+    - Camera \- Orthographic and Perspective Camera support with near and far clipping planes
 
 6. Using Transforms to change Position, Rotation and Scale of GameVastus
 7. Scene support to create and load multiple scenes
