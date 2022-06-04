@@ -1,15 +1,16 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "../../Core/Math.h"
 
 class Transform
 {
 	const float ANGLE_360 = 360.0f;
 
 private:
-	glm::vec3 m_Position;
-	glm::vec3 m_Rotation;
-	glm::vec3 m_Scale;
+	core::Vec3 m_Position;
+	core::Vec3 m_Rotation;
+	core::Vec3 m_Scale;
 
 	glm::mat4 m_PositionMatrix;
 	glm::mat4 m_RotationMatrix;
@@ -19,16 +20,16 @@ public:
 	Transform();
 	~Transform();
 
-	void SetPosition(glm::vec3 position);
-	void SetRotation(glm::vec3 rotation);
-	void SetScale(glm::vec3 scale);
+	void SetPosition(core::Vec3 position);
+	void SetRotation(core::Vec3 rotation);
+	void SetScale(core::Vec3 scale);
 
-	inline glm::vec3 GetPosition() { return m_Position; };
-	inline glm::mat4 GetPositionMatrix() { return m_PositionMatrix; };
-	inline glm::vec3 GetRotation() { return m_Rotation; };
-	inline glm::mat4 GetRotationMatrix() { return m_RotationMatrix; };
-	inline glm::vec3 GetScale() { return m_Scale; };
-	inline glm::mat4 GetTransformMatrix() { return m_TransformMatrix; }
+	inline const core::Vec3& GetPosition() { return m_Position; };
+	inline const glm::mat4& GetPositionMatrix() { return m_PositionMatrix; };
+	inline const core::Vec3& GetRotation() { return m_Rotation; };
+	inline const glm::mat4& GetRotationMatrix() { return m_RotationMatrix; };
+	inline const core::Vec3& GetScale() { return m_Scale; };
+	inline const glm::mat4& GetTransformMatrix() { return m_TransformMatrix; }
 
 	void OnInspectorGUI();
 
