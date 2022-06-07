@@ -32,6 +32,10 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 		ASSERT(false);
 		return;
 	}
+
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
+	glCullFace(GL_BACK);
 }
 
 Window::~Window()
