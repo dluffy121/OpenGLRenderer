@@ -80,6 +80,9 @@ namespace scene
 		delete[] vertices1;
 		delete[] vertices2;
 
+		delete texture1;
+		delete texture2;
+
 		DestroyGameVastu(textureVastu1);
 		DestroyGameVastu(textureVastu2);
 		DestroyGameVastu(cameraVastu);

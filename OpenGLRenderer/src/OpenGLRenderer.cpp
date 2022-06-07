@@ -46,14 +46,15 @@ int main(void)
 	if (!OpenGLHelper::InitializeGLEW())
 		return -1;
 
-	Window* window1 = windowManager->GetWindowInstance("Main Window", 960, 960, window, globalFontAtlas);
-	Window* window2 = windowManager->GetWindowInstance("Second Window", 960, 480, window, globalFontAtlas);
+	Window* window1 = windowManager->GetWindowInstance("Main Window", 2000, 1000, window, globalFontAtlas);
+	//Window* window2 = windowManager->GetWindowInstance("Second Window", 960, 480, window, globalFontAtlas);
 
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
 
-	glEnable(GL_DEPTH_CLAMP);
+	//glEnable(GL_DEPTH_CLAMP);
+	//glEnable(GL_DEPTH_TEST);
 
 	fprintf(stdout, "Status: Using OpenGL version %s\n", glGetString(GL_VERSION));
 
@@ -76,17 +77,17 @@ int main(void)
 		scenesWindow.RegisterScene<scene::TextureScene>("TextureScene");
 
 		window1->RegisterGUIWindow(scenesWindow);
-		window2->RegisterGUIWindow(scenesWindow);
+		//window2->RegisterGUIWindow(scenesWindow);
 
 		InspectorWindow inspectorWindow;
 
 		window1->RegisterGUIWindow(inspectorWindow);
-		window2->RegisterGUIWindow(inspectorWindow);
+		//window2->RegisterGUIWindow(inspectorWindow);
 
 		HeirarchyWindow heirarchyWindow;
 
 		window1->RegisterGUIWindow(heirarchyWindow);
-		window2->RegisterGUIWindow(heirarchyWindow);
+		//window2->RegisterGUIWindow(heirarchyWindow);
 
 		windowManager->Init();
 		windowManager->WindowLoop();
@@ -94,7 +95,7 @@ int main(void)
 	}
 
 	delete window1;
-	delete window2;
+	//delete window2;
 
 	OpenGLHelper::TerminateGLFW();
 
