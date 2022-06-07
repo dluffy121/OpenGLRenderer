@@ -2,10 +2,14 @@
 
 #include <glm/glm.hpp>
 #include "../../Core/Math.h"
+#include <functional>
 
 class Transform
 {
 	const float ANGLE_360 = 360.0f;
+
+public:
+	std::vector<std::function<void(bool, bool, bool)>> OnTransformUpdate;
 
 private:
 	core::Vec3 m_Position;
@@ -24,12 +28,12 @@ public:
 	void SetRotation(core::Vec3 rotation);
 	void SetScale(core::Vec3 scale);
 
-	inline const core::Vec3& GetPosition() { return m_Position; };
-	inline const glm::mat4& GetPositionMatrix() { return m_PositionMatrix; };
-	inline const core::Vec3& GetRotation() { return m_Rotation; };
-	inline const glm::mat4& GetRotationMatrix() { return m_RotationMatrix; };
-	inline const core::Vec3& GetScale() { return m_Scale; };
-	inline const glm::mat4& GetTransformMatrix() { return m_TransformMatrix; }
+	inline const core::Vec3& GetPosition() const { return m_Position; };
+	inline const glm::mat4& GetPositionMatrix() const { return m_PositionMatrix; };
+	inline const core::Vec3& GetRotation() const { return m_Rotation; };
+	inline const glm::mat4& GetRotationMatrix() const { return m_RotationMatrix; };
+	inline const core::Vec3& GetScale() const { return m_Scale; };
+	inline const glm::mat4& GetTransformMatrix() const { return m_TransformMatrix; }
 
 	void OnInspectorGUI();
 

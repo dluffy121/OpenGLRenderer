@@ -72,11 +72,11 @@ void Transform::OnInspectorGUI()
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn(); ImGui::PushID(0);
-		dirty |= ImGui::DragFloat("", &m_Position.x); ImGui::PopID();
+		dirty |= ImGui::DragFloat("", &m_Position.x, 0.01f); ImGui::PopID();
 		ImGui::TableNextColumn(); ImGui::PushID(1);
-		dirty |= ImGui::DragFloat("", &m_Position.y); ImGui::PopID();
+		dirty |= ImGui::DragFloat("", &m_Position.y, 0.01f); ImGui::PopID();
 		ImGui::TableNextColumn(); ImGui::PushID(2);
-		dirty |= ImGui::DragFloat("", &m_Position.z); ImGui::PopID();
+		dirty |= ImGui::DragFloat("", &m_Position.z, 0.01f); ImGui::PopID();
 		if (dirty)
 		{
 			SetPosition(m_Position);
@@ -85,11 +85,11 @@ void Transform::OnInspectorGUI()
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn(); ImGui::PushID(3);
-		dirty |= ImGui::DragFloat("", &m_Rotation.x); ImGui::PopID();
+		dirty |= ImGui::DragFloat("", &m_Rotation.x, 0.01f); ImGui::PopID();
 		ImGui::TableNextColumn(); ImGui::PushID(4);
-		dirty |= ImGui::DragFloat("", &m_Rotation.y); ImGui::PopID();
+		dirty |= ImGui::DragFloat("", &m_Rotation.y, 0.01f); ImGui::PopID();
 		ImGui::TableNextColumn(); ImGui::PushID(5);
-		dirty |= ImGui::DragFloat("", &m_Rotation.z); ImGui::PopID();
+		dirty |= ImGui::DragFloat("", &m_Rotation.z, 0.01f); ImGui::PopID();
 		if (dirty)
 		{
 			SetRotation(m_Rotation);
@@ -98,11 +98,11 @@ void Transform::OnInspectorGUI()
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn(); ImGui::PushID(6);
-		dirty |= ImGui::DragFloat("", &m_Scale.x); ImGui::PopID();
+		dirty |= ImGui::DragFloat("", &m_Scale.x, 0.01f); ImGui::PopID();
 		ImGui::TableNextColumn(); ImGui::PushID(7);
-		dirty |= ImGui::DragFloat("", &m_Scale.y); ImGui::PopID();
+		dirty |= ImGui::DragFloat("", &m_Scale.y, 0.01f); ImGui::PopID();
 		ImGui::TableNextColumn(); ImGui::PushID(8);
-		dirty |= ImGui::DragFloat("", &m_Scale.z); ImGui::PopID();
+		dirty |= ImGui::DragFloat("", &m_Scale.z, 0.01f); ImGui::PopID();
 		if (dirty)
 		{
 			SetScale(m_Scale);
