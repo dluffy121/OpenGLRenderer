@@ -72,9 +72,6 @@ void Renderer::Render()
 
 	_Vertices = CopyArray(m_Vertices, m_VertexCount);
 
-	bool ortho = window->GetCamera().GetOrtho();
-	float orthoMultiplier = window->GetCamera().GetOrthoMultiplier();
-
 	for (size_t i = 0; i < m_VertexCount; i++)
 	{
 		glm::vec4 position(m_Vertices[i].Position.x, m_Vertices[i].Position.y, m_Vertices[i].Position.z, 1.0f);
@@ -82,7 +79,7 @@ void Renderer::Render()
 		_Vertices[i].Position.x = position.x;
 		_Vertices[i].Position.y = position.y;
 		_Vertices[i].Position.z = position.z;
-		_Vertices[i].Position.w = ortho ? position.w / orthoMultiplier : 0 - position.w;
+		_Vertices[i].Position.w = position.w;
 	}
 
 	_Indices = CopyArray(m_Indices, m_IndexCount);

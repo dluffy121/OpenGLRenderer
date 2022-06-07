@@ -76,4 +76,6 @@ private:
 	void UpdateViewMatrix();
 
 	void Awake() override;
+
+	void OnTransformUpdate(bool posChange, bool rotChange, bool scaleChange);
 };

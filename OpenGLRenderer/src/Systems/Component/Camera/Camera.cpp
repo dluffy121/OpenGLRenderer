@@ -5,7 +5,7 @@
 Camera::Camera() :
 	m_ortho(true),
 	m_OrthoMultiplier(1.0f),
-	m_NearClipPlane(-500.0f),
+	m_NearClipPlane(1.0f),
 	m_FarClipPlane(500.0f),
 	m_Left(-1.0f),
 	m_Right(1.0f),
@@ -20,13 +20,13 @@ Camera::Camera() :
 
 Camera::Camera(float windowWidth, float windowHeight) :
 	m_ortho(true),
-	m_NearClipPlane(-500.0f),
+	m_NearClipPlane(1.0f),
 	m_FarClipPlane(500.0f),
-	m_OrthoMultiplier(100.0f),
-	m_Left(-windowWidth / 2.0f),
-	m_Right(windowWidth / 2.0f),
-	m_Bottom(-windowHeight / 2.0f),
-	m_Top(windowHeight / 2.0f),
+	m_OrthoMultiplier(1.0f),
+	m_Left(-windowWidth / windowHeight),
+	m_Right(windowWidth / windowHeight),
+	m_Bottom(-1.0f),
+	m_Top(1.0f),
 	m_frustrumWidth(windowWidth),
 	m_frustrumHeight(windowHeight),
 	m_fov(45.0f),
@@ -39,23 +39,59 @@ Camera::~Camera()
 
 void Camera::Awake()
 {
-	SetOrtho(m_ortho);
+	std::function<void(bool, bool, bool)> s =
+		[this](bool x, bool y, bool z) { this->OnTransformUpdate(x, y, z); };
+	gameVastu->m_transform->OnTransformUpdate.push_back(s);
+
 	UpdateProjectionMatrix();
+	UpdateViewMatrix();
+}
+
+void Camera::OnTransformUpdate(bool posChange, bool rotChange, bool scaleChange)
+{
 	UpdateViewMatrix();
 }
 
 void Camera::UpdateProjectionMatrix()
 {
-	m_ProjectionMatrix = m_ortho ?
-		glm::ortho(m_Left, m_Right, m_Bottom, m_Top, m_NearClipPlane, m_FarClipPlane)
-		:
-		m_ProjectionMatrix = glm::perspective(glm::radians(m_fov), m_frustrumWidth / m_frustrumHeight, m_NearClipPlane, m_FarClipPlane);
+	if (m_ortho)
+	{
+		float scale_x = 1.f / (m_Right - m_Left);
+		float scale_y = 1.f / (m_Top - m_Bottom);
+		float scale_z = -1.f / (m_NearClipPlane - m_FarClipPlane);
+		float mid_x = -(m_Right + m_Left) / (m_Right - m_Left);
+		float mid_y = -(m_Top + m_Bottom) / (m_Top - m_Bottom);
+		float mid_z = -(m_FarClipPlane + m_NearClipPlane) / (m_FarClipPlane - m_NearClipPlane);
+
+		m_ProjectionMatrix = glm::mat4 {
+			scale_x,	0.f,		0.f,		0.f,
+			0.f,		scale_y,	0.f,		0.f,
+			0.f,		0.f,		scale_z,	0.f,
+			mid_x,		mid_y,		mid_z,		1.f };
+	}
+	else
+	{
+		float halfFOV = m_fov / 2.f;
+		float tanHalfFOV = glm::tan(glm::radians(halfFOV));
+
+		float ar = m_frustrumWidth / m_frustrumHeight;
+		float x = 1.f / (tanHalfFOV * ar);
+		float y = 1.f / tanHalfFOV;
+
+		float a = (m_FarClipPlane + m_NearClipPlane) / (m_NearClipPlane - m_FarClipPlane);
+		float b = (2.f * m_FarClipPlane * m_NearClipPlane) / (m_FarClipPlane - m_NearClipPlane);
+
+		m_ProjectionMatrix = glm::mat4 {
+			x,		0.f,	0.f,	0.f,
+			0.f,	y,		0.f,	0.f,
+			0.f,	0.f,	a,		1.f,
+			0.f,	0.f,	b,		0.f };
+	}
 }
 
 void Camera::UpdateViewMatrix()
 {
-	m_ViewnMatrix = gameVastu->m_transform->GetPositionMatrix() * gameVastu->m_transform->GetRotationMatrix();
-	m_ViewnMatrix = glm::inverse(m_ViewnMatrix);
+	m_ViewnMatrix = glm::inverse(gameVastu->m_transform->GetPositionMatrix() * gameVastu->m_transform->GetRotationMatrix());
 }
 
 void Camera::SetOrtho(bool value)
@@ -136,31 +172,28 @@ void Camera::OnInspectorGUI()
 	}
 
 	ImGui::Text("Clip Planes:");
-	dirty |= ImGui::DragFloat("Near", &m_NearClipPlane);
-	dirty |= ImGui::DragFloat("Far", &m_FarClipPlane);
+	dirty |= ImGui::DragFloat("Near", &m_NearClipPlane, 0.01f);
+	dirty |= ImGui::DragFloat("Far", &m_FarClipPlane, 0.01f);
 
 	if (m_ortho)
 	{
 		ImGui::Text("Orthographic Parameters:");
-		dirty |= ImGui::DragFloat("Multiplier", &m_OrthoMultiplier);
-		dirty |= ImGui::DragFloat("Left", &m_Left);
-		dirty |= ImGui::DragFloat("Right", &m_Right);
-		dirty |= ImGui::DragFloat("Bottom", &m_Bottom);
-		dirty |= ImGui::DragFloat("Top", &m_Top);
+		dirty |= ImGui::DragFloat("Multiplier", &m_OrthoMultiplier, 0.01f);
+		dirty |= ImGui::DragFloat("Left", &m_Left, 0.01f);
+		dirty |= ImGui::DragFloat("Right", &m_Right, 0.01f);
+		dirty |= ImGui::DragFloat("Bottom", &m_Bottom, 0.01f);
+		dirty |= ImGui::DragFloat("Top", &m_Top, 0.01f);
 	}
 	else
 	{
 		ImGui::Text("Perspective Parameters:");
-		dirty |= ImGui::DragFloat("Width", &m_frustrumWidth);
-		dirty |= ImGui::DragFloat("Height", &m_frustrumHeight);
-		dirty |= ImGui::DragFloat("FOV", &m_fov, 0.1f, 10.0f, 180.0f);
+		dirty |= ImGui::DragFloat("Width", &m_frustrumWidth, 0.01f);
+		dirty |= ImGui::DragFloat("Height", &m_frustrumHeight, 0.01f);
+		dirty |= ImGui::DragFloat("FOV", &m_fov, 0.01f, 10.0f, 180.0f);
 	}
 
 	if (dirty)
-	{
 		UpdateProjectionMatrix();
-		UpdateViewMatrix();
-	}
 
 	if (ImGui::CollapsingHeader("Projection Matrix"))
 	{
