@@ -4,6 +4,7 @@
 #include <Shader/ShaderManager.h>
 #include <Component/Renderer/Renderer.h>
 #include <Component/Camera/Camera.h>
+#include <Component/CameraController/CameraController.h>
 #include <GameVastu/GameVastu.h>
 #include "../../../Macros.h"
 
@@ -17,6 +18,8 @@ namespace scene
 		auto window = WindowManager::getInstance()->GetCurrentWindow();
 		camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
 		cameraVastu->AddComponent(*camera);
+		CameraController* cameraController = new CameraController();
+		cameraVastu->AddComponent(*cameraController);
 
 		texture1 = new Texture("resources/textures/Opengl.png");
 		texture2 = new Texture("resources/textures/test.png");
@@ -79,6 +82,9 @@ namespace scene
 		delete[] indices;
 		delete[] vertices1;
 		delete[] vertices2;
+
+		delete texture1;
+		delete texture2;
 
 		DestroyGameVastu(textureVastu1);
 		DestroyGameVastu(textureVastu2);

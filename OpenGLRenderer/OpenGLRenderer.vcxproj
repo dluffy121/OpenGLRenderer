@@ -305,6 +305,7 @@
     <ClInclude Include="src\Core\Math.h" />
     <ClInclude Include="src\StaticMethods.h" />
     <ClInclude Include="src\Systems\BatchRenderer\BatchRenderer.h" />
+    <ClInclude Include="src\Systems\Component\CameraController\CameraController.h" />
     <ClInclude Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.h" />
     <ClInclude Include="src\Systems\GUI\Inspector\InspectorWindow.h" />
     <ClInclude Include="src\Systems\GUI\Scenes\ScenesWindow.h" />
@@ -628,6 +629,7 @@
     <ClCompile Include="src\Core\GL\VertexBuffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Core\Logger.cpp" />
     <ClCompile Include="src\Systems\BatchRenderer\BatchRenderer.cpp" />
+    <ClCompile Include="src\Systems\Component\CameraController\CameraController.cpp" />
     <ClCompile Include="src\Systems\Component\Camera\Camera.cpp" />
     <ClCompile Include="src\Systems\Component\Component.cpp" />
     <ClCompile Include="src\Systems\GameVastu\GameVastu.cpp" />

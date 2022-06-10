@@ -1406,6 +1406,9 @@
     <ClInclude Include="src\Systems\Shader\ShaderAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Systems\Component\CameraController\CameraController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\vendor\glm\detail\glm.cpp">
@@ -1511,6 +1514,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Systems\Shader\ShaderAsset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Systems\Component\CameraController\CameraController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

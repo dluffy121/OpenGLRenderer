@@ -4,6 +4,7 @@
 #include <Shader/ShaderManager.h>
 #include <Component/Renderer/Renderer.h>
 #include <Component/Camera/Camera.h>
+#include <Component/CameraController/CameraController.h>
 #include <GameVastu/GameVastu.h>
 
 namespace scene
@@ -16,15 +17,15 @@ namespace scene
 
 		vertices1 = new Vertex[8]
 		{
-			{ { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.5, 1.0}, {0.0, 0.0}, 0 }, // 0
-			{ { 0.0, 1.0, 0.0 }, { 0.0, 0.0, 1.0, 1.0}, {1.0, 0.0}, 0 }, // 1
-			{ { 1.0, 1.0, 0.0 }, { 0.0, 0.5, 0.5, 1.0}, {1.0, 1.0}, 0 }, // 2
-			{ { 1.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0, 1.0}, {0.0, 1.0}, 0 }, // 3
+			{ {-0.5,-0.5,-0.5 }, { 0.0, 0.0, 0.5, 1.0}, {0.0, 0.0}, 0 }, // 0
+			{ {-0.5, 0.5,-0.5 }, { 0.0, 0.0, 1.0, 1.0}, {1.0, 0.0}, 0 }, // 1
+			{ { 0.5, 0.5,-0.5 }, { 0.0, 0.5, 0.5, 1.0}, {1.0, 1.0}, 0 }, // 2
+			{ { 0.5,-0.5,-0.5 }, { 0.0, 1.0, 0.0, 1.0}, {0.0, 1.0}, 0 }, // 3
 
-			{ { 0.0, 0.0, 1.0 }, { 0.5, 0.5, 0.0, 1.0}, {0.0, 0.0}, 0 }, // 4
-			{ { 0.0, 1.0, 1.0 }, { 1.0, 0.0, 0.0, 1.0}, {1.0, 0.0}, 0 }, // 5
-			{ { 1.0, 1.0, 1.0 }, { 0.5, 0.0, 0.0, 1.0}, {1.0, 1.0}, 0 }, // 6
-			{ { 1.0, 0.0, 1.0 }, { 1.0, 1.0, 0.0, 1.0}, {0.0, 1.0}, 0 }  // 7
+			{ {-0.5,-0.5, 0.5 }, { 0.5, 0.5, 0.0, 1.0}, {0.0, 0.0}, 0 }, // 4
+			{ {-0.5, 0.5, 0.5 }, { 1.0, 0.0, 0.0, 1.0}, {1.0, 0.0}, 0 }, // 5
+			{ { 0.5, 0.5, 0.5 }, { 0.5, 0.0, 0.0, 1.0}, {1.0, 1.0}, 0 }, // 6
+			{ { 0.5,-0.5, 0.5 }, { 1.0, 1.0, 0.0, 1.0}, {0.0, 1.0}, 0 }  // 7
 		};
 
 		indices1 = new unsigned int[36]
@@ -91,6 +92,8 @@ namespace scene
 		auto window = WindowManager::getInstance()->GetCurrentWindow();
 		camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
 		cameraVastu->AddComponent(*camera);
+		CameraController* cameraController = new CameraController();
+		cameraVastu->AddComponent(*cameraController);
 		cameraVastu->m_transform->SetPosition({ 0.0f, 0.0f, -10.f });
 	}
 
