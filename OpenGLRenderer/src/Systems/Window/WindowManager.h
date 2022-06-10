@@ -25,6 +25,7 @@ public:
 	void SelectedGameVastu(GameVastu* gameVastu);
 	GameVastu* SelectedGameVastu();
 
+
 	inline Window*& GetCurrentWindow() { return m_currentWindow; }
 
 protected:

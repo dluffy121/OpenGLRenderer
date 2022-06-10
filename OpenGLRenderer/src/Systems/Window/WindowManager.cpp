@@ -108,6 +108,8 @@ void WindowManager::WindowLoop()
 
 			glfwSwapBuffers(glfwWindow);
 
+			m_currentWindow->EndFrame();
+
 			if (glfwWindowShouldClose(glfwWindow))
 			{
 				windowClosed = true;

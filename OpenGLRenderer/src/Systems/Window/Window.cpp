@@ -8,6 +8,9 @@
 #include <iterator>
 #include <imgui/imgui_impl_opengl3.h>
 
+using namespace core;
+using namespace core::gl;
+
 Window::Window(const std::string& rendererId, int width, int height, GLFWwindow* sharedWindow, ImFontAtlas* sharedFontAtlas) :
 	m_WindowId(rendererId),
 	m_Width(width),
@@ -51,13 +54,74 @@ Window::~Window()
 	std::cout << "Deleted Window with id: " << m_WindowId << std::endl;
 }
 
-void Window::CreateImGUIContext(ImFontAtlas* sharedFontAtlas)
+void Window::NewFrame()
 {
-	m_ImGuiContext = ImGui::CreateContext(sharedFontAtlas);
-	ImGui::SetCurrentContext(m_ImGuiContext);
-	ImGui_ImplGlfw_InitForOpenGL(m_GLFWWindow, false);
-	ImGui::StyleColorsDark();
+	m_Frames++;
 }
+
+void Window::EndFrame()
+{
+	m_BatchRenderer->Reset();
+	m_ScrollOffset[0] = 0.0f; m_ScrollOffset[1] = 0.0f;
+}
+
+ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+void Window::Clear()
+{
+	glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+	GLLog(glClear(GL_COLOR_BUFFER_BIT));
+}
+
+void Window::Update()
+{
+	for (auto& scene : m_Scenes)
+	{
+		scene.second->Update();
+	}
+
+	for (auto& component : m_Components)
+	{
+		component->_Update();
+	}
+}
+
+void Window::Render()
+{
+	if (!FindAndSelectCamera()) return;
+
+	for (auto& component : m_Components)
+	{
+		component->_Render();
+	}
+
+	if (m_BatchRenderer->Enable)
+		m_BatchRenderer->Draw();
+}
+
+void Window::RenderGUI()
+{
+	ImGui::SetCurrentContext(m_ImGuiContext);
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	for (auto& component : m_Components)
+	{
+		component->_OnGUI();
+	}
+
+	for (auto& guiWindow : m_GUIWindows)
+	{
+		guiWindow->Draw(this);
+	}
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+#pragma region GLFW Window
 
 void Window::InstallCallbacks()
 {
@@ -126,6 +190,9 @@ void Window::MouseButtonCallback(GLFWwindow* glfwWindow, int button, int action,
 
 void Window::ScrollCallback(GLFWwindow* glfwWindow, double xoffset, double yoffset)
 {
+	m_ScrollOffset[0] = xoffset;
+	m_ScrollOffset[1] = yoffset;
+
 	ImGuiContext* lastImGuiContext = ImGui::GetCurrentContext();
 	ImGui::SetCurrentContext(m_ImGuiContext);
 
@@ -154,45 +221,48 @@ void Window::CharCallback(GLFWwindow* glfwWindow, unsigned int c)
 	ImGui::SetCurrentContext(lastImGuiContext);
 }
 
-void Window::NewFrame()
+bool Window::GetKeyPressed(int keyCode)
 {
-	m_BatchRenderer->Reset();
-	m_Frames++;
+	return glfwGetKey(m_GLFWWindow, keyCode) == GLFW_PRESS;
 }
 
-ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-void Window::Clear()
+bool Window::GetKeyDown(int keyCode)
 {
-	glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-	GLLog(glClear(GL_COLOR_BUFFER_BIT));
+	return glfwGetKey(m_GLFWWindow, keyCode) == GLFW_REPEAT;
 }
 
-void Window::Update()
+bool Window::GetKeyUp(int keyCode)
 {
-	for (auto& scene : m_Scenes)
-	{
-		scene.second->Update();
-	}
-
-	for (auto& component : m_Components)
-	{
-		component->_Update();
-	}
+	return glfwGetKey(m_GLFWWindow, keyCode) == GLFW_RELEASE;
 }
 
-void Window::Render()
+Vec2 Window::GetMousePos()
 {
-	if (!FindAndSelectCamera()) return;
-
-	for (auto& component : m_Components)
-	{
-		component->_Render();
-	}
-
-	if (m_BatchRenderer->Enable)
-		m_BatchRenderer->Draw();
+	double x, y;
+	glfwGetCursorPos(m_GLFWWindow, &x, &y);
+	return Vec2 { static_cast<float>(x), static_cast<float>(y) };
 }
+
+Vec2 Window::GetScroll()
+{
+	return Vec2 { static_cast<float>(m_ScrollOffset[0]), static_cast<float>(m_ScrollOffset[1])};
+}
+
+#pragma endregion
+
+#pragma region ImGui
+
+void Window::CreateImGUIContext(ImFontAtlas* sharedFontAtlas)
+{
+	m_ImGuiContext = ImGui::CreateContext(sharedFontAtlas);
+	ImGui::SetCurrentContext(m_ImGuiContext);
+	ImGui_ImplGlfw_InitForOpenGL(m_GLFWWindow, false);
+	ImGui::StyleColorsDark();
+}
+
+#pragma endregion
+
+#pragma region Camera
 
 bool Window::FindAndSelectCamera()
 {
@@ -212,53 +282,9 @@ bool Window::FindAndSelectCamera()
 	return false;
 }
 
-void Window::RenderGUI()
-{
-	ImGui::SetCurrentContext(m_ImGuiContext);
+#pragma endregion
 
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
-	for (auto& component : m_Components)
-	{
-		component->_OnGUI();
-	}
-
-	for (auto& guiWindow : m_GUIWindows)
-	{
-		guiWindow->Draw(this);
-	}
-
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void Window::RegisterGUIWindow(GUIWindow& window)
-{
-	if (std::find(m_GUIWindows.begin(), m_GUIWindows.end(), &window) != m_GUIWindows.end())
-		return;
-
-	m_GUIWindows.push_back(&window);
-}
-
-void Window::UnRegisterGUIWindow(GUIWindow& window)
-{
-	size_t size = m_GUIWindows.size();
-	for (size_t i = 0; i < size; ++i)
-	{
-		if (m_GUIWindows[i] == &window)
-		{
-			GUIWindow* tmp = m_GUIWindows[size - 1];
-			m_GUIWindows[size - 1] = m_GUIWindows[i];
-			m_GUIWindows[i] = tmp;
-			size--;
-			break;
-		}
-	}
-
-	m_GUIWindows.erase(m_GUIWindows.end() - 1);
-}
+#pragma region Components
 
 void Window::RegisterComponent(Component& component)
 {
@@ -295,6 +321,40 @@ void Window::UnRegisterComponent(Component& component)
 	m_Components.erase(m_Components.end() - 1);
 }
 
+#pragma endregion
+
+#pragma region GUI Windows
+
+void Window::RegisterGUIWindow(GUIWindow& window)
+{
+	if (std::find(m_GUIWindows.begin(), m_GUIWindows.end(), &window) != m_GUIWindows.end())
+		return;
+
+	m_GUIWindows.push_back(&window);
+}
+
+void Window::UnRegisterGUIWindow(GUIWindow& window)
+{
+	size_t size = m_GUIWindows.size();
+	for (size_t i = 0; i < size; ++i)
+	{
+		if (m_GUIWindows[i] == &window)
+		{
+			GUIWindow* tmp = m_GUIWindows[size - 1];
+			m_GUIWindows[size - 1] = m_GUIWindows[i];
+			m_GUIWindows[i] = tmp;
+			size--;
+			break;
+		}
+	}
+
+	m_GUIWindows.erase(m_GUIWindows.end() - 1);
+}
+
+#pragma endregion
+
+#pragma region Scene
+
 void Window::AddScene(scene::Scene* scene)
 {
 	std::string name = scene->GetName();
@@ -328,3 +388,5 @@ bool Window::IsSceneActive(const scene::Scene& scene)
 {
 	return IsSceneActive(scene.GetName());
 }
+
+#pragma endregion
