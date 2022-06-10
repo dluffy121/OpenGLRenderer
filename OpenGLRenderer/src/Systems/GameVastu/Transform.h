@@ -9,7 +9,9 @@ class Transform
 	const float ANGLE_360 = 360.0f;
 
 public:
-	std::vector<std::function<void(bool, bool, bool)>> OnTransformUpdate;
+	std::vector<std::function<void(core::Vec3)>> OnPositionUpdateCallbacks;
+	std::vector<std::function<void(core::Vec3)>> OnRotationUpdateCallbacks;
+	std::vector<std::function<void(core::Vec3)>> OnScaleUpdateCallbacks;
 
 private:
 	core::Vec3 m_Position;
@@ -26,6 +28,7 @@ public:
 
 	void SetPosition(core::Vec3 position);
 	void SetRotation(core::Vec3 rotation);
+	void Rotate(core::Vec3 rotation);
 	void SetScale(core::Vec3 scale);
 
 	inline const core::Vec3& GetPosition() const { return m_Position; };
@@ -39,4 +42,8 @@ public:
 
 private:
 	void UpdateModelMatrix();
+
+	void OnPositionUpdate(core::Vec3 delta);
+	void OnRotationUpdate(core::Vec3 delta);
+	void OnScaleUpdate(core::Vec3 delta);
 };
