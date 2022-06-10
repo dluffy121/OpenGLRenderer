@@ -2,6 +2,8 @@
 #include "../../GameVastu/GameVastu.h"
 #include <glm/gtx/string_cast.hpp>
 
+using namespace core;
+
 Camera::Camera() :
 	m_ortho(true),
 	m_OrthoMultiplier(1.0f),
@@ -39,16 +41,11 @@ Camera::~Camera()
 
 void Camera::Awake()
 {
-	std::function<void(bool, bool, bool)> s =
-		[this](bool x, bool y, bool z) { this->OnTransformUpdate(x, y, z); };
-	gameVastu->m_transform->OnTransformUpdate.push_back(s);
+	std::function<void(Vec3)> s = [this](Vec3 x) { this->UpdateViewMatrix(); };
+	gameVastu->m_transform->OnPositionUpdateCallbacks.push_back(s);
+	gameVastu->m_transform->OnRotationUpdateCallbacks.push_back(s);
 
 	UpdateProjectionMatrix();
-	UpdateViewMatrix();
-}
-
-void Camera::OnTransformUpdate(bool posChange, bool rotChange, bool scaleChange)
-{
 	UpdateViewMatrix();
 }
 
@@ -91,6 +88,20 @@ void Camera::UpdateProjectionMatrix()
 
 void Camera::UpdateViewMatrix()
 {
+	//auto pos = gameVastu->m_transform->GetPosition();
+	//auto rot = gameVastu->m_transform->GetRotationMatrix();
+	//glm::vec3 U = rot * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+	//glm::vec3 V = rot * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	//glm::vec3 N = rot * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
+	//glm::normalize(U);
+	//glm::normalize(V);
+	//glm::normalize(N);
+
+	//m_ViewnMatrix[0][0] = U.x;		m_ViewnMatrix[0][1] = V.x;		m_ViewnMatrix[0][2] = N.x;
+	//m_ViewnMatrix[1][0] = U.y;		m_ViewnMatrix[1][1] = V.y;		m_ViewnMatrix[1][2] = N.y;
+	//m_ViewnMatrix[2][0] = U.z;		m_ViewnMatrix[2][1] = V.z;		m_ViewnMatrix[2][2] = N.z;
+	//m_ViewnMatrix[3][0] = -pos.x;		m_ViewnMatrix[3][1] = -pos.y;	m_ViewnMatrix[3][2] = -pos.z;
+
 	m_ViewnMatrix = glm::inverse(gameVastu->m_transform->GetPositionMatrix() * gameVastu->m_transform->GetRotationMatrix());
 }
 

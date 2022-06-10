@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Component.h"
+#include <Component/Component.h>
 #include "glm/gtc/matrix_transform.hpp"
 
 const std::string CAMERA_TYPE_NAME = "Camera";
@@ -31,16 +31,9 @@ public:
 	Camera(float windowWidth, float windowHeight);
 	~Camera();
 
-	inline const glm::mat4& GetProjectionMatrix() { return m_ProjectionMatrix; }
-	inline const glm::mat4& GetViewMatrix()
-	{
-		UpdateViewMatrix();
-		return m_ViewnMatrix;
-	}
-	inline const glm::mat4& GetVieProjectionwMatrix()
-	{
-		return m_ProjectionMatrix * GetViewMatrix();
-	}
+	inline const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
+	inline const glm::mat4& GetViewMatrix() const { return m_ViewnMatrix; }
+	inline const glm::mat4& GetVieProjectionwMatrix() const { return m_ProjectionMatrix * GetViewMatrix(); }
 
 	inline bool GetOrtho() { return m_ortho; }
 	void SetOrtho(bool value);
@@ -76,6 +69,4 @@ private:
 	void UpdateViewMatrix();
 
 	void Awake() override;
-
-	void OnTransformUpdate(bool posChange, bool rotChange, bool scaleChange);
 };
