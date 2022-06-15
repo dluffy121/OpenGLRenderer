@@ -88,21 +88,28 @@ void Camera::UpdateProjectionMatrix()
 
 void Camera::UpdateViewMatrix()
 {
-	//auto pos = gameVastu->m_transform->GetPosition();
-	//auto rot = gameVastu->m_transform->GetRotationMatrix();
-	//glm::vec3 U = rot * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-	//glm::vec3 V = rot * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	//glm::vec3 N = rot * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
-	//glm::normalize(U);
-	//glm::normalize(V);
-	//glm::normalize(N);
+	auto pos = gameVastu->m_transform->GetPosition();
+	auto eye = glm::vec3(pos.x, pos.y, pos.z);
+	auto rot = gameVastu->m_transform->GetRotationMatrix();
 
-	//m_ViewnMatrix[0][0] = U.x;		m_ViewnMatrix[0][1] = V.x;		m_ViewnMatrix[0][2] = N.x;
-	//m_ViewnMatrix[1][0] = U.y;		m_ViewnMatrix[1][1] = V.y;		m_ViewnMatrix[1][2] = N.y;
-	//m_ViewnMatrix[2][0] = U.z;		m_ViewnMatrix[2][1] = V.z;		m_ViewnMatrix[2][2] = N.z;
-	//m_ViewnMatrix[3][0] = -pos.x;		m_ViewnMatrix[3][1] = -pos.y;	m_ViewnMatrix[3][2] = -pos.z;
+	glm::vec3 N = glm::normalize(glm::vec3(rot[2]));
+	glm::vec3 U = glm::normalize(glm::cross(N, glm::vec3(rot[1])));
+	glm::vec3 V = glm::cross(U, N);
 
-	m_ViewnMatrix = glm::inverse(gameVastu->m_transform->GetPositionMatrix() * gameVastu->m_transform->GetRotationMatrix());
+	m_ViewnMatrix[0][0] = U.x;
+	m_ViewnMatrix[1][0] = U.y;
+	m_ViewnMatrix[2][0] = U.z;
+	m_ViewnMatrix[3][0] = -glm::dot(U, eye);
+
+	m_ViewnMatrix[0][1] = V.x;
+	m_ViewnMatrix[1][1] = V.y;
+	m_ViewnMatrix[2][1] = V.z;
+	m_ViewnMatrix[3][1] = -glm::dot(V, eye);	
+	
+	m_ViewnMatrix[0][2] = -N.x;
+	m_ViewnMatrix[1][2] = -N.y;
+	m_ViewnMatrix[2][2] = -N.z;
+	m_ViewnMatrix[3][2] = glm::dot(N, eye);
 }
 
 void Camera::SetOrtho(bool value)
