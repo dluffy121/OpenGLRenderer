@@ -16,6 +16,8 @@ namespace core::gl
 		stbi_set_flip_vertically_on_load(1);
 		unsigned char* localBuffer = stbi_load(m_FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 0);	// 4 is for RGBA
 
+		ASSERT(("Cannot load Image from path: " + texturePath, localBuffer));
+
 		Log("Texture with id: " << Id << std::endl
 			<< "Load Status: " << (localBuffer != nullptr) << std::endl
 			<< "Resolution: " << m_Width << " x " << m_Height << std::endl
@@ -23,17 +25,16 @@ namespace core::gl
 
 		GLLog(glBindTexture(GL_TEXTURE_2D, Id));
 
+		GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer));
+
 		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-
-		GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer));
+		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP));
+		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP));
 
 		GLLog(glBindTexture(GL_TEXTURE_2D, 0));
 
-		if (localBuffer)					// we can unload the data, since we just need to show the image and opengl already used the m_LocalBuffer to create texture
-			stbi_image_free(localBuffer);
+		stbi_image_free(localBuffer);	// we can unload the data, since we just need to show the image and opengl already used the m_LocalBuffer to create texture
 	}
 
 	Texture::~Texture()
