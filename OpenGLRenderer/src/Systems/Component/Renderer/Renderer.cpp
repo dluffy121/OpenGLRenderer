@@ -53,13 +53,13 @@ bool Renderer::UnBindShader() const
 void Renderer::BindTextures() const
 {
 	for (auto& sampler : m_Textures)
-		sampler.second->BindToUnit(sampler.first);
+		sampler.second->Bind(sampler.first);
 }
 
 void Renderer::UnBindTexture() const
 {
 	for (auto& sampler : m_Textures)
-		sampler.second->UnBindFromUnit(sampler.first);
+		sampler.second->Bind(sampler.first);
 }
 
 void Renderer::Render()

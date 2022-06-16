@@ -5,6 +5,8 @@ using namespace core;
 
 ShaderManager::ShaderManager() {}
 
+const unsigned int LOG_BUFF_SIZE = 1024;
+
 ShaderManager* ShaderManager::getInstance()
 {
 	static ShaderManager instance;
@@ -49,8 +51,28 @@ Shader* ShaderManager::LoadShader(ShaderAsset& shaderAsset)
 
 	GLLog(glAttachShader(program, shaderAsset.GetVertexShader()));
 	GLLog(glAttachShader(program, shaderAsset.GetFragmentShader()));
+
+	GLint status;
+
 	GLLog(glLinkProgram(program));
+	GLLog(glGetProgramiv(program, GL_LINK_STATUS, &status));
+	if (status == GL_FALSE)
+	{
+		GLsizei len;
+		GLchar log[LOG_BUFF_SIZE];
+		GLLog(glGetProgramInfoLog(program, LOG_BUFF_SIZE, &len, log));
+		Log(log);
+	}
+
 	GLLog(glValidateProgram(program));
+	GLLog(glGetProgramiv(program, GL_VALIDATE_STATUS, &status));
+	if (status == GL_FALSE)
+	{
+		GLsizei len;
+		GLchar log[LOG_BUFF_SIZE];
+		GLLog(glGetProgramInfoLog(program, LOG_BUFF_SIZE, &len, log));
+		Log(log);
+	}
 
 	auto shader = new Shader(program, shaderPath);
 	shader->m_RefCount++;
