@@ -39,31 +39,70 @@ void Transform::SetRotation(Vec3 rotation)
 	m_Rotation.y = fmodf(m_Rotation.y, ANGLE_360);
 	m_Rotation.z = fmodf(m_Rotation.z, ANGLE_360);
 
-	m_RotationMatrix =
-		glm::rotate(glm::mat4(1), glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)) *
-		glm::rotate(glm::mat4(1), glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)) *
-		glm::rotate(glm::mat4(1), glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	m_RotationMatrix = glm::rotate(glm::mat4(1), glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
 	UpdateModelMatrix();
 
 	OnRotationUpdate(delta);
 }
 
-void Transform::Rotate(Vec3 rotation)
+void Transform::Rotate(float value, Vec3 axis)
 {
-	m_Rotation += rotation;
-	m_Rotation.x = fmodf(m_Rotation.x, ANGLE_360);
-	m_Rotation.y = fmodf(m_Rotation.y, ANGLE_360);
-	m_Rotation.z = fmodf(m_Rotation.z, ANGLE_360);
+	Rotate(value, glm::vec3(axis.x, axis.y, axis.z));
+}
 
-	m_RotationMatrix =
-		glm::rotate(glm::mat4(1), glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)) *
-		glm::rotate(glm::mat4(1), glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)) *
-		glm::rotate(glm::mat4(1), glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+void Transform::Rotate(float value, glm::vec3 axis)
+{
+	axis = glm::normalize(axis);
+	m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(value), axis);
+	Vec3 rotation
+	{
+		value * axis.x,
+		value * axis.y,
+		value * axis.z
+	};
+
+	Vec3 delta = m_Rotation - rotation;
+	m_Rotation = rotation;
 
 	UpdateModelMatrix();
 
-	OnRotationUpdate(rotation);
+	OnRotationUpdate(delta);
+}
+
+void Transform::RotateAroundXAxis(float value)
+{
+	m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(value), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	m_Rotation.x += value;
+
+	UpdateModelMatrix();
+
+	OnRotationUpdate({ value, 0.0f, 0.0f });
+}
+
+void Transform::RotateAroundYAxis(float value)
+{
+	m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(value), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	m_Rotation.y += value;
+
+	UpdateModelMatrix();
+
+	OnRotationUpdate({ 0.0f, value, 0.0f });
+}
+
+void Transform::RotateAroundZAxis(float value)
+{
+	m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(value), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	m_Rotation.z += value;
+
+	UpdateModelMatrix();
+
+	OnRotationUpdate({ 0.0f, 0.0f, value });
 }
 
 void Transform::SetScale(Vec3 scale)
@@ -129,16 +168,28 @@ void Transform::OnInspectorGUI()
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn(); ImGui::PushID(3);
-		dirty |= ImGui::DragFloat("", &m_Rotation.x, 0.01f); ImGui::PopID();
+		//dirty |= ImGui::DragFloat("", &m_Rotation.x, 0.01f); ImGui::PopID();
+		float val = m_Rotation.x;
+		if (ImGui::DragFloat("", &val, 0.01f))
+			RotateAroundXAxis(val - m_Rotation.x);
+		ImGui::PopID();
 		ImGui::TableNextColumn(); ImGui::PushID(4);
-		dirty |= ImGui::DragFloat("", &m_Rotation.y, 0.01f); ImGui::PopID();
+		//dirty |= ImGui::DragFloat("", &m_Rotation.y, 0.01f); ImGui::PopID();
+		val = m_Rotation.y;
+		if (ImGui::DragFloat("", &val, 0.01f))
+			RotateAroundYAxis(val - m_Rotation.y);
+		ImGui::PopID();
 		ImGui::TableNextColumn(); ImGui::PushID(5);
-		dirty |= ImGui::DragFloat("", &m_Rotation.z, 0.01f); ImGui::PopID();
-		if (dirty)
-		{
-			SetRotation(m_Rotation);
-			dirty = false;
-		}
+		//dirty |= ImGui::DragFloat("", &m_Rotation.z, 0.01f); ImGui::PopID();
+		val = m_Rotation.z;
+		if (ImGui::DragFloat("", &val, 0.01f))
+			RotateAroundZAxis(val - m_Rotation.z);
+		ImGui::PopID();
+		//if (dirty)
+		//{
+		//	SetRotation(m_Rotation);
+		//	dirty = false;
+		//}
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn(); ImGui::PushID(6);

@@ -28,7 +28,11 @@ public:
 
 	void SetPosition(core::Vec3 position);
 	void SetRotation(core::Vec3 rotation);
-	void Rotate(core::Vec3 rotation);
+	void Rotate(float value, core::Vec3 axis);
+	void Rotate(float value, glm::vec3 axis);
+	void RotateAroundXAxis(float value);
+	void RotateAroundYAxis(float value);
+	void RotateAroundZAxis(float value);
 	void SetScale(core::Vec3 scale);
 
 	inline const core::Vec3& GetPosition() const { return m_Position; };
