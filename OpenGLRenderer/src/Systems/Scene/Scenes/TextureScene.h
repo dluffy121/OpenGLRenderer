@@ -22,8 +22,10 @@ namespace scene
 
 		GameVastu* textureVastu1;
 		GameVastu* textureVastu2;
+		GameVastu* textureVastu3;
 		Renderer* textureRenderer1;
 		Renderer* textureRenderer2;
+		Renderer* textureRenderer3;
 
 		Shader* shader;
 		Texture* texture1;
@@ -32,9 +34,14 @@ namespace scene
 		unsigned int* indices;
 		Vertex* vertices1;
 		Vertex* vertices2;
+		Vertex* vertices3;
+		unsigned int* indices3;
 
 	public:
 		TextureScene();
 		~TextureScene();
+
+	private:
+		void Update() override;
 	};
 }

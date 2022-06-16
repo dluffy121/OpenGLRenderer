@@ -12,8 +12,8 @@ namespace scene
 	ColorScene::ColorScene() :
 		Scene("ColorScene")
 	{
-		Vec4 color1{ 0.8f, 0.25f, 0.1f, 1.0f };
-		Vec4 color2{ 0.1f, 0.25f, 0.8f, 1.0f };
+		Vec4 color1 { 0.8f, 0.25f, 0.1f, 1.0f };
+		Vec4 color2 { 0.1f, 0.25f, 0.8f, 1.0f };
 
 		vertices1 = new Vertex[8]
 		{
@@ -94,7 +94,8 @@ namespace scene
 		cameraVastu->AddComponent(*camera);
 		CameraController* cameraController = new CameraController();
 		cameraVastu->AddComponent(*cameraController);
-		cameraVastu->m_transform->SetPosition({ 0.0f, 0.0f, -10.f });
+		cameraVastu->m_transform->SetPosition({ 0.0f, 0.0f, -6.f });
+		cameraVastu->m_transform->SetRotation({ 0.0f, 180.0f, 0.f });
 	}
 
 	ColorScene::~ColorScene()
