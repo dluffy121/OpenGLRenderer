@@ -118,13 +118,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>src\Utils;src\Systems;src\vendor;$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\include;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\include;$(SolutionDir)Dependencies\ASSIMP\assimp-5.2.4\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\Utils;src\Systems;src\vendor;$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\include;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\lib-vc2022;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependencies\ASSIMP\assimp-5.2.4\lib\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mt.lib;glfw3.lib;glfw3_mt.lib;glew32s.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\lib-vc2022;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;glfw3_mt.lib;glew32s.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
       <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
@@ -304,7 +304,6 @@
     <ClInclude Include="src\Core\Logger.h" />
     <ClInclude Include="src\Core\Math.h" />
     <ClInclude Include="src\StaticMethods.h" />
-    <ClInclude Include="src\Systems\Mesh\Mesh.h" />
     <ClInclude Include="src\Systems\BatchRenderer\BatchRenderer.h" />
     <ClInclude Include="src\Systems\Component\CameraController\CameraController.h" />
     <ClInclude Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.h" />
@@ -640,7 +639,6 @@
     <ClCompile Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.cpp" />
     <ClCompile Include="src\Systems\GUI\Inspector\InspectorWindow.cpp" />
     <ClCompile Include="src\Systems\GUI\Scenes\ScenesWindow.cpp" />
-    <ClCompile Include="src\Systems\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Systems\Scene\Scene.cpp" />
     <ClCompile Include="src\Systems\Scene\Scenes\ColorScene.cpp" />
     <ClCompile Include="src\Systems\Scene\Scenes\TextureScene.cpp" />
