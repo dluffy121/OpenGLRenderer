@@ -435,9 +435,6 @@
     <Image Include="resources\textures\Opengl.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="resources\textures\texture1.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\vendor\glm\detail\_features.hpp">
@@ -1412,9 +1409,6 @@
     <ClInclude Include="src\Systems\Component\CameraController\CameraController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Systems\MeshAssetImporter\MeshAssetImporter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\vendor\glm\detail\glm.cpp">
@@ -1523,9 +1517,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Systems\Component\CameraController\CameraController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Systems\MeshAssetImporter\MeshAssetImporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

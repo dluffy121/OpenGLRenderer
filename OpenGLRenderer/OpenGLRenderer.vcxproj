@@ -118,13 +118,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>src\Utils;src\Systems;src\vendor;$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\include;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\include;$(SolutionDir)Dependencies\assimp\Release</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\Utils;src\Systems;src\vendor;$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\include;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\lib-vc2022;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependencies\assimp\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;glfw3_mt.lib;glew32s.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;assimp-vc143-mt.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\lib-vc2022;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;glfw3_mt.lib;glew32s.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
       <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
@@ -293,7 +293,6 @@
   <ItemGroup>
     <Image Include="resources\textures\Opengl.png" />
     <Image Include="resources\textures\test.png" />
-    <Image Include="resources\textures\texture1.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\GL\IndexBuffer\IndexBuffer.h" />
@@ -310,7 +309,6 @@
     <ClInclude Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.h" />
     <ClInclude Include="src\Systems\GUI\Inspector\InspectorWindow.h" />
     <ClInclude Include="src\Systems\GUI\Scenes\ScenesWindow.h" />
-    <ClInclude Include="src\Systems\MeshAssetImporter\MeshAssetImporter.h" />
     <ClInclude Include="src\Systems\Scene\Scene.h" />
     <ClInclude Include="src\Systems\Scene\Scenes\ColorScene.h" />
     <ClInclude Include="src\Systems\Scene\Scenes\TextureScene.h" />
@@ -630,7 +628,6 @@
     <ClCompile Include="src\Core\GL\VertexBufferLayout\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Core\GL\VertexBuffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Core\Logger.cpp" />
-    <ClCompile Include="src\Systems\MeshAssetImporter\MeshAssetImporter.cpp" />
     <ClCompile Include="src\Systems\BatchRenderer\BatchRenderer.cpp" />
     <ClCompile Include="src\Systems\Component\CameraController\CameraController.cpp" />
     <ClCompile Include="src\Systems\Component\Camera\Camera.cpp" />
