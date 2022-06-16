@@ -39,6 +39,8 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
+
+	//glEnable(GL_DEPTH_TEST);
 }
 
 Window::~Window()
@@ -70,7 +72,7 @@ ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 void Window::Clear()
 {
 	glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-	GLLog(glClear(GL_COLOR_BUFFER_BIT));
+	GLLog(glClear(GL_COLOR_BUFFER_BIT /*| GL_DEPTH_BUFFER_BIT*/));
 }
 
 void Window::Update()
