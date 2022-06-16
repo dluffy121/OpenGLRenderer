@@ -52,7 +52,7 @@ namespace core::gl
 	void Texture::BindToUnit(unsigned int unit) const
 	{
 		ASSERT(glIsTexture(Id) == GL_TRUE);
-		GLLog(glBindTextureUnit(unit, Id));
+		GLLog(glBindTextureUnit(unit, Id));					// Only availabe after 4.5
 	}
 
 	void Texture::UnBind() const
@@ -62,7 +62,7 @@ namespace core::gl
 
 	void Texture::UnBindFromUnit(unsigned int unit) const
 	{
-		GLLog(glBindTextureUnit(unit, 0));
+		GLLog(glBindTextureUnit(unit, 0));					// Only availabe after 4.5
 	}
 
 	unsigned int Texture::GenerateTexture()
