@@ -168,28 +168,20 @@ void Transform::OnInspectorGUI()
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn(); ImGui::PushID(3);
-		//dirty |= ImGui::DragFloat("", &m_Rotation.x, 0.01f); ImGui::PopID();
 		float val = m_Rotation.x;
 		if (ImGui::DragFloat("", &val, 0.01f))
 			RotateAroundXAxis(val - m_Rotation.x);
 		ImGui::PopID();
 		ImGui::TableNextColumn(); ImGui::PushID(4);
-		//dirty |= ImGui::DragFloat("", &m_Rotation.y, 0.01f); ImGui::PopID();
 		val = m_Rotation.y;
 		if (ImGui::DragFloat("", &val, 0.01f))
 			RotateAroundYAxis(val - m_Rotation.y);
 		ImGui::PopID();
 		ImGui::TableNextColumn(); ImGui::PushID(5);
-		//dirty |= ImGui::DragFloat("", &m_Rotation.z, 0.01f); ImGui::PopID();
 		val = m_Rotation.z;
 		if (ImGui::DragFloat("", &val, 0.01f))
 			RotateAroundZAxis(val - m_Rotation.z);
 		ImGui::PopID();
-		//if (dirty)
-		//{
-		//	SetRotation(m_Rotation);
-		//	dirty = false;
-		//}
 
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn(); ImGui::PushID(6);
