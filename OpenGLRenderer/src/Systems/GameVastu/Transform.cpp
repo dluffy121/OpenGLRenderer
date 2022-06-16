@@ -66,6 +66,9 @@ void Transform::Rotate(float value, glm::vec3 axis)
 
 	Vec3 delta = m_Rotation - rotation;
 	m_Rotation = rotation;
+	m_Rotation.x = fmodf(m_Rotation.x, ANGLE_360);
+	m_Rotation.y = fmodf(m_Rotation.y, ANGLE_360);
+	m_Rotation.z = fmodf(m_Rotation.z, ANGLE_360);
 
 	UpdateModelMatrix();
 
@@ -77,6 +80,7 @@ void Transform::RotateAroundXAxis(float value)
 	m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(value), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	m_Rotation.x += value;
+	m_Rotation.x = fmodf(m_Rotation.x, ANGLE_360);
 
 	UpdateModelMatrix();
 
@@ -88,6 +92,7 @@ void Transform::RotateAroundYAxis(float value)
 	m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(value), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	m_Rotation.y += value;
+	m_Rotation.y = fmodf(m_Rotation.y, ANGLE_360);
 
 	UpdateModelMatrix();
 
@@ -99,6 +104,7 @@ void Transform::RotateAroundZAxis(float value)
 	m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(value), glm::vec3(0.0f, 0.0f, 1.0f));
 
 	m_Rotation.z += value;
+	m_Rotation.z = fmodf(m_Rotation.z, ANGLE_360);
 
 	UpdateModelMatrix();
 
