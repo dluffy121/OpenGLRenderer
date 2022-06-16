@@ -7,7 +7,7 @@ class CameraController : public Component
 private:
 	float m_delta;
 	float m_MoveSpeed;
-	float m_ZoomSpeed;
+	float m_RotateSpeed;
 
 public:
 	CameraController();
