@@ -75,14 +75,14 @@ void Camera::UpdateProjectionMatrix()
 		float x = 1.f / (tanHalfFOV * ar);
 		float y = 1.f / tanHalfFOV;
 
-		float a = (m_FarClipPlane + m_NearClipPlane) / (m_NearClipPlane - m_FarClipPlane);
+		float a = (m_FarClipPlane + m_NearClipPlane) / (m_FarClipPlane - m_NearClipPlane);
 		float b = (2.f * m_FarClipPlane * m_NearClipPlane) / (m_FarClipPlane - m_NearClipPlane);
 
 		m_ProjectionMatrix = glm::mat4 {
 			x,		0.f,	0.f,	0.f,
 			0.f,	y,		0.f,	0.f,
-			0.f,	0.f,	a,		1.f,
-			0.f,	0.f,	b,		0.f };
+			0.f,	0.f,   -a,	   -1.f,
+			0.f,	0.f,   -b,		0.f };
 	}
 }
 
@@ -104,12 +104,12 @@ void Camera::UpdateViewMatrix()
 	m_ViewnMatrix[0][1] = V.x;
 	m_ViewnMatrix[1][1] = V.y;
 	m_ViewnMatrix[2][1] = V.z;
-	m_ViewnMatrix[3][1] = -glm::dot(V, eye);	
-	
-	m_ViewnMatrix[0][2] = -N.x;
-	m_ViewnMatrix[1][2] = -N.y;
-	m_ViewnMatrix[2][2] = -N.z;
-	m_ViewnMatrix[3][2] = glm::dot(N, eye);
+	m_ViewnMatrix[3][1] = -glm::dot(V, eye);
+
+	m_ViewnMatrix[0][2] = N.x;
+	m_ViewnMatrix[1][2] = N.y;
+	m_ViewnMatrix[2][2] = N.z;
+	m_ViewnMatrix[3][2] = -glm::dot(N, eye);	// Just reverse the N vector since camera should face in opposite direction
 }
 
 void Camera::SetOrtho(bool value)
