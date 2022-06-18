@@ -55,7 +55,7 @@ void Camera::UpdateProjectionMatrix()
 	{
 		float scale_x = 1.f / (m_Right - m_Left);
 		float scale_y = 1.f / (m_Top - m_Bottom);
-		float scale_z = -1.f / (m_NearClipPlane - m_FarClipPlane);
+		float scale_z = -1.f / (m_FarClipPlane - m_NearClipPlane);
 		float mid_x = -(m_Right + m_Left) / (m_Right - m_Left);
 		float mid_y = -(m_Top + m_Bottom) / (m_Top - m_Bottom);
 		float mid_z = -(m_FarClipPlane + m_NearClipPlane) / (m_FarClipPlane - m_NearClipPlane);
