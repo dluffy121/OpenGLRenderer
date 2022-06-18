@@ -1,5 +1,5 @@
 #include "VertexBufferLayout.h"
-#include "../../Logger.h"
+#include <Logger/Logger.h>
 #include <Window/WindowManager.h>
 
 namespace core::gl

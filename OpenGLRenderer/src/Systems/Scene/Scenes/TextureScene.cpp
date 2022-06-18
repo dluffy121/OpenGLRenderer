@@ -8,6 +8,9 @@
 #include <GameVastu/GameVastu.h>
 #include "../../../Macros.h"
 
+using namespace core;
+using namespace core::gl;
+
 namespace scene
 {
 	TextureScene::TextureScene() :

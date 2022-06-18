@@ -1,7 +1,10 @@
 #include "Renderer.h"
 #include <GameVastu/GameVastu.h>
-#include "../../../Core/Logger.h"
+#include <Logger/Logger.h>
 #include <Component/Camera/Camera.h>
+
+using namespace core;
+using namespace core::gl;
 
 Renderer::Renderer(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount) :
 	m_Vertices(vertices),

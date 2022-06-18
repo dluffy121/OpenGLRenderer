@@ -2,8 +2,8 @@
 
 #include <vector>
 #include <unordered_map>
-#include "../OpenGLHelper.h"
-#include "../Core/Math.h"
+#include <GL/OpenGLHelper.h>
+#include <Math/Math.h>
 
 namespace core::gl
 {

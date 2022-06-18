@@ -7,6 +7,8 @@
 #include <Component/CameraController/CameraController.h>
 #include <GameVastu/GameVastu.h>
 
+using namespace core;
+
 namespace scene
 {
 	ColorScene::ColorScene() :

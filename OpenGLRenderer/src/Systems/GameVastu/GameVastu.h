@@ -5,7 +5,7 @@
 #include "Transform.h"
 #include <Window/WindowManager.h>
 #include "../StaticMethods.h"
-#include "../Core/Logger.h"
+#include <Logger/Logger.h>
 
 class GameVastu
 {

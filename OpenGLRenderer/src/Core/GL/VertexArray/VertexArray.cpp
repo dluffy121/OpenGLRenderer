@@ -1,5 +1,5 @@
 #include "VertexArray.h"
-#include "../../Logger.h"
+#include <Logger/Logger.h>
 
 namespace core::gl
 {

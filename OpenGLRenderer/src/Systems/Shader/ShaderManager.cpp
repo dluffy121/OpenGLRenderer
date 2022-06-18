@@ -1,5 +1,5 @@
 #include "ShaderManager.h"
-#include "../../Core/Logger.h"
+#include <Logger/Logger.h>
 
 using namespace core;
 

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "../../Core/Logger.h"
+#include <Logger/Logger.h>
 
 using namespace core;
 

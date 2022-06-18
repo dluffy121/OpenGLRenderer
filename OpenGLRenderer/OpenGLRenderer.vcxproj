@@ -118,7 +118,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>src\Utils;src\Systems;src\vendor;$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\include;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\Core;src\Utils;src\Systems;src\vendor;$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\include;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,6 +126,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\lib-vc2022;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;glfw3_mt.lib;glew32s.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
       <ShowProgress>LinkVerbose</ShowProgress>
+      <LinkStatus>true</LinkStatus>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -301,8 +302,8 @@
     <ClInclude Include="src\Core\GL\VertexArray\VertexArray.h" />
     <ClInclude Include="src\Core\GL\VertexBufferLayout\VertexBufferLayout.h" />
     <ClInclude Include="src\Core\GL\VertexBuffer\VertexBuffer.h" />
-    <ClInclude Include="src\Core\Logger.h" />
-    <ClInclude Include="src\Core\Math.h" />
+    <ClInclude Include="src\Core\Logger\Logger.h" />
+    <ClInclude Include="src\Core\Math\Math.h" />
     <ClInclude Include="src\StaticMethods.h" />
     <ClInclude Include="src\Systems\BatchRenderer\BatchRenderer.h" />
     <ClInclude Include="src\Systems\Component\CameraController\CameraController.h" />
@@ -320,7 +321,6 @@
     <ClInclude Include="src\Systems\GameVastu\GameVastuManager.h" />
     <ClInclude Include="src\Systems\GUI\GUIWindow.h" />
     <ClInclude Include="src\Macros.h" />
-    <ClInclude Include="src\Systems\Component\Renderer\RenderData.h" />
     <ClInclude Include="src\Systems\Component\Renderer\Renderer.h" />
     <ClInclude Include="src\Systems\Shader\Shader.h" />
     <ClInclude Include="src\Systems\Shader\ShaderManager.h" />
@@ -627,7 +627,7 @@
     <ClCompile Include="src\Core\GL\VertexArray\VertexArray.cpp" />
     <ClCompile Include="src\Core\GL\VertexBufferLayout\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Core\GL\VertexBuffer\VertexBuffer.cpp" />
-    <ClCompile Include="src\Core\Logger.cpp" />
+    <ClCompile Include="src\Core\Logger\Logger.cpp" />
     <ClCompile Include="src\Systems\BatchRenderer\BatchRenderer.cpp" />
     <ClCompile Include="src\Systems\Component\CameraController\CameraController.cpp" />
     <ClCompile Include="src\Systems\Component\Camera\Camera.cpp" />

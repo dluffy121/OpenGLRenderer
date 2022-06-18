@@ -1295,9 +1295,6 @@
     <ClInclude Include="src\Systems\Component\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Systems\Component\Renderer\RenderData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Systems\Component\Renderer\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1394,10 +1391,10 @@
     <ClInclude Include="src\Core\GL\OpenGLHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\Logger.h">
+    <ClInclude Include="src\Core\Logger\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\Math.h">
+    <ClInclude Include="src\Core\Math\Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Systems\BatchRenderer\BatchRenderer.h">
@@ -1507,7 +1504,7 @@
     <ClCompile Include="src\Core\GL\OpenGLHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Logger.cpp">
+    <ClCompile Include="src\Core\Logger\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Systems\BatchRenderer\BatchRenderer.cpp">

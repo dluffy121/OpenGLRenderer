@@ -1,6 +1,6 @@
 #include "VertexBuffer.h"
-#include "../../Logger.h"
-#include "../Core/Math.h"
+#include <Logger/Logger.h>
+#include <Math/Math.h>
 
 namespace core::gl
 {

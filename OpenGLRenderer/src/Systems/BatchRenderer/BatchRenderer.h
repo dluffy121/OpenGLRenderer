@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../Core/GL/VertexArray/VertexArray.h"
-#include "../../Core/GL/VertexBuffer/VertexBuffer.h"
-#include "../../Core/GL/IndexBuffer/IndexBuffer.h"
-#include "../../Core/GL/VertexBufferLayout/VertexBufferLayout.h"
+#include <GL/VertexArray/VertexArray.h>
+#include <GL/VertexBuffer/VertexBuffer.h>
+#include <GL/IndexBuffer/IndexBuffer.h>
+#include <GL/VertexBufferLayout/VertexBufferLayout.h>
 #include <Shader/Shader.h>
 
 const size_t MAX_VERTEX_COUNT = 1020;

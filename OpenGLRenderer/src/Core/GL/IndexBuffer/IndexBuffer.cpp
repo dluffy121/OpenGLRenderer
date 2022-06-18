@@ -1,7 +1,7 @@
 #include "IndexBuffer.h"
-#include "../Core/Logger.h"
-#include "../OpenGLHelper.h"
+#include <GL/OpenGLHelper.h>
 #include <iostream>
+#include <Logger/Logger.h>
 
 namespace core::gl
 {

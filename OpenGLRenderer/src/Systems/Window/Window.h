@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../Core/GL/OpenGLHelper.h"
+#include <GL/OpenGLHelper.h>
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <imgui/imgui.h>
 #include <Action.h>
-#include "../Core/GL/VertexArray/VertexArray.h"
+#include <GL/VertexArray/VertexArray.h>
 #include "../Scene/Scene.h"
-#include "../../Core/Math.h"
+#include <Math/Math.h>
 #include <BatchRenderer/BatchRenderer.h>
 
 class GameVastu;

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <GL/glew.h>
-#include "../../Core/Logger.h"
+#include <Logger/Logger.h>
 
 using namespace core;
 

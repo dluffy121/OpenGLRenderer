@@ -3,7 +3,7 @@
 #include <Component/Camera/Camera.h>
 #include <GUI/GUIWindow.h>
 #include <imgui/imgui_impl_glfw.h>
-#include "../../Core/Logger.h"
+#include <Logger/Logger.h>
 #include <algorithm>
 #include <iterator>
 #include <imgui/imgui_impl_opengl3.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../OpenGLHelper.h"
+#include <GL/OpenGLHelper.h>
 
 namespace core::gl
 {

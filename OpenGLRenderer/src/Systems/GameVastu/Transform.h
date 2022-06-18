@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "../../Core/Math.h"
+#include <Math/Math.h>
 #include <functional>
 
 class Transform

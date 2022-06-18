@@ -1,5 +1,5 @@
 #include "GameVastuManager.h"
-#include "../Core/Logger.h"
+#include <Logger/Logger.h>
 
 GameVastuManager::GameVastuManager() {}
 

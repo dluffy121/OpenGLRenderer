@@ -4,6 +4,7 @@
 #include <corecrt_math.h>
 #include <imgui/imgui.h>
 #include <glm/gtx/string_cast.hpp>
+#include <Math/Math.h>
 
 using namespace core;
 

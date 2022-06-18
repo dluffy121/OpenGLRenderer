@@ -1,11 +1,8 @@
 #pragma once
 
-#include "../Scene.h"
-#include "../Core/GL/Texture/Texture.h"
-#include "../Core/Math.h"
-
-using namespace core;
-using namespace core::gl;
+#include <Scene/Scene.h>
+#include <GL/Texture/Texture.h>
+#include <Math/Math.h>
 
 class Camera;
 class GameVastu;
@@ -28,13 +25,13 @@ namespace scene
 		Renderer* textureRenderer3;
 
 		Shader* shader;
-		Texture* texture1;
-		Texture* texture2;
+		core::gl::Texture* texture1;
+		core::gl::Texture* texture2;
 
 		unsigned int* indices;
-		Vertex* vertices1;
-		Vertex* vertices2;
-		Vertex* vertices3;
+		core::Vertex* vertices1;
+		core::Vertex* vertices2;
+		core::Vertex* vertices3;
 		unsigned int* indices3;
 
 	public:

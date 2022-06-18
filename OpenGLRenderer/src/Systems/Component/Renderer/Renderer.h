@@ -1,23 +1,19 @@
 #pragma once
 
-#include "RenderData.h"
-#include "../../../Core/GL/Texture/Texture.h"
-#include "../../../Core/GL/VertexArray/VertexArray.h"
+#include <GL/Texture/Texture.h>
+#include <GL/VertexArray/VertexArray.h>
 #include <Component/Component.h>
 #include <Shader/Shader.h>
-#include "../../../Core/Math.h"
-
-using namespace core;
-using namespace core::gl;
+#include <Math/Math.h>
 
 class Renderer : public Component
 {
 private:
 	Shader* m_Shader;
-	std::unordered_map<int, Texture*> m_Textures;
+	std::unordered_map<int, core::gl::Texture*> m_Textures;
 
-	Vertex* m_Vertices;
-	Vertex* _Vertices;
+	core::Vertex* m_Vertices;
+	core::Vertex* _Vertices;
 	const unsigned int m_VertexCount;
 
 	unsigned int* m_Indices;
@@ -27,11 +23,11 @@ private:
 	int m_triangleCount;
 
 public:
-	Renderer(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount);
+	Renderer(core::Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount);
 	~Renderer();
 
 	void SetShader(Shader& shader);
-	void AddTexture(int samplerId, Texture& texture);
+	void AddTexture(int samplerId, core::gl::Texture& texture);
 	void RemoveTexture(int samplerId);
 
 private:

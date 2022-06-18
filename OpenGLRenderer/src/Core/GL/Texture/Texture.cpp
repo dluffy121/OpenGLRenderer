@@ -1,8 +1,8 @@
 #include "Texture.h"
 #include <GL/glew.h>
-#include "stb_image/stb_image.h"
+#include <stb_image/stb_image.h>
 #include <iostream>
-#include "../../Logger.h"
+#include <Logger/Logger.h>
 
 namespace core::gl
 {
@@ -31,7 +31,7 @@ namespace core::gl
 		}
 		else if (m_BPP == 4)
 		{
-		GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer));
+			GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer));
 		}
 
 		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));

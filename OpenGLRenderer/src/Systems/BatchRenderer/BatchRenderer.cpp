@@ -1,5 +1,5 @@
 #include "BatchRenderer.h"
-#include "../../Core/Logger.h"
+#include <Logger/Logger.h>
 
 using namespace core;
 using namespace core::gl;

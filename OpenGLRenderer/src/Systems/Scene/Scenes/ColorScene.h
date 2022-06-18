@@ -1,9 +1,7 @@
 #pragma once
 
 #include "../Scene.h"
-#include "../Core/Math.h"
-
-using namespace core;
+#include <Math/Math.h>
 
 class Camera;
 class GameVastu;
@@ -33,8 +31,8 @@ namespace scene
 
 		unsigned int* indices1;
 		unsigned int* indices2;
-		Vertex* vertices1;
-		Vertex* vertices2;
+		core::Vertex* vertices1;
+		core::Vertex* vertices2;
 
 		float timeDelta;
 		float increment;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <assert.h>
 #include <iostream>
 
 namespace core
@@ -7,7 +8,7 @@ namespace core
 #define ASSERT(x)	if(!(x)) __debugbreak();
 #define GLLog(x)	GLClearError();\
 					x;\
-					ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+					assert(GLLogCall(#x, __FILE__, __LINE__))
 
 #define DEBUGGING true
 #define Log(x)		if(DEBUGGING) \
