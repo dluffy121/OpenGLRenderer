@@ -25,7 +25,14 @@ namespace core::gl
 
 		GLLog(glBindTexture(GL_TEXTURE_2D, Id));
 
+		if (m_BPP == 3)
+		{
+			GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, localBuffer));
+		}
+		else if (m_BPP == 4)
+		{
 		GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer));
+		}
 
 		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
