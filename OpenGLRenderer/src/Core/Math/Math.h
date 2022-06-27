@@ -376,5 +376,6 @@ namespace core
 		Vec4 Color;
 		Vec2 TexCoords;
 		int TexID;
+		Vec3 Normals;
 	};
 }

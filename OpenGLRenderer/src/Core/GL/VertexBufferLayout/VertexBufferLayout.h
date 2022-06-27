@@ -101,6 +101,7 @@ namespace core::gl
 				Push<Vec4>(id++, 1);
 				Push<Vec2>(id++, 1);
 				Push<int>(id++, 1);
+				Push<Vec3>(id++, 1);
 			}
 		}
 
