@@ -27,6 +27,7 @@ namespace scene
 		Shader* shader;
 		core::gl::Texture* texture1;
 		core::gl::Texture* texture2;
+		core::gl::Texture* texture3;
 
 		unsigned int* indices;
 		core::Vertex* vertices1;

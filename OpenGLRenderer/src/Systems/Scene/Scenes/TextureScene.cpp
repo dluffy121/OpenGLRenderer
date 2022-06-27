@@ -28,6 +28,7 @@ namespace scene
 
 		texture1 = new Texture("resources/textures/Opengl.png");
 		texture2 = new Texture("resources/textures/test.png");
+		texture3 = new Texture("resources/textures/hardfur.png");
 
 		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/Texture.shader");
 
@@ -89,10 +90,10 @@ namespace scene
 			{ { 0.5, 0.5,-0.5 }, { 1.0, 1.0, 1.0, 1.0}, {1.0, 1.0}, 1 }, // 2
 			{ { 0.5,-0.5,-0.5 }, { 1.0, 1.0, 1.0, 1.0}, {0.0, 1.0}, 1 }, // 3
 
-			{ {-0.5,-0.5, 0.5 }, { 1.0, 1.0, 1.0, 1.0}, {0.0, 0.0}, 2 }, // 4
-			{ {-0.5, 0.5, 0.5 }, { 1.0, 1.0, 1.0, 1.0}, {1.0, 0.0}, 2 }, // 5
-			{ { 0.5, 0.5, 0.5 }, { 1.0, 1.0, 1.0, 1.0}, {1.0, 1.0}, 2 }, // 6
-			{ { 0.5,-0.5, 0.5 }, { 1.0, 1.0, 1.0, 1.0}, {0.0, 1.0}, 2 }  // 7
+			{ {-0.5,-0.5, 0.5 }, { 1.0, 1.0, 1.0, 1.0}, {0.0, 0.0}, 1 }, // 4
+			{ {-0.5, 0.5, 0.5 }, { 1.0, 1.0, 1.0, 1.0}, {1.0, 0.0}, 1 }, // 5
+			{ { 0.5, 0.5, 0.5 }, { 1.0, 1.0, 1.0, 1.0}, {1.0, 1.0}, 1 }, // 6
+			{ { 0.5,-0.5, 0.5 }, { 1.0, 1.0, 1.0, 1.0}, {0.0, 1.0}, 1 }  // 7
 		};
 
 		indices3 = new unsigned int[36]
@@ -126,7 +127,7 @@ namespace scene
 		textureVastu3->m_name = "Texture Renderer 3";
 		textureRenderer3 = new Renderer(vertices3, 8, indices3, 36);
 		textureRenderer3->SetShader(*shader);
-		textureRenderer3->AddTexture(samplers[0], *texture1);
+		textureRenderer3->AddTexture(samplers[0], *texture3);
 		textureVastu3->AddComponent(*textureRenderer3);
 	}
 
@@ -145,6 +146,7 @@ namespace scene
 
 		delete texture1;
 		delete texture2;
+		delete texture3;
 
 		DestroyGameVastu(textureVastu1);
 		DestroyGameVastu(textureVastu2);
