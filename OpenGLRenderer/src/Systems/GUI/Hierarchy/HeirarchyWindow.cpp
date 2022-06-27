@@ -4,6 +4,8 @@
 #include <Scene/Scene.h>
 #include <GameVastu/GameVastu.h>
 
+using namespace scene;
+
 HeirarchyWindow::HeirarchyWindow() :
 	GUIWindow("HeirarchyWindow")
 {}
@@ -15,7 +17,7 @@ void HeirarchyWindow::Draw(Window* window)
 {
 	ImGui::Begin("Heirarchy");
 
-	std::unordered_map<std::string, scene::Scene*>& scenes = window->GetAllScenes();
+	std::unordered_map<std::string, Scene*>& scenes = window->GetAllScenes();
 
 	GameVastu* seletedGameVastu = window->SelectedGameVastu;
 

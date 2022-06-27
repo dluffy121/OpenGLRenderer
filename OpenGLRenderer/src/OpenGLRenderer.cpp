@@ -17,6 +17,9 @@
 #include <GUI/Scenes/ScenesWindow.h>
 #include <GUI/Inspector/InspectorWindow.h>
 #include <GUI/Hierarchy/HeirarchyWindow.h>
+#include <Scene/Scenes/ColorScene.h>
+#include <Scene/Scenes/TextureScene.h>
+#include <Scene/Scenes/ModelScene.h>
 
 using namespace core;
 using namespace core::gl;

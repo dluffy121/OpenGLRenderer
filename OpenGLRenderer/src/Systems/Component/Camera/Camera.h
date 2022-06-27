@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Component/Component.h>
-#include "glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 const std::string CAMERA_TYPE_NAME = "Camera";
 

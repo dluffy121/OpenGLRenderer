@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../GUIWindow.h"
+#include <GUI/GUIWindow.h>
 
 class HeirarchyWindow : public GUIWindow
 {
