@@ -3,18 +3,20 @@
 #include <stb_image/stb_image.h>
 #include <iostream>
 #include <Logger/Logger.h>
+#include <Path.h>
 
 namespace core::gl
 {
 	Texture::Texture(const std::string& texturePath) :
 		Id(GenerateTexture()),
-		m_FilePath(texturePath),
+		FilePath(texturePath),
+		FileName(GetFileName(texturePath)),
 		m_Width(0),
 		m_Height(0),
 		m_BPP(0)
 	{
 		stbi_set_flip_vertically_on_load(1);
-		unsigned char* localBuffer = stbi_load(m_FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 0);	// 4 is for RGBA
+		unsigned char* localBuffer = stbi_load(FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 4);	// 4 is for RGBA
 
 		ASSERT(("Cannot load Image from path: " + texturePath, localBuffer));
 
@@ -25,14 +27,7 @@ namespace core::gl
 
 		GLLog(glBindTexture(GL_TEXTURE_2D, Id));
 
-		if (m_BPP == 3)
-		{
-			GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, localBuffer));
-		}
-		else if (m_BPP == 4)
-		{
-			GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer));
-		}
+		GLLog(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer));
 
 		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 		GLLog(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));

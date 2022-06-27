@@ -7,7 +7,8 @@ namespace core::gl
 	{
 	public:
 		const unsigned int Id;
-		const std::string m_FilePath;
+		const std::string FilePath;
+		const std::string FileName;
 
 	private:
 		int m_Width, m_Height, m_BPP;
