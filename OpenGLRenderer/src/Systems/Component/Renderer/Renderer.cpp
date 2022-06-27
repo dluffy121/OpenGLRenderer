@@ -11,7 +11,7 @@ Renderer::Renderer(Vertex* vertices, unsigned int vertexCount, unsigned int* ind
 	m_VertexCount(vertexCount),
 	m_Indices(indices),
 	m_IndexCount(indexCount),
-	m_triangleCount(indexCount / 3),
+	m_TriangleCount(indexCount / 3),
 	_Vertices(NULL),
 	_Indices(NULL),
 	m_Shader(NULL)
@@ -105,7 +105,7 @@ void Renderer::OnInspectorGUI()
 		ImGui::Text(std::to_string(m_IndexCount).c_str());
 		ImGui::Text("Triangles: ");
 		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-		ImGui::Text(std::to_string(m_triangleCount).c_str());
+		ImGui::Text(std::to_string(m_TriangleCount).c_str());
 	}
 
 	if (ImGui::CollapsingHeader("Shader Info"))
@@ -131,7 +131,7 @@ void Renderer::OnInspectorGUI()
 				ImGui::Text(std::to_string(texture.second->Id).c_str());
 				ImGui::Text("Texture Path: ");
 				ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-				ImGui::Text(texture.second->m_FilePath.c_str());
+				ImGui::Text(texture.second->FilePath.c_str());
 			}
 		}
 

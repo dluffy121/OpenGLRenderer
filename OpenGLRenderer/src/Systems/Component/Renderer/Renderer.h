@@ -20,7 +20,7 @@ private:
 	unsigned int* _Indices;
 	unsigned int m_IndexCount;
 
-	int m_triangleCount;
+	int m_TriangleCount;
 
 public:
 	Renderer(core::Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount);
