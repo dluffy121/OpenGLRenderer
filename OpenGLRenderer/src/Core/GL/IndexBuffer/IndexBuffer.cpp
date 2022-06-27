@@ -12,7 +12,7 @@ namespace core::gl
 	{
 		Bind();
 		GLsizeiptr size = count * GetSizeOfType(type);
-		GLLog(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * size, data, GL_STATIC_DRAW));
+		GLLog(glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
 	}
 
 	IndexBuffer::IndexBuffer(unsigned int type, unsigned int count) :
@@ -22,7 +22,7 @@ namespace core::gl
 	{
 		Bind();
 		GLsizeiptr size = count * GetSizeOfType(type);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * size, nullptr, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 	}
 
 	IndexBuffer::~IndexBuffer()
