@@ -68,6 +68,7 @@ int main(void)
 		ScenesWindow scenesWindow;
 		scenesWindow.RegisterScene<scene::ColorScene>("ColorScene");
 		scenesWindow.RegisterScene<scene::TextureScene>("TextureScene");
+		scenesWindow.RegisterScene<scene::ModelScene>("ModelScene");
 
 		window1->RegisterGUIWindow(scenesWindow);
 		window2->RegisterGUIWindow(scenesWindow);
