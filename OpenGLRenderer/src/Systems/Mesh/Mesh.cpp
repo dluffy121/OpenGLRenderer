@@ -46,7 +46,6 @@ void Mesh::LoadMesh(const std::string& path)
 	if (path.empty())
 		return;
 
-
 	Assimp::Importer importer;
 
 	const aiScene* scene = importer.ReadFile(path.c_str(), ASSIMP_LOAD_FLAGS);
@@ -75,6 +74,16 @@ void Mesh::InitMesh(const aiScene* scene, const std::string& path)
 	m_Indices.reserve(m_IndexCount);
 
 	InitAllSubMeshes(scene);
+
+	m_VAO = new VertexArray();
+	m_VAO->Bind();
+	m_vertexVB = new VertexBuffer(m_VertexCount * sizeof(Vertex));
+	m_vertexVB->Bind();
+	m_indexBuffer = new IndexBuffer(&m_Indices[0], GL_UNSIGNED_INT, m_IndexCount);
+	m_indexBuffer->Bind();
+	m_VBLayout = new VertexBufferLayout();
+	m_VBLayout->Push<Vertex>(m_vertexVB->Id, 1);
+	m_VBLayout->Bind();
 
 	InitMaterials(scene, path);
 }
@@ -174,6 +183,9 @@ void Mesh::InitMaterials(const aiScene* scene, const std::string& path)
 
 void Mesh::Render()
 {
+	m_VAO->Bind();
+	m_Shader->Bind();
+
 	auto window = WindowManager::getInstance()->GetCurrentWindow();
 	glm::mat4 mvp = window->GetCamera().GetProjectionMatrix() * window->GetCamera().GetViewMatrix() * gameVastu->m_transform->GetTransformMatrix();
 
@@ -188,6 +200,10 @@ void Mesh::Render()
 		vertices[i].Position.w = position.w;
 	}
 
+	m_vertexVB->Bind();
+
+	GLLog(glBufferSubData(GL_ARRAY_BUFFER, 0, m_VertexCount * sizeof(Vertex), &vertices[0]));
+
 	for (size_t i = 0; i < m_SubMeshCount; i++)
 	{
 		unsigned int materialIndex = m_SubMeshes[i].MaterialIndex;
@@ -196,16 +212,14 @@ void Mesh::Render()
 
 		if (m_Textures[materialIndex])
 			m_Textures[materialIndex]->BindToUnit(0);
-	
-		window->GetBatchRenderer()->Draw(
-			*m_Shader,
-			&vertices[m_SubMeshes[i].BaseVertex],
-			m_SubMeshes[i].IndexCount,
-			&m_Indices[m_SubMeshes[i].BaseIndex],
-			m_SubMeshes[i].IndexCount,
-			false
-		);
+
+		auto startIndex = sizeof(unsigned int) * m_SubMeshes[i].BaseIndex;	// since IndexBuffer is already populated, we just provide starting offset
+
+		GLLog(glDrawElementsBaseVertex(GL_TRIANGLES, m_SubMeshes[i].IndexCount, GL_UNSIGNED_INT, (void*)startIndex, m_SubMeshes[i].BaseVertex));
 	}
+
+	m_Shader->UnBind();
+	m_VAO->UnBind();
 }
 
 void Mesh::OnInspectorGUI()

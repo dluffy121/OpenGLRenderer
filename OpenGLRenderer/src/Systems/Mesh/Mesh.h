@@ -24,6 +24,11 @@ public:
 	std::string MeshPath;
 
 private:
+	core::gl::VertexArray* m_VAO;
+	core::gl::VertexBuffer* m_vertexVB;
+	core::gl::IndexBuffer* m_indexBuffer;
+	core::gl::VertexBufferLayout* m_VBLayout;
+
 	unsigned int m_VertexCount;
 	std::vector<core::Vertex> m_Vertices;
 	unsigned int m_IndexCount;
