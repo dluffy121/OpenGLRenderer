@@ -10,6 +10,7 @@
 #include <Math/Math.h>
 #include <BatchRenderer/BatchRenderer.h>
 #include <Camera/CameraManager.h>
+#include <Light/LightingManager.h>
 
 class GameVastu;
 class Component;
@@ -144,4 +145,15 @@ public:
 	inline BatchRenderer*& GetBatchRenderer() { return m_BatchRenderer; }
 
 #pragma endregion
+
+#pragma region Light
+
+private:
+	LightingManager* m_LightingManager;
+
+public:
+	inline LightingManager& GetLightingManager() { return *m_LightingManager; }
+
+#pragma endregion
+
 };

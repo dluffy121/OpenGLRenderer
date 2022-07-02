@@ -16,6 +16,7 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 	m_Width(width),
 	m_Height(height),
 	m_CameraManager(new CameraManager()),
+	m_LightingManager(new LightingManager()),
 	SelectedGameVastu(NULL)
 {
 	m_GLFWWindow = OpenGLHelper::CreateWindow(width, height, m_WindowId, sharedWindow);
@@ -50,6 +51,7 @@ Window::~Window()
 
 	delete m_BatchRenderer;
 	delete m_CameraManager;
+	delete m_LightingManager;
 
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();

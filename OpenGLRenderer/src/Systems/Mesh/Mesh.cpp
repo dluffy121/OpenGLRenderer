@@ -9,9 +9,10 @@
 using namespace core;
 using namespace core::gl;
 
-Mesh::Mesh(const std::string& path) :
+Mesh::Mesh(const std::string& path, unsigned int loadFlags) :
 	MeshPath(path),
-	m_TextureCount(0),
+	m_LoadFlags(loadFlags),
+	//m_TextureCount(0),
 	m_SubMeshCount(0)
 {}
 
@@ -28,14 +29,19 @@ void Mesh::Awake()
 void Mesh::Clear()
 {
 	m_SubMeshCount = 0;
-	m_TextureCount = 0;
+	m_MaterialCount = 0;
 
-	for (size_t i = 0; i < m_TextureCount; i++)
-		delete m_Textures[i];
+	delete m_VertexBuffer;
+	delete m_IndexBuffer;
+	delete m_VBLayout;
+	delete m_VAO;
+
+	for (size_t i = 0; i < m_MaterialCount; i++)
+		delete m_Materials[i];
 
 	m_Vertices.clear();
 	m_Indices.clear();
-	m_Textures.clear();
+	m_Materials.clear();
 	m_SubMeshes.clear();
 }
 
@@ -48,7 +54,7 @@ void Mesh::LoadMesh(const std::string& path)
 
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(path.c_str(), ASSIMP_LOAD_FLAGS);
+	const aiScene* scene = importer.ReadFile(path.c_str(), m_LoadFlags);
 
 	if (!scene)
 		Log("Unable to load Mesh from path: " << path);
@@ -59,14 +65,18 @@ void Mesh::LoadMesh(const std::string& path)
 void Mesh::SetShader(Shader& shader)
 {
 	m_Shader = &shader;
+	m_Shader->Bind();
+	m_Shader->SetUniform1i("u_DiffuseTexture", 0);
+	m_Shader->SetUniform1i("u_SpecularExponent", 1);
+	m_Shader->UnBind();
 }
 
 void Mesh::InitMesh(const aiScene* scene, const std::string& path)
 {
 	m_SubMeshCount = scene->mNumMeshes;
-	m_TextureCount = scene->mNumMaterials;
+	m_MaterialCount = scene->mNumMaterials;
 	m_SubMeshes.resize(m_SubMeshCount);
-	m_Textures.resize(m_TextureCount);
+	m_Materials.resize(m_MaterialCount);
 
 	InitSubMeshData(scene);
 
@@ -77,12 +87,12 @@ void Mesh::InitMesh(const aiScene* scene, const std::string& path)
 
 	m_VAO = new VertexArray();
 	m_VAO->Bind();
-	m_vertexVB = new VertexBuffer(m_VertexCount * sizeof(Vertex));
-	m_vertexVB->Bind();
-	m_indexBuffer = new IndexBuffer(&m_Indices[0], GL_UNSIGNED_INT, m_IndexCount);
-	m_indexBuffer->Bind();
+	m_VertexBuffer = new VertexBuffer(m_VertexCount * sizeof(Vertex));
+	m_VertexBuffer->Bind();
+	m_IndexBuffer = new IndexBuffer(&m_Indices[0], GL_UNSIGNED_INT, m_IndexCount);
+	m_IndexBuffer->Bind();
 	m_VBLayout = new VertexBufferLayout();
-	m_VBLayout->Push<Vertex>(m_vertexVB->Id, 1);
+	m_VBLayout->Push<Vertex>(m_VertexBuffer->Id, 1);
 	m_VBLayout->Bind();
 
 	InitMaterials(scene, path);
@@ -117,18 +127,19 @@ void Mesh::InitSubMesh(const aiMesh* mesh)
 	const aiVector3D zeroV3D(0.0f, 0.0f, 0.0f);
 
 	// Vertices Populate
-	size_t vertices = mesh->mNumVertices;
-	for (size_t i = 0; i < vertices; i++)
+	unsigned int vertices = mesh->mNumVertices;
+	for (unsigned int i = 0; i < vertices; i++)
 	{
 		const auto pos = mesh->mVertices[i];
-		const auto normal = mesh->mNormals[i];
+		const auto normal = mesh->mNormals ? mesh->mNormals[i] : aiVector3D(0.0f, 1.0f, 0.0f);
 		const auto texCoord = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][i] : zeroV3D;
 
 		m_Vertices.push_back({
 				{ pos.x, pos.y, pos.z },
 				{ 1.0f, 1.0f, 1.0f, 1.0f },
+				{ },
 				{ texCoord.x, texCoord.y },
-				1,
+				0,
 				{ normal.x, normal.y, normal.z }
 			});
 	}
@@ -156,28 +167,87 @@ void Mesh::InitMaterials(const aiScene* scene, const std::string& path)
 
 	for (size_t i = 0; i < materials; i++)
 	{
-		const aiMaterial* material = scene->mMaterials[i];
+		const aiMaterial* aiMaterial = scene->mMaterials[i];
 
-		m_Textures[i] = NULL;
+		m_Materials[i] = new Material();
 
-		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+		LoadDiffuseTexture(dir, aiMaterial, i);
+
+		LoadSpecularTexture(dir, aiMaterial, i);
+
+		LoadColors(aiMaterial, i);
+	}
+}
+
+void Mesh::LoadDiffuseTexture(const std::string& dir, const aiMaterial* aiMaterial, unsigned int index)
+{
+	m_Materials[index]->m_DiffuseTexture = NULL;
+
+	if (aiMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+	{
+		aiString aiTexPath;
+
+		if (aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &aiTexPath) == aiReturn_SUCCESS)
 		{
-			aiString aiTexPath;
+			std::string texPath(aiTexPath.data);
 
-			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &aiTexPath) == aiReturn_SUCCESS)
-			{
-				std::string texPath(aiTexPath.data);
+			if (texPath.substr(0, 2) == ".\\")
+				texPath = texPath.substr(2, texPath.size() - 2);
 
-				if (texPath.substr(0, 2) == ".\\")
-					texPath = texPath.substr(2, texPath.size() - 2);
+			texPath = dir + "/" + texPath;
 
-				texPath = dir + "/" + texPath;
+			m_Materials[index]->m_DiffuseTexture = new Texture(texPath);
 
-				m_Textures[i] = new Texture(texPath);
-
-				// Need to add load error check
-			}
+			// Need to add load error check
 		}
+	}
+}
+
+void Mesh::LoadSpecularTexture(const std::string& dir, const aiMaterial* aiMaterial, unsigned int index)
+{
+	m_Materials[index]->m_SpecularExponent = NULL;
+
+	if (aiMaterial->GetTextureCount(aiTextureType_SHININESS) > 0)
+	{
+		aiString aiTexPath;
+
+		if (aiMaterial->GetTexture(aiTextureType_SHININESS, 0, &aiTexPath) == aiReturn_SUCCESS)
+		{
+			std::string texPath(aiTexPath.data);
+
+			if (texPath.substr(0, 2) == ".\\")
+				texPath = texPath.substr(2, texPath.size() - 2);
+
+			texPath = dir + "/" + texPath;
+
+			m_Materials[index]->m_SpecularExponent = new Texture(texPath);
+
+			// Need to add load error check
+		}
+	}
+}
+
+void Mesh::LoadColors(const aiMaterial* aiMaterial, unsigned int index)
+{
+	aiColor3D aiAmbientColor;
+
+	if (aiMaterial->Get(AI_MATKEY_COLOR_AMBIENT, aiAmbientColor) == aiReturn_SUCCESS)
+	{
+		m_Materials[index]->m_AmbientColor = { aiAmbientColor.r, aiAmbientColor.g, aiAmbientColor.b };
+	}
+
+	aiColor3D aiDiffuseColor;
+
+	if (aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, aiDiffuseColor) == aiReturn_SUCCESS)
+	{
+		m_Materials[index]->m_DiffuseColor = { aiDiffuseColor.r, aiDiffuseColor.g, aiDiffuseColor.b };
+	}
+
+	aiColor3D aiSpecularColor;
+
+	if (aiMaterial->Get(AI_MATKEY_COLOR_SPECULAR, aiDiffuseColor) == aiReturn_SUCCESS)
+	{
+		m_Materials[index]->m_SpecularColor = { aiSpecularColor.r, aiSpecularColor.g, aiSpecularColor.b };
 	}
 }
 
@@ -187,31 +257,42 @@ void Mesh::Render()
 	m_Shader->Bind();
 
 	auto window = WindowManager::getInstance()->GetCurrentWindow();
-	glm::mat4 mvp = window->GetCamera().GetProjectionMatrix() * window->GetCamera().GetViewMatrix() * gameVastu->m_transform->GetTransformMatrix();
+	auto camera = window->GetCameraManager().GetCamera();
+	glm::mat4 mvp = camera->GetProjectionMatrix() * camera->GetViewMatrix() * gameVastu->m_transform->GetTransformMatrix();
+
+	window->GetLightingManager().UpdateShaderLightData(*m_Shader, *camera->GetGameVastu()->m_transform, *gameVastu->m_transform);
 
 	std::vector<Vertex> vertices = m_Vertices;
 	for (size_t i = 0; i < m_VertexCount; i++)
 	{
-		glm::vec4 position(vertices[i].Position.x, vertices[i].Position.y, vertices[i].Position.z, 1.0f);
-		position = mvp * position;
-		vertices[i].Position.x = position.x;
-		vertices[i].Position.y = position.y;
-		vertices[i].Position.z = position.z;
-		vertices[i].Position.w = position.w;
+		glm::vec4 pixelPosition(vertices[i].Position.x, vertices[i].Position.y, vertices[i].Position.z, 1.0f);
+		pixelPosition = mvp * pixelPosition;
+		vertices[i].PixelPosition.x = pixelPosition.x;
+		vertices[i].PixelPosition.y = pixelPosition.y;
+		vertices[i].PixelPosition.z = pixelPosition.z;
+		vertices[i].PixelPosition.w = pixelPosition.w;
 	}
 
-	m_vertexVB->Bind();
-
+	m_VertexBuffer->Bind();
 	GLLog(glBufferSubData(GL_ARRAY_BUFFER, 0, m_VertexCount * sizeof(Vertex), &vertices[0]));
 
 	for (size_t i = 0; i < m_SubMeshCount; i++)
 	{
 		unsigned int materialIndex = m_SubMeshes[i].MaterialIndex;
 
-		assert(materialIndex < m_TextureCount);
+		assert(materialIndex < m_MaterialCount);
 
-		if (m_Textures[materialIndex])
-			m_Textures[materialIndex]->BindToUnit(0);
+		if (m_Materials[materialIndex]->m_DiffuseTexture)
+			m_Materials[materialIndex]->m_DiffuseTexture->BindToUnit(0);
+		if (m_Materials[materialIndex]->m_SpecularExponent)
+			m_Materials[materialIndex]->m_SpecularExponent->BindToUnit(1);
+
+		auto ambientColor = m_Materials[materialIndex]->m_AmbientColor;
+		m_Shader->SetUniform3f("u_Material.ambientColor", ambientColor.x, ambientColor.y, ambientColor.z);
+		auto diffuseColor = m_Materials[materialIndex]->m_DiffuseColor;
+		m_Shader->SetUniform3f("u_Material.diffuseColor", diffuseColor.x, diffuseColor.y, diffuseColor.z);
+		auto specularColor = m_Materials[materialIndex]->m_SpecularColor;
+		m_Shader->SetUniform3f("u_Material.specularColor", specularColor.x, specularColor.y, specularColor.z);
 
 		auto startIndex = sizeof(unsigned int) * m_SubMeshes[i].BaseIndex;	// since IndexBuffer is already populated, we just provide starting offset
 
@@ -247,15 +328,44 @@ void Mesh::OnInspectorGUI()
 		ImGui::Text(m_Shader->Path.c_str());
 	}
 
-	if (ImGui::CollapsingHeader("Texture Info"))
+	if (ImGui::CollapsingHeader("Material Info"))
 	{
-		for (size_t i = 0; i < m_TextureCount; i++)
+		ImGui::Indent();
+		for (size_t i = 0; i < m_MaterialCount; i++)
 		{
-			std::string str = std::to_string(i) + ". ";
-			if (m_Textures[i])
-				str = str + m_Textures[i]->FileName;
-			ImGui::Text(str.c_str());
+			std::string header = "Material " + std::to_string(i);
+			if (ImGui::CollapsingHeader(header.c_str()))
+			{
+				ImGui::PushID(i);
+
+				Material*& matrial = m_Materials[i];
+
+				ImGui::ColorEdit3("Ambient Color", matrial->m_AmbientColor);
+				ImGui::ColorEdit3("Diffuse Color", matrial->m_DiffuseColor);
+				ImGui::ColorEdit3("Specular Color", matrial->m_SpecularColor);
+
+				if (m_Materials[i]->m_DiffuseTexture)
+				{
+					ImGui::Text("Diffuse Texture: ");
+					ImGui::Indent();
+					ImGui::Text(matrial->m_DiffuseTexture->FileName.c_str());
+					ImGui::Text(matrial->m_DiffuseTexture->FilePath.c_str());
+					ImGui::Unindent();
+				}
+
+				if (m_Materials[i]->m_SpecularExponent)
+				{
+					ImGui::Text("Specular Exponent Texture: ");
+					ImGui::Indent();
+					ImGui::Text(matrial->m_SpecularExponent->FileName.c_str());
+					ImGui::Text(matrial->m_SpecularExponent->FilePath.c_str());
+					ImGui::Unindent();
+				}
+
+				ImGui::PopID();
+			}
 		}
+		ImGui::Unindent();
 	}
 
 	if (ImGui::CollapsingHeader("Sub-Meshes Info"))
@@ -281,10 +391,8 @@ void Mesh::OnInspectorGUI()
 
 	if (ImGui::CollapsingHeader("Vertices"))
 	{
-		if (ImGui::BeginTable("Vertices", 4))
+		if (ImGui::BeginTable("Vertices", 3))
 		{
-			ImGui::TableNextColumn();
-			ImGui::TableHeader("#");
 			ImGui::TableNextColumn();
 			ImGui::TableHeader("X");
 			ImGui::TableNextColumn();
@@ -296,8 +404,6 @@ void Mesh::OnInspectorGUI()
 				ImGui::PushID(i);
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
-				ImGui::Text(std::to_string(i).c_str());
-				ImGui::TableNextColumn();
 				ImGui::DragFloat("X", &m_Vertices[i].Position.x);
 				ImGui::TableNextColumn();
 				ImGui::DragFloat("Y", &m_Vertices[i].Position.y);
@@ -307,5 +413,50 @@ void Mesh::OnInspectorGUI()
 			}
 		}
 		ImGui::EndTable();
+	}
+
+	if (ImGui::CollapsingHeader("Colors"))
+	{
+		for (size_t i = 0; i < m_VertexCount; i++)
+		{
+			float color[4] = { m_Vertices[i].Color.x, m_Vertices[i].Color.y, m_Vertices[i].Color.z, m_Vertices[i].Color.w };
+			if (ImGui::ColorEdit4(std::to_string(i).c_str(), color))
+			{
+				m_Vertices[i].Color.x = color[0];
+				m_Vertices[i].Color.y = color[1];
+				m_Vertices[i].Color.z = color[2];
+				m_Vertices[i].Color.w = color[3];
+			}
+		}
+	}
+
+	if (ImGui::CollapsingHeader("Texture Coords"))
+	{
+		if (ImGui::BeginTable("Texture Coords", 2))
+		{
+			ImGui::TableNextColumn();
+			ImGui::TableHeader("X");
+			ImGui::TableNextColumn();
+			ImGui::TableHeader("Y");
+			for (size_t i = 0; i < m_VertexCount; i++)
+			{
+				ImGui::PushID(i);
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("X", &m_Vertices[i].TexCoords.x, 0.01f, 0.0f, 1.0f);
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("Y", &m_Vertices[i].TexCoords.y, 0.01f, 0.0f, 1.0f);
+				ImGui::PopID();
+			}
+		}
+		ImGui::EndTable();
+	}
+
+	if (ImGui::CollapsingHeader("Texture Index"))
+	{
+		for (size_t i = 0; i < m_VertexCount; i++)
+		{
+			ImGui::DragInt(std::to_string(i).c_str(), &m_Vertices[i].TexID);
+		}
 	}
 }

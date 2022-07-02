@@ -1,0 +1,16 @@
+# Blender MTL File: 'wine_barrel_01_4k.blend'
+# Material Count: 1
+
+newmtl wine_barrel_01
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump textures\\wine_barrel_01_nor_gl_4k.exr
+map_Kd textures\\wine_barrel_01_diff_4k.jpg
+map_Ns textures\\wine_barrel_01_rough_4k.jpg
+refl textures\\wine_barrel_01_metal_4k.exr

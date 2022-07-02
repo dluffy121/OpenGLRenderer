@@ -8,11 +8,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <Logger/Logger.h>
 #include <Shader/ShaderManager.h>
-#include <Component/Camera/Camera.h>
-#include <Action.h>
-#include <Scene/Scene.h>
-#include <Scene/Scenes/ColorScene.h>
-#include <Scene/Scenes/TextureScene.h>
 #include <Window/WindowManager.h>
 #include <GUI/Scenes/ScenesWindow.h>
 #include <GUI/Inspector/InspectorWindow.h>
@@ -20,6 +15,7 @@
 #include <Scene/Scenes/ColorScene.h>
 #include <Scene/Scenes/TextureScene.h>
 #include <Scene/Scenes/ModelScene.h>
+#include <Scene/Scenes/LightScene.h>
 
 using namespace core;
 using namespace core::gl;
@@ -47,7 +43,7 @@ int main(void)
 		return -1;
 
 	Window* window1 = windowManager->GetWindowInstance("Main Window", 2000, 1000, window, globalFontAtlas);
-	Window* window2 = windowManager->GetWindowInstance("Second Window", 960, 480, window, globalFontAtlas);
+	//Window* window2 = windowManager->GetWindowInstance("Second Window", 960, 480, window, globalFontAtlas);
 
 	fprintf(stdout, "Status: Using OpenGL version %s\n", glGetString(GL_VERSION));
 
@@ -62,26 +58,28 @@ int main(void)
 		// 2			|	 0.5,  0.5,	|	1.0f, 1.0f,
 		// 3			|	-0.5,  0.5, |	0.0f, 1.0f
 
-		ShaderAsset shaderAsset1 = shaderManager->CreateShaderAsset("resources/shaders/Texture.shader");
 		ShaderAsset shaderAsset2 = shaderManager->CreateShaderAsset("resources/shaders/Color.shader");
+		ShaderAsset shaderAsset1 = shaderManager->CreateShaderAsset("resources/shaders/Texture.shader");
+		ShaderAsset shaderAsset3 = shaderManager->CreateShaderAsset("resources/shaders/SimpleLit.shader");
 
 		ScenesWindow scenesWindow;
 		scenesWindow.RegisterScene<scene::ColorScene>("ColorScene");
 		scenesWindow.RegisterScene<scene::TextureScene>("TextureScene");
 		scenesWindow.RegisterScene<scene::ModelScene>("ModelScene");
+		scenesWindow.RegisterScene<scene::LightScene>("LightScene");
 
 		window1->RegisterGUIWindow(scenesWindow);
-		window2->RegisterGUIWindow(scenesWindow);
+		//window2->RegisterGUIWindow(scenesWindow);
 
 		InspectorWindow inspectorWindow;
 
 		window1->RegisterGUIWindow(inspectorWindow);
-		window2->RegisterGUIWindow(inspectorWindow);
+		//window2->RegisterGUIWindow(inspectorWindow);
 
 		HeirarchyWindow heirarchyWindow;
 
 		window1->RegisterGUIWindow(heirarchyWindow);
-		window2->RegisterGUIWindow(heirarchyWindow);
+		//window2->RegisterGUIWindow(heirarchyWindow);
 
 		windowManager->Init();
 		windowManager->WindowLoop();
@@ -89,7 +87,7 @@ int main(void)
 	}
 
 	delete window1;
-	delete window2;
+	//delete window2;
 
 	OpenGLHelper::TerminateGLFW();
 
