@@ -17,6 +17,8 @@ namespace core
 		Vec2(float value) { x = y = value; }
 		Vec2(float x, float y) : x(x), y(y) {}
 
+		inline Vec2 Negate() { return { -x, -y }; }
+
 #pragma region Add
 		Vec2 operator + (const Vec2& v)
 		{
@@ -128,6 +130,8 @@ namespace core
 		Vec3(float value) { x = y = z = value; }
 		Vec3(float x, float y) : x(x), y(y), z(0) {}
 		Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
+
+		inline Vec3 Negate() { return { -x, -y, -z }; }
 
 #pragma region Add
 		Vec3 operator + (const Vec3& v)
@@ -249,6 +253,8 @@ namespace core
 		Vec4(float x, float y) : x(x), y(y), z(0), w(0) {}
 		Vec4(float x, float y, float z) : x(x), y(y), z(z), w(0) {}
 		Vec4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+
+		inline Vec4 Negate() { return { -x, -y, -z, -w }; }
 
 #pragma region Add
 		Vec4 operator + (const Vec4& v)
