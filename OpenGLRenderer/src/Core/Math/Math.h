@@ -378,7 +378,8 @@ namespace core
 
 	struct Vertex
 	{
-		Vec4 Position;
+		Vec3 Position;
+		Vec4 PixelPosition;
 		Vec4 Color;
 		Vec2 TexCoords;
 		int TexID;
