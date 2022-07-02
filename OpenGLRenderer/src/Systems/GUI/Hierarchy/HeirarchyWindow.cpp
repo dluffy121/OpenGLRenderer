@@ -34,8 +34,10 @@ void HeirarchyWindow::Draw(Window* window)
 					continue;
 				}
 
+				ImGui::PushID(1);
 				if (ImGui::Selectable(gameVastu->m_name.c_str(), false))
 					window->SelectedGameVastu = gameVastu;
+				ImGui::PopID();
 			}
 			ImGui::Unindent();
 		}
