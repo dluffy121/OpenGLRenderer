@@ -49,6 +49,16 @@ void Shader::SetUniform1f(const std::string& name, float value)
 	GLLog(glUniform1f(GetUniformLocation(name), value));
 }
 
+void Shader::SetUniform1fv(const std::string& name, float* value, unsigned int size)
+{
+	GLLog(glUniform1fv(GetUniformLocation(name), size, value));
+}
+
+void Shader::SetUniform3f(const std::string& name, float v0, float v1, float v2)
+{
+	GLLog(glUniform3f(GetUniformLocation(name), v0, v1, v2));
+}
+
 void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
 {
 	GLLog(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
