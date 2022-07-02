@@ -27,11 +27,7 @@ namespace scene
 
 		texture1 = new Texture("resources/textures/brickwall.png");
 
-		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/Texture.shader");
-		int samplers[2] = { 0, 1 };
-		shader->Bind();
-		shader->SetUniform1iv("u_Textures", samplers, 2);
-		shader->UnBind();
+		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/SimpleLit.shader");
 
 		modelVastu1 = CreateGameVastu();
 		modelVastu1->m_name = "Spider";
