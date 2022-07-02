@@ -9,6 +9,7 @@
 #include "../Scene/Scene.h"
 #include <Math/Math.h>
 #include <BatchRenderer/BatchRenderer.h>
+#include <Camera/CameraManager.h>
 
 class GameVastu;
 class Component;
@@ -83,13 +84,10 @@ private:
 #pragma region Camera
 
 private:
-	Camera* m_Camera;
+	CameraManager* m_CameraManager;
 
 public:
-	inline const Camera& GetCamera() const { return *m_Camera; }
-
-private:
-	bool FindAndSelectCamera();
+	inline CameraManager& GetCameraManager() const { return *m_CameraManager; }
 
 #pragma endregion
 

@@ -15,7 +15,7 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 	m_WindowId(rendererId),
 	m_Width(width),
 	m_Height(height),
-	m_Camera(NULL),
+	m_CameraManager(new CameraManager()),
 	SelectedGameVastu(NULL)
 {
 	m_GLFWWindow = OpenGLHelper::CreateWindow(width, height, m_WindowId, sharedWindow);
@@ -49,6 +49,7 @@ Window::~Window()
 		delete scene.second;
 
 	delete m_BatchRenderer;
+	delete m_CameraManager;
 
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -67,7 +68,7 @@ void Window::EndFrame()
 	m_ScrollOffset[0] = 0.0f; m_ScrollOffset[1] = 0.0f;
 }
 
-ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+ImVec4 clear_color = ImVec4(0.2f, 0.2f, 0.2f, 1.00f);
 
 void Window::Clear()
 {
@@ -90,7 +91,7 @@ void Window::Update()
 
 void Window::Render()
 {
-	if (!FindAndSelectCamera()) return;
+	if (!m_CameraManager->GetCamera()) return;
 
 	for (auto& component : m_Components)
 	{
@@ -264,28 +265,6 @@ void Window::CreateImGUIContext(ImFontAtlas* sharedFontAtlas)
 
 #pragma endregion
 
-#pragma region Camera
-
-bool Window::FindAndSelectCamera()
-{
-	if (m_Camera && m_Camera->enabled)
-		return true;
-
-	for (auto component : m_Components)
-	{
-		if (component->GetName() == CAMERA_TYPE_NAME)
-		{
-			m_Camera = dynamic_cast<Camera*>(component);
-			if (m_Camera->enabled)
-				return true;
-		}
-	}
-
-	return false;
-}
-
-#pragma endregion
-
 #pragma region Components
 
 void Window::RegisterComponent(Component& component)
@@ -304,9 +283,6 @@ void Window::UnRegisterComponent(Component& component)
 
 	if (size == 0)
 		return;
-
-	if (m_Camera && m_Camera->GetId() == component.GetId())
-		m_Camera = NULL;
 
 	for (size_t i = 0; i < size; ++i)
 	{
