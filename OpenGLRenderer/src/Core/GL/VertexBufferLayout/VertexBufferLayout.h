@@ -97,6 +97,7 @@ namespace core::gl
 		{
 			while (count--)
 			{
+				Push<Vec3>(id++, 1);
 				Push<Vec4>(id++, 1);
 				Push<Vec4>(id++, 1);
 				Push<Vec2>(id++, 1);
