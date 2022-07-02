@@ -145,6 +145,13 @@ void Transform::OnScaleUpdate(Vec3 delta)
 		callback(delta);
 }
 
+const glm::vec3 Transform::GetLocalPosition(const Transform& transform)
+{
+	glm::mat4 localMat = glm::inverse(m_TransformMatrix);
+	Vec3 worldPos = transform.GetPosition();
+	return glm::vec3(localMat * glm::vec4(worldPos.x, worldPos.y, worldPos.z, 1.0f));
+}
+
 void Transform::OnInspectorGUI()
 {
 	ImGui::Text("Tranform:");

@@ -41,6 +41,11 @@ public:
 	inline const glm::mat4& GetRotationMatrix() const { return m_RotationMatrix; };
 	inline const core::Vec3& GetScale() const { return m_Scale; };
 	inline const glm::mat4& GetTransformMatrix() const { return m_TransformMatrix; }
+	inline const glm::vec3 GetRight() { return glm::normalize(glm::vec3(m_RotationMatrix[0])); }
+	inline const glm::vec3 GetUp() { return glm::normalize(glm::vec3(m_RotationMatrix[1])); }
+	inline const glm::vec3 GetForward() { return glm::normalize(glm::vec3(m_RotationMatrix[2])); }
+
+ 	const glm::vec3 GetLocalPosition(const Transform& transform);
 
 	void OnInspectorGUI();
 
