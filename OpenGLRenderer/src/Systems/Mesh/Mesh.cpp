@@ -2,7 +2,7 @@
 #include <iostream>
 #include <Logger/Logger.h>
 #include <Window/WindowManager.h>
-#include <Component/Camera/Camera.h>
+#include <Camera/Camera.h>
 #include <GameVastu/GameVastu.h>
 #include <Path.h>
 

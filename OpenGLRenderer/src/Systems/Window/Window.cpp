@@ -1,6 +1,6 @@
 #include "Window.h"
 #include <GameVastu/GameVastuManager.h>
-#include <Component/Camera/Camera.h>
+#include <Camera/Camera.h>
 #include <GUI/GUIWindow.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <Logger/Logger.h>

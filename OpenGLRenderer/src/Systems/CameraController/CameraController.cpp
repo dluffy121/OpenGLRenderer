@@ -3,7 +3,7 @@
 
 CameraController::CameraController() :
 	m_MoveSpeed(0.1f),
-	m_RotateSpeed(1.0f),
+	m_RotateSpeed(5.0f),
 	m_delta(0.1f)
 {}
 
@@ -19,7 +19,9 @@ void CameraController::Update()
 	auto rot = transform->GetRotation();
 	auto rotMat = gameVastu->m_transform->GetRotationMatrix();
 	glm::vec3 right = glm::vec3(rotMat[0]);
+	right.y = 0.0f;
 	glm::vec3 up = glm::vec3(rotMat[1]);
+	up.z = 0;
 	glm::vec3 forward = glm::vec3(rotMat[2]);
 
 	bool alt = window->GetKeyPressed(GLFW_KEY_LEFT_ALT) || window->GetKeyPressed(GLFW_KEY_RIGHT_ALT);

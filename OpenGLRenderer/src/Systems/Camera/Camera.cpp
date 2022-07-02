@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "../../GameVastu/GameVastu.h"
+#include <GameVastu/GameVastu.h>
 #include <glm/gtx/string_cast.hpp>
 
 using namespace core;
@@ -18,7 +18,9 @@ Camera::Camera() :
 	m_fov(45.0f),
 	m_ProjectionMatrix(glm::mat4(1)),
 	m_ViewnMatrix(glm::mat4(1))
-{}
+{
+	WindowManager::getInstance()->GetCurrentWindow()->GetCameraManager().Subscribe(this);
+}
 
 Camera::Camera(float windowWidth, float windowHeight) :
 	m_ortho(true),
@@ -34,10 +36,14 @@ Camera::Camera(float windowWidth, float windowHeight) :
 	m_fov(45.0f),
 	m_ProjectionMatrix(glm::mat4(1)),
 	m_ViewnMatrix(glm::mat4(1))
-{}
+{
+	WindowManager::getInstance()->GetCurrentWindow()->GetCameraManager().Subscribe(this);
+}
 
 Camera::~Camera()
-{}
+{
+	WindowManager::getInstance()->GetCurrentWindow()->GetCameraManager().UnSubscribe(this);
+}
 
 void Camera::Awake()
 {

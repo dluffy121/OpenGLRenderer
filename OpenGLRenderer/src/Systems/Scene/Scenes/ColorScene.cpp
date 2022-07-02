@@ -2,9 +2,9 @@
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <Shader/ShaderManager.h>
-#include <Component/Renderer/Renderer.h>
-#include <Component/Camera/Camera.h>
-#include <Component/CameraController/CameraController.h>
+#include <Renderer/Renderer.h>
+#include <Camera/Camera.h>
+#include <CameraController/CameraController.h>
 #include <GameVastu/GameVastu.h>
 
 using namespace core;

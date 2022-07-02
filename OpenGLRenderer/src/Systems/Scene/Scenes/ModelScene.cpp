@@ -2,9 +2,9 @@
 #include <Window/WindowManager.h>
 #include <Shader/ShaderManager.h>
 #include <GameVastu/GameVastu.h>
-#include <Component/Camera/Camera.h>
-#include <Component/CameraController/CameraController.h>
-#include <Component/Renderer/Renderer.h>
+#include <Camera/Camera.h>
+#include <CameraController/CameraController.h>
+#include <Renderer/Renderer.h>
 
 using namespace core;
 using namespace core::gl;
@@ -117,6 +117,8 @@ namespace scene
 
 	ModelScene::~ModelScene()
 	{
+		ShaderManager::getInstance()->UnLoadShader(shader);
+
 		if (texture1) delete texture1;
 
 		delete[] vertices;

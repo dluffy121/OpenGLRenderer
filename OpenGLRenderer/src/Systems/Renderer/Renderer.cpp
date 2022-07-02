@@ -1,7 +1,7 @@
 #include "Renderer.h"
 #include <GameVastu/GameVastu.h>
 #include <Logger/Logger.h>
-#include <Component/Camera/Camera.h>
+#include <Camera/Camera.h>
 
 using namespace core;
 using namespace core::gl;
@@ -70,24 +70,23 @@ void Renderer::Render()
 	BindTextures();
 
 	auto window = WindowManager::getInstance()->GetCurrentWindow();
+	auto camera = window->GetCameraManager().GetCamera();
 
-	glm::mat4 mvp = window->GetCamera().GetProjectionMatrix() * window->GetCamera().GetViewMatrix() * gameVastu->m_transform->GetTransformMatrix();
+	glm::mat4 mvp = camera->GetProjectionMatrix() * camera->GetViewMatrix() * gameVastu->m_transform->GetTransformMatrix();
 
 	_Vertices = CopyArray(m_Vertices, m_VertexCount);
 
 	for (size_t i = 0; i < m_VertexCount; i++)
 	{
-		glm::vec4 position(m_Vertices[i].Position.x, m_Vertices[i].Position.y, m_Vertices[i].Position.z, 1.0f);
-		position = mvp * position;
-		_Vertices[i].Position.x = position.x;
-		_Vertices[i].Position.y = position.y;
-		_Vertices[i].Position.z = position.z;
-		_Vertices[i].Position.w = position.w;
+		glm::vec4 pixelPosition(m_Vertices[i].Position.x, m_Vertices[i].Position.y, m_Vertices[i].Position.z, 1.0f);
+		pixelPosition = mvp * pixelPosition;
+		_Vertices[i].PixelPosition.x = pixelPosition.x;
+		_Vertices[i].PixelPosition.y = pixelPosition.y;
+		_Vertices[i].PixelPosition.z = pixelPosition.z;
+		_Vertices[i].PixelPosition.w = pixelPosition.w;
 	}
 
-	_Indices = CopyArray(m_Indices, m_IndexCount);
-
-	window->GetBatchRenderer()->Draw(*m_Shader, _Vertices, m_VertexCount, _Indices, m_IndexCount);
+	window->GetBatchRenderer()->Draw(*m_Shader, _Vertices, m_VertexCount, m_Indices, m_IndexCount);
 
 	delete[] _Vertices;
 	delete[] _Indices;
