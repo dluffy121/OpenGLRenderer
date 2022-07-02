@@ -17,11 +17,16 @@ static std::string GetParentDirectory(const std::string& path)
 
 static std::string GetFileName(const std::string& path)
 {
-	std::string::size_type slashIndex = path.find_last_of('/');
+	std::string::size_type fslashIndex = path.find_last_of('/');
+	std::string::size_type bslashIndex = path.find_last_of('\\');
 
-	if (slashIndex == std::string::npos)
+	if (fslashIndex == std::string::npos
+		&& bslashIndex == std::string::npos)
 		return path;
 
-	slashIndex += 1;
-	return path.substr(slashIndex, path.size() - slashIndex);
+	if (fslashIndex < bslashIndex)
+		fslashIndex = bslashIndex;
+
+	fslashIndex += 1;
+	return path.substr(fslashIndex, path.size() - fslashIndex);
 }
