@@ -36,7 +36,7 @@ Camera* CameraManager::GetCamera()
 			continue;
 		}
 
-		if ((*i)->enabled)
+		if ((*i)->GetEnabled())
 			return *i;
 	}
 }

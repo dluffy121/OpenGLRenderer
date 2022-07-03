@@ -15,6 +15,14 @@ Component::~Component()
 	WindowManager::getInstance()->GetCurrentWindow()->UnRegisterComponent(*this);
 }
 
+void Component::SetEnabled(bool value)
+{
+	if (enabled == value) return;
+
+	enabled = value;
+	enabled ? _OnEnable() : _OnDisable();
+}
+
 void Component::_Awake()
 {
 	Awake();
@@ -34,6 +42,16 @@ void Component::_Render()
 	Render();
 }
 
+void Component::_OnEnable()
+{
+	OnEnable();
+}
+
+void Component::_OnDisable()
+{
+	OnDisable();
+}
+
 void Component::_OnGUI()
 {
 	if (!enabled) return;
@@ -44,7 +62,10 @@ void Component::_OnGUI()
 void Component::_OnInspectorGUI()
 {
 	ImGui::PushID(Id);
-	ImGui::Checkbox(name.c_str(), &enabled);
+
+	bool value = enabled;
+	if (ImGui::Checkbox(name.c_str(), &value))
+		SetEnabled(value);
 
 	ImGui::Spacing();
 
