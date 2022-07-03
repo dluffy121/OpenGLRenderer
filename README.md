@@ -2,7 +2,7 @@
 
 A Learning project to not only learn about the OpenGL Graphics Library but also learn C++ Language
 
-## Capabilities
+## Features
 
 1. Multiple GLFW Windows
 2. GLSL Shader programming
@@ -10,13 +10,15 @@ A Learning project to not only learn about the OpenGL Graphics Library but also 
 4. Creating <b>GameVastu</b>s (GameObjects)
 5. Attaching Components to it, like
 
-    - Renderer \- uses Vertex Coordinates, Color, Texture Coordinates, Texture Samplers, and Triangle Indices to render objects
     - Camera \- Orthographic and Perspective Camera support with near and far clipping planes
+    - Renderer \- uses Vertex Coordinates, Color, Texture Coordinates, Texture Samplers, and Triangle Indices to render objects
+    - Mesh Renderer \- uses obj and simple texture formats(jpg, png) to render meshes
+    - Light \- Basic Directional lights based on Phong Lighting model
 
 6. Using Transforms to change Position, Rotation and Scale of GameVastus
 7. Scene support to create and load multiple scenes
 8. GUI Windows to easily inspect, modify, and load scenes (GUIWindows - Scenes, Inspector, Hierarchy)
-10. Batch Rendering for multiple objects using same Shader (Partial WIP - only supports single Batch)
+<!-- 10. Batch Rendering for multiple objects using same Shader (Partial WIP - only supports single Batch) -->
 
 
 <!-- ## Examples -->
