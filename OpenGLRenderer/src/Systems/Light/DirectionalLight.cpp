@@ -35,8 +35,6 @@ Vec3 DirectionalLight::GetDirection(Transform& vastuTransform)
 
 void DirectionalLight::UpdateShaderLightData(unsigned int index, Shader& shader, Transform& cameraTransform, Transform& vastuTransform)
 {
-	if (!enabled) return;
-
 	std::string uniform = "u_DirLights[" + std::to_string(index) + "]";
 
 	std::string uniformColor = uniform + ".color";
@@ -58,21 +56,25 @@ void DirectionalLight::UpdateShaderLightData(unsigned int index, Shader& shader,
 	shader.SetUniform3f("u_CameraLocalPosition", cameraLocalPos.x, cameraLocalPos.y, cameraLocalPos.z);
 }
 
+void DirectionalLight::OnEnable()
+{
+	WindowManager::getInstance()->GetCurrentWindow()->GetLightingManager().Subscribe<DirectionalLight>(this);
+}
+
 void DirectionalLight::OnDisable()
 {
-
+	WindowManager::getInstance()->GetCurrentWindow()->GetLightingManager().UnSubscribe<DirectionalLight>(this);
 }
 
 void DirectionalLight::OnInspectorGUI()
 {
-	Dirty |= ImGui::DragFloat("Ambient Intensity", &m_Intensity, 0.01f, 0.0f, 100.0f);
-	Dirty |= ImGui::DragFloat("Diffuse Intensity", &m_DiffuseIntensity, 0.01f, 0.0f, 100.0f);
-	Dirty |= ImGui::DragFloat("Specular Intensity", &m_SpecularIntensity, 0.01f, 0.0f, 100.0f);
+	ImGui::DragFloat("Ambient Intensity", &m_Intensity, 0.01f, 0.0f, 100.0f);
+	ImGui::DragFloat("Diffuse Intensity", &m_DiffuseIntensity, 0.01f, 0.0f, 100.0f);
+	ImGui::DragFloat("Specular Intensity", &m_SpecularIntensity, 0.01f, 0.0f, 100.0f);
 
 	float color[3] { m_Color.x, m_Color.y, m_Color.z };
 	if (ImGui::ColorEdit3("Ambient Color", color))
 	{
-		Dirty |= true;
 		m_Color.x = color[0];
 		m_Color.y = color[1];
 		m_Color.z = color[2];

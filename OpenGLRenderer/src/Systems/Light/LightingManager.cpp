@@ -40,9 +40,11 @@ void LightingManager::UnSubscribe<DirectionalLight>(DirectionalLight* light)
 			auto tmp = *i;
 			*i = *(m_DirectionalLights.end() - 1);
 			*(m_DirectionalLights.end() - 1) = tmp;
-			return;
+			break;
 		}
 	}
+
+	m_DirectionalLights.erase(m_DirectionalLights.end() - 1);
 }
 
 template<>
@@ -55,13 +57,17 @@ void LightingManager::UnSubscribe<PointLight>(PointLight* light)
 			auto tmp = *i;
 			*i = *(m_PointLights.end() - 1);
 			*(m_PointLights.end() - 1) = tmp;
-			return;
+			break;
 		}
 	}
+
+	m_PointLights.erase(m_PointLights.end() - 1);
 }
 
 void LightingManager::UpdateShaderLightData(Shader& shader, Transform& cameraTransform, Transform& vastuTransform)
 {
+	shader.SetUniform1i("u_ActiveDirLightsCount", m_DirectionalLights.size());
+
 	for (unsigned int i = 0; i < m_DirectionalLights.size(); i++)
 	{
 		Light* light = m_DirectionalLights[i];

@@ -20,5 +20,6 @@ private:
 	virtual void UpdateShaderLightData(unsigned int index, Shader& shader, Transform& cameraTransform, Transform& vastuTransform) override;
 
 	void OnDisable() override;
+	void OnEnable() override;
 	void OnInspectorGUI() override;
 };

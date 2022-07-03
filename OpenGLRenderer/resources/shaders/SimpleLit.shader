@@ -55,6 +55,7 @@ in vec3 v_LocalPosition;
 
 uniform Material u_Material;
 uniform DirectionalLight u_DirLights[MAX_DIRECTIONAL_LIGHTS];
+uniform int u_ActiveDirLightsCount;
 uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_SpecularExponent;
 uniform vec3 u_CameraLocalPosition;
@@ -63,7 +64,7 @@ vec4 TotalAmbientColorFromDirLights()
 {
 	vec4 ambientColor = vec4(0, 0, 0, 0);
 
-	for (int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
+	for (int i = 0; i < u_ActiveDirLightsCount; i++)
 	{
 		ambientColor +=
 			vec4(u_DirLights[i].color, 1.0f) *
@@ -81,7 +82,7 @@ void TotalDiffuseAndSpecularColorFromDirLights(
 	diffuseColor = vec4(0, 0, 0, 0);
 	specularColor = vec4(0, 0, 0, 0);
 
-	for (int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
+	for (int i = 0; i < u_ActiveDirLightsCount; i++)
 	{
 		// Dot Product of Normal and light Direction gives Diffuse Factor
 		// need to reverse Direction since we know the reflection vector is opposite of Light Vector and has same angle from normal
