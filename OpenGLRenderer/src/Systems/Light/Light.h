@@ -15,17 +15,19 @@ class Light : public Component
 {
 public:
 	const LightType Type;
+	core::Vec3 m_Color = core::Vec3(1.0f);
+	float m_AmbientIntensity;
+	float m_DiffuseIntensity;
+	float m_SpecularIntensity;
 
 public:
-	core::Vec3 m_Color = core::Vec3(1.0f);
-	float m_Intensity = 1.0f;
-	bool Dirty;
-
 	Light(LightType type);
-	Light(LightType type, core::Vec3 color, float intensity);
 	~Light();
 
-	virtual void UpdateShaderLightData(unsigned int index, Shader& shader, Transform& cameraTransform, Transform& vastuTransform) {}
+	virtual void UpdateShaderLightData(unsigned int index, Shader& shader, Transform& vastuTransform) {}
+
+protected:
+	virtual void OnInspectorGUI() override;
 };
 
 template<class T>

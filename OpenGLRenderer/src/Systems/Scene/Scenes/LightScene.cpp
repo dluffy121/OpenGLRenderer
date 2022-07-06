@@ -19,27 +19,26 @@ namespace scene
 		cameraVastu->AddComponent(*camera);
 		CameraController* cameraController = new CameraController();
 		cameraVastu->AddComponent(*cameraController);
-		cameraVastu->m_transform->SetPosition({ 0.1f, 3.0f, -6.f });
+		cameraVastu->m_transform->SetPosition({ 0.0f, 1.5f, -6.f });
 		cameraVastu->m_transform->SetRotation({ 0.0f, 180.0f, 0.f });
 		camera->SetOrtho(false);
 
 		light1 = CreateGameVastu();
-		light1->m_name = "DirectionalLight1";
-		dirLight1 = new DirectionalLight();
-		light1->AddComponent(*dirLight1);
-		dirLight1->m_Color = { 1.0f, 1.0f, 1.0f };
-		dirLight1->m_Intensity = 0.0f;
-		auto light1Color = dirLight1->m_Color;
+		light1->m_name = "Directional Light";
+		dirLight = new DirectionalLight();
+		light1->AddComponent(*dirLight);
+		dirLight->m_Color = { 1.0f, 1.0f, 1.0f };
+		auto light1Color = dirLight->m_Color;
 		light1->m_transform->SetRotation({ 0.0f, 70.0f, 0.f });
 
 		light2 = CreateGameVastu();
-		light2->m_name = "DirectionalLight2";
-		dirLight2 = new DirectionalLight();
-		light2->AddComponent(*dirLight2);
-		dirLight2->m_Color = { 0.0f, 0.0f, 1.0f };
-		dirLight1->m_Intensity = 0.0f;
-		auto light2Color = dirLight2->m_Color;
-		light2->m_transform->SetRotation({ 0.0f, -70.0f, 0.f });
+		light2->m_name = "Point Light";
+		pointLight = new PointLight();
+		light2->AddComponent(*pointLight);
+		pointLight->m_Color = { 0.0f, 0.0f, 1.0f };
+		auto light2Color = pointLight->m_Color;
+		light2->m_transform->SetPosition({ 0.f, 0.f, -1.f });
+		light2->m_transform->SetRotation({ 0.0f, -90.0f, 0.f });
 
 		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/SimpleLit.shader");
 
@@ -66,7 +65,6 @@ namespace scene
 
 		DestroyGameVastu(mesh1Vastu);
 		DestroyGameVastu(mesh2Vastu);
-		DestroyGameVastu(mesh3Vastu);
 		DestroyGameVastu(cameraVastu);
 	}
 

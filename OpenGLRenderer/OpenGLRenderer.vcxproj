@@ -652,6 +652,7 @@
     <ClCompile Include="src\Systems\GameVastu\GameVastuManager.cpp" />
     <ClCompile Include="src\OpenGLRenderer.cpp" />
     <ClCompile Include="src\Systems\Light\LightingManager.cpp" />
+    <ClCompile Include="src\Systems\Light\PointLight.cpp" />
     <ClCompile Include="src\Systems\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.cpp" />
     <ClCompile Include="src\Systems\GUI\Inspector\InspectorWindow.cpp" />

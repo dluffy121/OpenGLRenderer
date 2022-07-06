@@ -1571,5 +1571,8 @@
     <ClCompile Include="src\Core\GL\Material\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Systems\Light\PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -28,6 +28,7 @@ void main()
 #version 460 core
 
 #define MAX_DIRECTIONAL_LIGHTS 50
+#define MAX_POINT_LIGHTS 50
 
 struct Material
 {
@@ -36,13 +37,32 @@ struct Material
 	vec3 specularColor;
 };
 
-struct DirectionalLight
+struct Attenuation
+{
+	float Constant;
+	float Linear;
+	float Exponent;
+};
+
+struct BaseLight
 {
 	vec3 color;
 	float ambientIntensity;
 	float diffuseIntensity;
 	float specularIntensity;
+};
+
+struct DirectionalLight
+{
+	BaseLight base;
 	vec3 direction;
+};
+
+struct PointLight
+{
+	BaseLight base;
+	vec3 localPos;
+	Attenuation atten;
 };
 
 out vec4 fragColor;
@@ -56,80 +76,91 @@ in vec3 v_LocalPosition;
 uniform Material u_Material;
 uniform DirectionalLight u_DirLights[MAX_DIRECTIONAL_LIGHTS];
 uniform int u_ActiveDirLightsCount;
+uniform PointLight u_PointLights[MAX_POINT_LIGHTS];
+uniform int u_ActivePointLightsCount;
 uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_SpecularExponent;
 uniform vec3 u_CameraLocalPosition;
 
-vec4 TotalAmbientColorFromDirLights()
+vec4 CalcBaseLightColor(BaseLight light, vec3 direction, vec3 normal)
 {
-	vec4 ambientColor = vec4(0, 0, 0, 0);
+	vec4 ambientColor =
+		vec4(light.color, 1.0f) *
+		light.ambientIntensity *
+		vec4(u_Material.ambientColor, 1.0f);
 
-	for (int i = 0; i < u_ActiveDirLightsCount; i++)
+	vec4 diffuseColor = vec4(0, 0, 0, 0);
+	vec4 specularColor = vec4(0, 0, 0, 0);
+
+	float diffuseFactor = dot(normal, -direction);
+	if (diffuseFactor > 0)
 	{
-		ambientColor +=
-			vec4(u_DirLights[i].color, 1.0f) *
-			u_DirLights[i].ambientIntensity;
-	}
+		diffuseColor =
+			vec4(light.color, 1.0f) *
+			light.diffuseIntensity *
+			vec4(u_Material.diffuseColor, 1.0f) *
+			diffuseFactor;
 
-	return ambientColor;
-}
-
-void TotalDiffuseAndSpecularColorFromDirLights(
-	in vec3 normal,
-	out vec4 diffuseColor,
-	out vec4 specularColor)
-{
-	diffuseColor = vec4(0, 0, 0, 0);
-	specularColor = vec4(0, 0, 0, 0);
-
-	for (int i = 0; i < u_ActiveDirLightsCount; i++)
-	{
-		// Dot Product of Normal and light Direction gives Diffuse Factor
-		// need to reverse Direction since we know the reflection vector is opposite of Light Vector and has same angle from normal
-		float diffuseFactor = dot(normal, -u_DirLights[i].direction);
-		if (diffuseFactor > 0)
+		vec3 pixelToCamera = normalize(u_CameraLocalPosition - v_LocalPosition);	// Get Pixel to Camera Vector
+		vec3 lightReflect = normalize(reflect(direction, normal));	// Get Reflection Vector
+		float specularFactor = dot(pixelToCamera, lightReflect);					// Dot Product gives Specular Factor
+		if (specularFactor > 0)
 		{
-			diffuseColor +=
-				vec4(u_DirLights[i].color, 1.0f) *
-				u_DirLights[i].diffuseIntensity *
-				diffuseFactor;
-
-			vec3 pixelToCamera = normalize(u_CameraLocalPosition - v_LocalPosition);	// Get Pixel to Camera Vector
-			vec3 lightReflect = normalize(reflect(u_DirLights[i].direction, normal));	// Get Reflection Vector
-			float specularFactor = dot(pixelToCamera, lightReflect);					// Dot Product gives Specular Factor
-			if (specularFactor > 0)
-			{
-				float specularExponent = texture2D(u_SpecularExponent, v_TexCoord).r * 255.0f;
-				specularFactor = pow(specularFactor, specularExponent);
-				specularColor +=
-					vec4(u_DirLights[i].color, 1.0f) *
-					u_DirLights[i].specularIntensity *
-					specularFactor;
-			}
+			float specularExponent = texture2D(u_SpecularExponent, v_TexCoord).r * 255.0f;
+			specularFactor = pow(specularFactor, specularExponent);
+			specularColor =
+				vec4(light.color, 1.0f) *
+				light.specularIntensity *
+				vec4(u_Material.specularColor, 1.0f) *
+				specularFactor;
 		}
 	}
+
+	return (ambientColor + diffuseColor + specularColor);
+}
+
+vec4 CalcDirLightsColors(vec3 normal)
+{
+	vec4 color = vec4(0, 0, 0, 1);
+
+	for (int i = 0; i < u_ActiveDirLightsCount; i++)
+	{
+		color += CalcBaseLightColor(u_DirLights[i].base, u_DirLights[i].direction, normal);
+	}
+
+	return color;
+}
+
+vec4 CalcPointLightsColors(vec3 normal)
+{
+	vec4 color = vec4(0, 0, 0, 0);
+
+	for (int i = 0; i < u_ActivePointLightsCount; i++)
+	{
+		vec3 direction = v_LocalPosition - u_PointLights[i].localPos;
+		float distance = length(direction);
+		direction = normalize(direction);
+
+		float attenuation =
+			u_PointLights[i].atten.Constant +
+			u_PointLights[i].atten.Linear * distance +
+			u_PointLights[i].atten.Exponent * distance * distance;
+
+		color += CalcBaseLightColor(u_PointLights[i].base, direction, normal) / attenuation;
+	}
+
+	return color;
 }
 
 void main()
 {
 	vec4 texColor = texture2D(u_DiffuseTexture, v_TexCoord);
 
-	vec4 ambientColor =
-		vec4(u_Material.ambientColor, 1.0f) +
-		TotalAmbientColorFromDirLights();
-
-	vec4 diffuseColor = vec4(0, 0, 0, 0);
-	vec4 specularColor = vec4(0, 0, 0, 0);
-
-	TotalDiffuseAndSpecularColorFromDirLights(
-		normalize(v_Normal),
-		diffuseColor,
-		specularColor);
-
-	diffuseColor *= vec4(u_Material.diffuseColor, 1.0f);
-	specularColor *= vec4(u_Material.specularColor, 1.0f);
+	vec3 normal = normalize(v_Normal);
+	vec4 TotalLightColor = CalcDirLightsColors(normal) + CalcPointLightsColors(normal);
+	TotalLightColor = clamp(TotalLightColor, 0, 1);
 
 	fragColor =
 		texColor *
-		clamp(ambientColor + diffuseColor + specularColor, 0.0f, 10.0f);
+		TotalLightColor;
 }

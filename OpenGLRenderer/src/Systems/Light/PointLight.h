@@ -6,15 +6,18 @@
 class PointLight : public Light
 {
 public:
-	float m_DiffuseIntensity;
+	float m_ConstantAttenuation;
+	float m_LinearAttenuation;
+	float m_ExponentialAttenuation;
 
 public:
 	PointLight();
-	PointLight(core::Vec3 color, float ambientIntensity, float diffuseIntensity);
 	~PointLight();
 
 private:
-	virtual void UpdateShaderLightData(unsigned int index, Shader& shader, Transform& cameraTransform, Transform& vastuTransform) override;
+	virtual void UpdateShaderLightData(unsigned int index, Shader& shader, Transform& vastuTransform) override;
 
+	void OnEnable();
+	void OnDisable();
 	void OnInspectorGUI() override;
 };

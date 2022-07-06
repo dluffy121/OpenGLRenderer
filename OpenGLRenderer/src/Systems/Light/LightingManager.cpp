@@ -66,17 +66,21 @@ void LightingManager::UnSubscribe<PointLight>(PointLight* light)
 
 void LightingManager::UpdateShaderLightData(Shader& shader, Transform& cameraTransform, Transform& vastuTransform)
 {
-	shader.SetUniform1i("u_ActiveDirLightsCount", m_DirectionalLights.size());
+	// Providing Camera Position in Local Space
+	glm::vec3 cameraLocalPos = vastuTransform.GetLocalPosition(cameraTransform);
+	shader.SetUniform3f("u_CameraLocalPosition", cameraLocalPos.x, cameraLocalPos.y, cameraLocalPos.z);
 
+	shader.SetUniform1i("u_ActiveDirLightsCount", m_DirectionalLights.size());
 	for (unsigned int i = 0; i < m_DirectionalLights.size(); i++)
 	{
 		Light* light = m_DirectionalLights[i];
-		light->UpdateShaderLightData(i, shader, cameraTransform, vastuTransform);
+		light->UpdateShaderLightData(i, shader, vastuTransform);
 	}
 
+	shader.SetUniform1i("u_ActivePointLightsCount", m_PointLights.size());
 	for (unsigned int i = 0; i < m_PointLights.size(); i++)
 	{
 		Light* light = m_PointLights[i];
-		light->UpdateShaderLightData(i, shader, cameraTransform, vastuTransform);
+		light->UpdateShaderLightData(i, shader, vastuTransform);
 	}
 }

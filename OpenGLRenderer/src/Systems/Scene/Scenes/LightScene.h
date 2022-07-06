@@ -6,6 +6,7 @@
 #include <Mesh/Mesh.h>
 #include <GL/Texture/Texture.h>
 #include <Light/DirectionalLight.h>
+#include <Light/PointLight.h>
 
 class Camera;
 class GameVastu;
@@ -26,14 +27,11 @@ namespace scene
 		GameVastu* mesh2Vastu;
 		Mesh* mesh2;
 
-		GameVastu* mesh3Vastu;
-		Mesh* mesh3;
-
 		GameVastu* light1;
-		DirectionalLight* dirLight1;
+		DirectionalLight* dirLight;
 
 		GameVastu* light2;
-		DirectionalLight* dirLight2;
+		PointLight* pointLight;
 
 		Shader* shader;
 		core::gl::Texture* texture1;
