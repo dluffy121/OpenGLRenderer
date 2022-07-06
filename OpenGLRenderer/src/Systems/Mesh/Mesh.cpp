@@ -245,7 +245,7 @@ void Mesh::LoadColors(const aiMaterial* aiMaterial, unsigned int index)
 
 	aiColor3D aiSpecularColor;
 
-	if (aiMaterial->Get(AI_MATKEY_COLOR_SPECULAR, aiDiffuseColor) == aiReturn_SUCCESS)
+	if (aiMaterial->Get(AI_MATKEY_COLOR_SPECULAR, aiSpecularColor) == aiReturn_SUCCESS)
 	{
 		m_Materials[index]->m_SpecularColor = { aiSpecularColor.r, aiSpecularColor.g, aiSpecularColor.b };
 	}
