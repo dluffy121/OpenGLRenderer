@@ -13,7 +13,7 @@ A Learning project to not only learn about the OpenGL Graphics Library but also 
     - Camera \- Orthographic and Perspective Camera support with near and far clipping planes
     - Renderer \- uses Vertex Coordinates, Color, Texture Coordinates, Texture Samplers, and Triangle Indices to render objects
     - Mesh Renderer \- uses obj and simple texture formats(jpg, png) to render meshes
-    - Light \- Basic Directional lights based on Phong Lighting model
+    - Light \- Directional, Point and Spot lights based on Phong Lighting model can be added
 
 6. Using Transforms to change Position, Rotation and Scale of GameVastus
 7. Scene support to create and load multiple scenes
