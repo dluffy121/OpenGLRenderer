@@ -27,8 +27,9 @@ void main()
 #shader fragment
 #version 460 core
 
-#define MAX_DIRECTIONAL_LIGHTS 50
+#define MAX_DIRECTIONAL_LIGHTS 10
 #define MAX_POINT_LIGHTS 50
+#define MAX_SPOT_LIGHTS 50
 
 struct Material
 {
@@ -65,6 +66,13 @@ struct PointLight
 	Attenuation atten;
 };
 
+struct SpotLight
+{
+	PointLight base;
+	vec3 direction;
+	float cutoff; // Cosine of angle (to reduce calculations for each pixel)
+};
+
 out vec4 fragColor;
 
 in vec4 v_Color;
@@ -78,11 +86,13 @@ uniform DirectionalLight u_DirLights[MAX_DIRECTIONAL_LIGHTS];
 uniform int u_ActiveDirLightsCount;
 uniform PointLight u_PointLights[MAX_POINT_LIGHTS];
 uniform int u_ActivePointLightsCount;
+uniform SpotLight u_SpotLights[MAX_SPOT_LIGHTS];
+uniform int u_ActiveSpotLightsCount;
 uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_SpecularExponent;
 uniform vec3 u_CameraLocalPosition;
 
-vec4 CalcBaseLightColor(BaseLight light, vec3 direction, vec3 normal)
+vec4 CalcBaseLightColor(in BaseLight light, in vec3 direction, in vec3 normal)
 {
 	vec4 ambientColor =
 		vec4(light.color, 1.0f) *
@@ -119,7 +129,7 @@ vec4 CalcBaseLightColor(BaseLight light, vec3 direction, vec3 normal)
 	return (ambientColor + diffuseColor + specularColor);
 }
 
-vec4 CalcDirLightsColors(vec3 normal)
+vec4 CalcAllDirLightsColors(in vec3 normal)
 {
 	vec4 color = vec4(0, 0, 0, 1);
 
@@ -131,22 +141,54 @@ vec4 CalcDirLightsColors(vec3 normal)
 	return color;
 }
 
-vec4 CalcPointLightsColors(vec3 normal)
+vec4 CalcPointLightColor(in PointLight light, in vec3 normal)
+{
+	vec3 direction = v_LocalPosition - light.localPos;
+	float distance = length(direction);
+	direction = normalize(direction);
+
+	float attenuation =
+		light.atten.Constant +
+		light.atten.Linear * distance +
+		light.atten.Exponent * distance * distance;
+
+	return CalcBaseLightColor(light.base, direction, normal) / attenuation;
+}
+
+vec4 CalcAllPointLightsColors(in vec3 normal)
 {
 	vec4 color = vec4(0, 0, 0, 0);
 
 	for (int i = 0; i < u_ActivePointLightsCount; i++)
 	{
-		vec3 direction = v_LocalPosition - u_PointLights[i].localPos;
-		float distance = length(direction);
-		direction = normalize(direction);
+		color += CalcPointLightColor(u_PointLights[i], normal);
+	}
 
-		float attenuation =
-			u_PointLights[i].atten.Constant +
-			u_PointLights[i].atten.Linear * distance +
-			u_PointLights[i].atten.Exponent * distance * distance;
+	return color;
+}
 
-		color += CalcBaseLightColor(u_PointLights[i].base, direction, normal) / attenuation;
+vec4 CalcSpotLightColor(in SpotLight light, in vec3 normal)
+{
+	vec3 lightToPixel = normalize(v_LocalPosition - light.base.localPos);
+	float spotFactor = dot(lightToPixel, light.direction);
+
+	if (spotFactor > light.cutoff)
+	{
+		vec4 color = CalcPointLightColor(light.base, normal);
+		float spotLightIntensity = 1.0f - (1.0f - spotFactor) / (1.0f - light.cutoff);
+		return color * spotLightIntensity;
+	}
+	else
+		return vec4(0, 0, 0, 0);
+}
+
+vec4 CalcAllSpotLightsColors(in vec3 normal)
+{
+	vec4 color = vec4(0, 0, 0, 0);
+
+	for (int i = 0; i < u_ActiveSpotLightsCount; i++)
+	{
+		color += CalcSpotLightColor(u_SpotLights[i], normal);
 	}
 
 	return color;
@@ -157,7 +199,7 @@ void main()
 	vec4 texColor = texture2D(u_DiffuseTexture, v_TexCoord);
 
 	vec3 normal = normalize(v_Normal);
-	vec4 TotalLightColor = CalcDirLightsColors(normal) + CalcPointLightsColors(normal);
+	vec4 TotalLightColor = CalcAllDirLightsColors(normal) + CalcAllPointLightsColors(normal) + CalcAllSpotLightsColors(normal);
 	TotalLightColor = clamp(TotalLightColor, 0, 1);
 
 	fragColor =
