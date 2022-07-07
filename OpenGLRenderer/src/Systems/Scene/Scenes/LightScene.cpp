@@ -29,7 +29,7 @@ namespace scene
 		light1->AddComponent(*dirLight);
 		dirLight->m_Color = { 1.0f, 1.0f, 1.0f };
 		auto light1Color = dirLight->m_Color;
-		light1->m_transform->SetRotation({ 0.0f, 70.0f, 0.f });
+		light1->m_transform->SetRotation({ 0.0f, 90.0f, 0.f });
 
 		light2 = CreateGameVastu();
 		light2->m_name = "Point Light";
@@ -37,8 +37,15 @@ namespace scene
 		light2->AddComponent(*pointLight);
 		pointLight->m_Color = { 0.0f, 0.0f, 1.0f };
 		auto light2Color = pointLight->m_Color;
-		light2->m_transform->SetPosition({ 0.f, 0.f, -1.f });
-		light2->m_transform->SetRotation({ 0.0f, -90.0f, 0.f });
+		light2->m_transform->SetPosition({ 0.15f, 1.0f, 0.0f });
+
+		light3 = CreateGameVastu();
+		light3->m_name = "Spot Light";
+		spotLight = new SpotLight();
+		light3->AddComponent(*spotLight);
+		spotLight->m_Color = { 0.0f, 1.0f, 1.0f };
+		auto light3Color = spotLight->m_Color;
+		light3->m_transform->SetPosition({ -2.0f, 1.0f, -4.0f });
 
 		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/SimpleLit.shader");
 
@@ -50,13 +57,13 @@ namespace scene
 		mesh1Vastu->m_transform->SetPosition({ -2.0f, 0.0f, 0.0f });
 		mesh1Vastu->m_transform->SetScale({ 2.0f, 2.0f, 2.0f });
 
-		mesh2Vastu = CreateGameVastu();
-		mesh2Vastu->m_name = "Chest";
-		mesh2 = new Mesh("resources/models/Chest/treasure_chest_4k.obj");
-		mesh2->SetShader(*shader);
-		mesh2Vastu->AddComponent(*mesh2);
-		mesh2Vastu->m_transform->SetPosition({ 2.0f, 0.0f, 0.0f });
-		mesh2Vastu->m_transform->SetScale({ 2.0f, 2.0f, 2.0f });
+		//mesh2Vastu = CreateGameVastu();
+		//mesh2Vastu->m_name = "Chest";
+		//mesh2 = new Mesh("resources/models/Chest/treasure_chest_4k.obj");
+		//mesh2->SetShader(*shader);
+		//mesh2Vastu->AddComponent(*mesh2);
+		//mesh2Vastu->m_transform->SetPosition({ 2.0f, 0.0f, 0.0f });
+		//mesh2Vastu->m_transform->SetScale({ 2.0f, 2.0f, 2.0f });
 	}
 
 	LightScene::~LightScene()
@@ -71,7 +78,7 @@ namespace scene
 	void LightScene::Update()
 	{
 		mesh1Vastu->m_transform->RotateAroundYAxis(0.5f);
-		mesh2Vastu->m_transform->RotateAroundYAxis(0.5f);
+		//mesh2Vastu->m_transform->RotateAroundYAxis(0.5f);
 
 		//light1->m_transform->RotateAroundYAxis(-0.2f);
 		//light2->m_transform->RotateAroundYAxis(0.2f);

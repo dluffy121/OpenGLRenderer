@@ -4,12 +4,14 @@
 #include <vector>
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 class LightingManager
 {
 private:
 	std::vector<DirectionalLight*> m_DirectionalLights;
 	std::vector<PointLight*> m_PointLights;
+	std::vector<SpotLight*> m_SpotLights;
 
 public:
 	LightingManager();

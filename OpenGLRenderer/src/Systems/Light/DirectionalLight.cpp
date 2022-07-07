@@ -6,9 +6,7 @@ using namespace core;
 
 DirectionalLight::DirectionalLight() :
 	Light(LightType::Directional)
-{
-	WindowManager::getInstance()->GetCurrentWindow()->GetLightingManager().Subscribe<DirectionalLight>(this);
-}
+{}
 
 DirectionalLight::~DirectionalLight()
 {

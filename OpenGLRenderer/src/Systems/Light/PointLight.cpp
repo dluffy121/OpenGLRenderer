@@ -9,9 +9,14 @@ PointLight::PointLight() :
 	m_ConstantAttenuation(1.0f),
 	m_LinearAttenuation(0.5f),
 	m_ExponentialAttenuation(0.5f)
-{
-	WindowManager::getInstance()->GetCurrentWindow()->GetLightingManager().Subscribe<PointLight>(this);
-}
+{}
+
+PointLight::PointLight(LightType type) :
+	Light(type),
+	m_ConstantAttenuation(1.0f),
+	m_LinearAttenuation(0.5f),
+	m_ExponentialAttenuation(0.5f)
+{}
 
 PointLight::~PointLight()
 {

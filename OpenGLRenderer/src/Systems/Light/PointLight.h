@@ -14,10 +14,14 @@ public:
 	PointLight();
 	~PointLight();
 
-private:
-	virtual void UpdateShaderLightData(unsigned int index, Shader& shader, Transform& vastuTransform) override;
+protected:
+	PointLight(LightType type);
 
-	void OnEnable();
-	void OnDisable();
-	void OnInspectorGUI() override;
+	virtual void OnInspectorGUI() override;
+
+private:
+	void UpdateShaderLightData(unsigned int index, Shader& shader, Transform& vastuTransform) override;
+
+	void OnEnable() override;
+	void OnDisable() override;
 };

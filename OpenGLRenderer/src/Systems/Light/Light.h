@@ -8,7 +8,8 @@
 enum LightType
 {
 	Directional = 0,
-	Point = 1
+	Point = 1,
+	Spot = 2
 };
 
 class Light : public Component
@@ -16,9 +17,9 @@ class Light : public Component
 public:
 	const LightType Type;
 	core::Vec3 m_Color = core::Vec3(1.0f);
-	float m_AmbientIntensity;
-	float m_DiffuseIntensity;
-	float m_SpecularIntensity;
+	float m_AmbientIntensity = 0.1f;
+	float m_DiffuseIntensity = 1.0f;
+	float m_SpecularIntensity = 1.0f;
 
 public:
 	Light(LightType type);

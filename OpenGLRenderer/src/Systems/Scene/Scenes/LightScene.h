@@ -7,6 +7,7 @@
 #include <GL/Texture/Texture.h>
 #include <Light/DirectionalLight.h>
 #include <Light/PointLight.h>
+#include <Light/SpotLight.h>
 
 class Camera;
 class GameVastu;
@@ -32,6 +33,9 @@ namespace scene
 
 		GameVastu* light2;
 		PointLight* pointLight;
+
+		GameVastu* light3;
+		SpotLight* spotLight;
 
 		Shader* shader;
 		core::gl::Texture* texture1;

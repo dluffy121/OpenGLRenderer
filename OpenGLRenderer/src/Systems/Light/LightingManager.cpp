@@ -31,6 +31,12 @@ void LightingManager::Subscribe<PointLight>(PointLight* light)
 }
 
 template<>
+void LightingManager::Subscribe<SpotLight>(SpotLight* light)
+{
+	m_SpotLights.push_back(light);
+}
+
+template<>
 void LightingManager::UnSubscribe<DirectionalLight>(DirectionalLight* light)
 {
 	for (auto i = m_DirectionalLights.begin(); i != m_DirectionalLights.end(); i++)
@@ -64,6 +70,23 @@ void LightingManager::UnSubscribe<PointLight>(PointLight* light)
 	m_PointLights.erase(m_PointLights.end() - 1);
 }
 
+template<>
+void LightingManager::UnSubscribe<SpotLight>(SpotLight* light)
+{
+	for (auto i = m_SpotLights.begin(); i != m_SpotLights.end(); i++)
+	{
+		if (*i == light)
+		{
+			auto tmp = *i;
+			*i = *(m_SpotLights.end() - 1);
+			*(m_SpotLights.end() - 1) = tmp;
+			break;
+		}
+	}
+
+	m_SpotLights.erase(m_SpotLights.end() - 1);
+}
+
 void LightingManager::UpdateShaderLightData(Shader& shader, Transform& cameraTransform, Transform& vastuTransform)
 {
 	// Providing Camera Position in Local Space
@@ -81,6 +104,13 @@ void LightingManager::UpdateShaderLightData(Shader& shader, Transform& cameraTra
 	for (unsigned int i = 0; i < m_PointLights.size(); i++)
 	{
 		Light* light = m_PointLights[i];
+		light->UpdateShaderLightData(i, shader, vastuTransform);
+	}
+
+	shader.SetUniform1i("u_ActiveSpotLightsCount", m_SpotLights.size());
+	for (unsigned int i = 0; i < m_SpotLights.size(); i++)
+	{
+		Light* light = m_SpotLights[i];
 		light->UpdateShaderLightData(i, shader, vastuTransform);
 	}
 }
