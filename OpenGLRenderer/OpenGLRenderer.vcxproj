@@ -314,6 +314,7 @@
     <ClInclude Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.h" />
     <ClInclude Include="src\Systems\Light\LightingManager.h" />
     <ClInclude Include="src\Systems\Light\PointLight.h" />
+    <ClInclude Include="src\Systems\Light\SpotLight.h" />
     <ClInclude Include="src\Systems\Mesh\Mesh.h" />
     <ClInclude Include="src\Systems\BatchRenderer\BatchRenderer.h" />
     <ClInclude Include="src\Systems\CameraController\CameraController.h" />
@@ -653,6 +654,7 @@
     <ClCompile Include="src\OpenGLRenderer.cpp" />
     <ClCompile Include="src\Systems\Light\LightingManager.cpp" />
     <ClCompile Include="src\Systems\Light\PointLight.cpp" />
+    <ClCompile Include="src\Systems\Light\SpotLight.cpp" />
     <ClCompile Include="src\Systems\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.cpp" />
     <ClCompile Include="src\Systems\GUI\Inspector\InspectorWindow.cpp" />
