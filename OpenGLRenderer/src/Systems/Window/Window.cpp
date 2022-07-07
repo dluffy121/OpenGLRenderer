@@ -275,6 +275,8 @@ void Window::RegisterComponent(Component& component)
 		return;
 
 	component._Awake();
+	if(component.GetEnabled())
+		component._OnEnable();
 
 	m_Components.push_back(&component);
 }
