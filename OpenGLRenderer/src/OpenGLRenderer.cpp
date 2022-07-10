@@ -31,11 +31,14 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#if DEBUGGING
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+#endif
 	GLFWwindow* window = OpenGLHelper::CreateWindow(1, 1, "", NULL, true);
 	OpenGLHelper::UseGLFWWindow(window);
 	OpenGLHelper::SetSwapInterval(1);
 
-	IMGUI_CHECKVERSION();
+	//IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImFontAtlas* globalFontAtlas = ImGui::GetIO().Fonts;
 
@@ -58,9 +61,10 @@ int main(void)
 		// 2			|	 0.5,  0.5,	|	1.0f, 1.0f,
 		// 3			|	-0.5,  0.5, |	0.0f, 1.0f
 
-		ShaderAsset shaderAsset2 = shaderManager->CreateShaderAsset("resources/shaders/Color.shader");
-		ShaderAsset shaderAsset1 = shaderManager->CreateShaderAsset("resources/shaders/Texture.shader");
-		ShaderAsset shaderAsset3 = shaderManager->CreateShaderAsset("resources/shaders/SimpleLit.shader");
+		shaderManager->CreateShaderAsset("resources/shaders/Color.shader");
+		shaderManager->CreateShaderAsset("resources/shaders/Texture.shader");
+		shaderManager->CreateShaderAsset("resources/shaders/SimpleLit.shader");
+		shaderManager->CreateShaderAsset("resources/shaders/SimpleUnlit.shader");
 
 		ScenesWindow scenesWindow;
 		scenesWindow.RegisterScene<scene::ColorScene>("ColorScene");

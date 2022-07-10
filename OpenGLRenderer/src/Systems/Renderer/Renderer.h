@@ -1,42 +1,57 @@
 #pragma once
 
-#include <GL/Texture/Texture.h>
-#include <GL/VertexArray/VertexArray.h>
 #include <Component/Component.h>
+#include <GL/VertexArray/VertexArray.h>
+#include <GL/VertexBuffer/VertexBuffer.h>
+#include <GL/IndexBuffer/IndexBuffer.h>
+#include <GL/VertexBufferLayout/VertexBufferLayout.h>
+#include <GL/Material/Material.h>
 #include <Shader/Shader.h>
 #include <Math/Math.h>
 
 class Renderer : public Component
 {
-private:
-	Shader* m_Shader;
-	std::unordered_map<int, core::gl::Texture*> m_Textures;
+protected:
+	core::gl::VertexArray* m_VAO;
+	core::gl::VertexBuffer* m_VertexBuffer;
+	core::gl::IndexBuffer* m_IndexBuffer;
+	core::gl::VertexBufferLayout* m_VBLayout;
 
-	core::Vertex* m_Vertices;
-	core::Vertex* _Vertices;
-	const unsigned int m_VertexCount;
+	unsigned int m_VertexCount;
+	std::vector<core::Vertex> m_Vertices;
 
-	unsigned int* m_Indices;
-	unsigned int* _Indices;
 	unsigned int m_IndexCount;
+	std::vector<unsigned int> m_Indices;
 
-	int m_TriangleCount;
+	unsigned int m_MaterialCount;
+	std::vector<core::gl::Material*> m_Materials;
+
+	Shader* m_Shader;
+
+	unsigned int m_TriangleCount;
 
 public:
+	Renderer();
 	Renderer(core::Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount);
 	~Renderer();
 
 	void SetShader(Shader& shader);
-	void AddTexture(int samplerId, core::gl::Texture& texture);
-	void RemoveTexture(int samplerId);
+	void SetVertices(core::Vertex* vertices, unsigned int count);
+	void SetIndices(unsigned int* indices, unsigned int count);
+	void AddMaterial(core::gl::Material*& material);
+	void RemoveMaterial(core::gl::Material*& material);
+
+protected:
+	virtual void LoadResources();
+	virtual void UnLoadResources();
+	virtual void BindResources();
+	virtual void UnBindResources();
+	virtual void Prepare();
+	virtual void Draw();
+
+	virtual void OnInspectorGUI() override;
 
 private:
+	void Awake() override;
 	void Render() override;
-	void OnInspectorGUI() override;
-
-	void BindTextures() const;
-	void UnBindTexture() const;
-
-	bool BindShader() const;
-	bool UnBindShader() const;
 };

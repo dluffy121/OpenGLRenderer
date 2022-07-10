@@ -154,6 +154,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="resources\shaders\SimpleLit.shader" />
+    <None Include="resources\shaders\SimpleUnlit.shader" />
     <None Include="resources\shaders\Texture.shader" />
     <None Include="resources\shaders\Color.shader" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
@@ -315,7 +316,7 @@
     <ClInclude Include="src\Systems\Light\LightingManager.h" />
     <ClInclude Include="src\Systems\Light\PointLight.h" />
     <ClInclude Include="src\Systems\Light\SpotLight.h" />
-    <ClInclude Include="src\Systems\Mesh\Mesh.h" />
+    <ClInclude Include="src\Systems\MeshRenderer\MeshRenderer.h" />
     <ClInclude Include="src\Systems\BatchRenderer\BatchRenderer.h" />
     <ClInclude Include="src\Systems\CameraController\CameraController.h" />
     <ClInclude Include="src\Systems\GUI\Inspector\InspectorWindow.h" />
@@ -655,11 +656,11 @@
     <ClCompile Include="src\Systems\Light\LightingManager.cpp" />
     <ClCompile Include="src\Systems\Light\PointLight.cpp" />
     <ClCompile Include="src\Systems\Light\SpotLight.cpp" />
+    <ClCompile Include="src\Systems\MeshRenderer\MeshRenderer.cpp" />
     <ClCompile Include="src\Systems\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.cpp" />
     <ClCompile Include="src\Systems\GUI\Inspector\InspectorWindow.cpp" />
     <ClCompile Include="src\Systems\GUI\Scenes\ScenesWindow.cpp" />
-    <ClCompile Include="src\Systems\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Systems\Scene\Scene.cpp" />
     <ClCompile Include="src\Systems\Scene\Scenes\ColorScene.cpp" />
     <ClCompile Include="src\Systems\Scene\Scenes\LightScene.cpp" />

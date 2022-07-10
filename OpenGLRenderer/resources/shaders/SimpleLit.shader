@@ -5,12 +5,10 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec4 pixelPosition;
 layout(location = 2) in vec4 color;
 layout(location = 3) in vec2 texCoord;
-layout(location = 4) in float texIndex;
 layout(location = 5) in vec3 normal;
 
 out vec4 v_Color;
 out vec2 v_TexCoord;
-out float v_TexIndex;
 out vec3 v_Normal;
 out vec3 v_LocalPosition;
 
@@ -19,7 +17,6 @@ void main()
 	gl_Position = pixelPosition;
 	v_Color = color;
 	v_TexCoord = texCoord;
-	v_TexIndex = texIndex;
 	v_Normal = normal;
 	v_LocalPosition = position;
 }
@@ -77,7 +74,6 @@ out vec4 fragColor;
 
 in vec4 v_Color;
 in vec2 v_TexCoord;
-in float v_TexIndex;
 in vec3 v_Normal;
 in vec3 v_LocalPosition;
 
@@ -88,8 +84,8 @@ uniform PointLight u_PointLights[MAX_POINT_LIGHTS];
 uniform int u_ActivePointLightsCount;
 uniform SpotLight u_SpotLights[MAX_SPOT_LIGHTS];
 uniform int u_ActiveSpotLightsCount;
-uniform sampler2D u_DiffuseTexture;
-uniform sampler2D u_SpecularExponent;
+uniform sampler2D u_DiffuseTexture;		// 0
+uniform sampler2D u_SpecularExponent;	// 1
 uniform vec3 u_CameraLocalPosition;
 
 vec4 CalcBaseLightColor(in BaseLight light, in vec3 direction, in vec3 normal)
@@ -203,6 +199,6 @@ void main()
 	TotalLightColor = clamp(TotalLightColor, 0, 1);
 
 	fragColor =
-		texColor *
-		TotalLightColor;
+		texColor
+		* TotalLightColor;
 }

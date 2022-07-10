@@ -6,90 +6,180 @@
 using namespace core;
 using namespace core::gl;
 
+Renderer::Renderer() :
+	m_VAO(NULL),
+	m_VertexBuffer(NULL),
+	m_IndexBuffer(NULL),
+	m_VBLayout(NULL),
+	m_VertexCount(0),
+	m_IndexCount(0),
+	m_MaterialCount(0),
+	m_Shader(NULL),
+	m_TriangleCount(0)
+{}
+
 Renderer::Renderer(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount) :
-	m_Vertices(vertices),
+	m_VAO(NULL),
+	m_VertexBuffer(NULL),
+	m_IndexBuffer(NULL),
+	m_VBLayout(NULL),
+	m_Vertices(std::vector<Vertex>(vertices, vertices + vertexCount)),
 	m_VertexCount(vertexCount),
-	m_Indices(indices),
+	m_Indices(std::vector<unsigned int>(indices, indices + indexCount)),
 	m_IndexCount(indexCount),
-	m_TriangleCount(indexCount / 3),
-	_Vertices(NULL),
-	_Indices(NULL),
-	m_Shader(NULL)
+	m_MaterialCount(0),
+	m_Shader(NULL),
+	m_TriangleCount(indexCount / 3)
 {}
 
 Renderer::~Renderer()
-{}
+{
+	UnLoadResources();
+}
+
+void Renderer::Awake()
+{
+	LoadResources();
+}
+
+void Renderer::LoadResources()
+{
+	m_VAO = new VertexArray();
+	m_VAO->Bind();
+	m_VertexBuffer = new VertexBuffer(m_VertexCount * sizeof(Vertex));
+	m_VertexBuffer->Bind();
+	if (!m_Indices.empty())
+	{
+		m_IndexBuffer = new IndexBuffer(&m_Indices[0], GL_UNSIGNED_INT, m_IndexCount);
+		m_IndexBuffer->Bind();
+	}
+	m_VBLayout = new VertexBufferLayout();
+	m_VBLayout->Push<Vertex>(m_VertexBuffer->Id, 1);
+	m_VBLayout->Bind();
+}
+
+void Renderer::UnLoadResources()
+{
+	delete m_VertexBuffer;
+	delete m_IndexBuffer;
+	delete m_VBLayout;
+	delete m_VAO;
+
+	//for (size_t i = 0; i < m_MaterialCount; i++)
+	//	delete m_Materials[i];
+
+	m_Vertices.clear();
+	m_Indices.clear();
+	m_MaterialCount = 0;
+	m_Materials.clear();
+}
 
 void Renderer::SetShader(Shader& shader)
 {
+	if (!&shader) return;
+
 	m_Shader = &shader;
 }
 
-void Renderer::AddTexture(int samplerId, Texture& texture)
+void Renderer::SetVertices(Vertex* vertices, unsigned int count)
 {
-	m_Textures[samplerId] = &texture;
+	m_Vertices = std::vector<Vertex>(vertices, vertices + count);
 }
 
-void Renderer::RemoveTexture(int samplerId)
+void Renderer::SetIndices(unsigned int* indices, unsigned int count)
 {
-	m_Textures.erase(samplerId);
+	m_Indices = std::vector<unsigned int>(indices, indices + count);
 }
 
-bool Renderer::BindShader() const
+void Renderer::AddMaterial(Material*& material)
 {
-	if (m_Shader == nullptr)
-		return false;
+	if (!material) return;
 
-	m_Shader->Bind();
-	return true;
+	for (size_t i = 0; i < m_MaterialCount; i++)
+	{
+		if (material->Id == m_Materials[i]->Id)
+		{
+			Log("Material already added");
+			return;
+		}
+	}
+
+	m_Materials.push_back(material);
+	m_MaterialCount++;
 }
 
-bool Renderer::UnBindShader() const
+void Renderer::RemoveMaterial(Material*& material)
 {
-	if (m_Shader == nullptr)
-		return false;
+	bool found = false;
+	for (auto i = m_Materials.begin(); i != m_Materials.end(); i++)
+	{
+		if ((*i)->Id == material->Id)
+		{
+			found = true;
+			auto tmp = *i;
+			*i = *(m_Materials.end() - 1);
+			*(m_Materials.end() - 1) = tmp;
+			break;
+		}
+	}
 
-	m_Shader->UnBind();
-	return true;
-}
-
-void Renderer::BindTextures() const
-{
-	for (auto& sampler : m_Textures)
-		sampler.second->BindToUnit(sampler.first);
-}
-
-void Renderer::UnBindTexture() const
-{
-	for (auto& sampler : m_Textures)
-		sampler.second->UnBindFromUnit(sampler.first);
+	if (found)
+		m_Materials.erase(m_Materials.end() - 1);
 }
 
 void Renderer::Render()
 {
-	BindTextures();
+	BindResources();
 
+	Prepare();
+
+	Draw();
+
+	UnBindResources();
+}
+
+void Renderer::BindResources()
+{
+	m_VAO->Bind();
+	m_Shader->Bind();
+}
+
+void Renderer::UnBindResources()
+{
+	m_VAO->UnBind();
+	m_Shader->UnBind();
+}
+
+void Renderer::Prepare()
+{
 	auto window = WindowManager::getInstance()->GetCurrentWindow();
 	auto camera = window->GetCameraManager().GetCamera();
-
 	glm::mat4 mvp = camera->GetProjectionMatrix() * camera->GetViewMatrix() * gameVastu->m_transform->GetTransformMatrix();
 
-	_Vertices = CopyArray(m_Vertices, m_VertexCount);
-
+	std::vector<Vertex> vertices = m_Vertices;
 	for (size_t i = 0; i < m_VertexCount; i++)
 	{
 		glm::vec4 pixelPosition(m_Vertices[i].Position.x, m_Vertices[i].Position.y, m_Vertices[i].Position.z, 1.0f);
 		pixelPosition = mvp * pixelPosition;
-		_Vertices[i].PixelPosition.x = pixelPosition.x;
-		_Vertices[i].PixelPosition.y = pixelPosition.y;
-		_Vertices[i].PixelPosition.z = pixelPosition.z;
-		_Vertices[i].PixelPosition.w = pixelPosition.w;
+		vertices[i].PixelPosition.x = pixelPosition.x;
+		vertices[i].PixelPosition.y = pixelPosition.y;
+		vertices[i].PixelPosition.z = pixelPosition.z;
+		vertices[i].PixelPosition.w = pixelPosition.w;
 	}
 
-	window->GetBatchRenderer()->Draw(*m_Shader, _Vertices, m_VertexCount, m_Indices, m_IndexCount);
+	m_VertexBuffer->Bind();
+	GLLog(glBufferSubData(GL_ARRAY_BUFFER, 0, m_VertexCount * sizeof(Vertex), &vertices[0]));
+	m_VertexBuffer->UnBind();
+}
 
-	delete[] _Vertices;
-	delete[] _Indices;
+void Renderer::Draw()
+{
+	if (m_MaterialCount < 1 || !m_Materials[0])
+		return;
+
+	m_Materials[0]->Bind();
+
+	GLLog(glDrawElements(GL_TRIANGLES, m_IndexCount, GL_UNSIGNED_INT, nullptr));
 }
 
 void Renderer::OnInspectorGUI()
@@ -98,10 +188,10 @@ void Renderer::OnInspectorGUI()
 	{
 		ImGui::Text("Vertex Count: ");
 		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-		ImGui::Text(std::to_string(m_VertexCount).c_str());
+		ImGui::Text(std::to_string(m_Vertices.size()).c_str());
 		ImGui::Text("Index Count: ");
 		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-		ImGui::Text(std::to_string(m_IndexCount).c_str());
+		ImGui::Text(std::to_string(m_Indices.size()).c_str());
 		ImGui::Text("Triangles: ");
 		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
 		ImGui::Text(std::to_string(m_TriangleCount).c_str());
@@ -117,22 +207,45 @@ void Renderer::OnInspectorGUI()
 		ImGui::Text(m_Shader->Path.c_str());
 	}
 
-	if (m_Textures.size() > 0)
-		if (ImGui::CollapsingHeader("Texture Info"))
+	if (ImGui::CollapsingHeader("Material Info"))
+	{
+		ImGui::Indent();
+		for (size_t i = 0; i < m_MaterialCount; i++)
 		{
-			for (auto& texture : m_Textures)
+			std::string header = "Material " + std::to_string(i);
+			if (ImGui::CollapsingHeader(header.c_str()))
 			{
-				ImGui::Text("Sampler Id: ");
-				ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-				ImGui::Text(std::to_string(texture.first).c_str());
-				ImGui::Text("Texture Id: ");
-				ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-				ImGui::Text(std::to_string(texture.second->Id).c_str());
-				ImGui::Text("Texture Path: ");
-				ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-				ImGui::Text(texture.second->FilePath.c_str());
+				ImGui::PushID(i);
+
+				Material*& material = m_Materials[i];
+
+				ImGui::ColorEdit3("Ambient Color", material->m_AmbientColor);
+				ImGui::ColorEdit3("Diffuse Color", material->m_DiffuseColor);
+				ImGui::ColorEdit3("Specular Color", material->m_SpecularColor);
+
+				if (m_Materials[i]->m_DiffuseTexture)
+				{
+					ImGui::Text("Diffuse Texture: ");
+					ImGui::Indent();
+					ImGui::Text(material->m_DiffuseTexture->FileName.c_str());
+					ImGui::Text(material->m_DiffuseTexture->FilePath.c_str());
+					ImGui::Unindent();
+				}
+
+				if (m_Materials[i]->m_SpecularExponent)
+				{
+					ImGui::Text("Specular Exponent Texture: ");
+					ImGui::Indent();
+					ImGui::Text(material->m_SpecularExponent->FileName.c_str());
+					ImGui::Text(material->m_SpecularExponent->FilePath.c_str());
+					ImGui::Unindent();
+				}
+
+				ImGui::PopID();
 			}
 		}
+		ImGui::Unindent();
+	}
 
 	if (ImGui::CollapsingHeader("Vertices"))
 	{

@@ -428,6 +428,7 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="resources\shaders\SimpleLit.shader" />
+    <None Include="resources\shaders\SimpleUnlit.shader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\test.png">
@@ -1404,9 +1405,6 @@
     <ClInclude Include="src\Systems\CameraController\CameraController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Systems\Mesh\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Systems\Scene\Scenes\ModelScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1438,6 +1436,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Systems\Light\SpotLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Systems\MeshRenderer\MeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1547,9 +1548,6 @@
     <ClCompile Include="src\Systems\CameraController\CameraController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Systems\Mesh\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Systems\Scene\Scenes\ModelScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1578,6 +1576,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Systems\Light\SpotLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Systems\MeshRenderer\MeshRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
