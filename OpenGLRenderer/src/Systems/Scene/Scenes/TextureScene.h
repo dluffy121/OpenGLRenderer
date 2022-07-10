@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Scene/Scene.h>
-#include <GL/Texture/Texture.h>
+#include <GL/Material/Material.h>
 #include <Math/Math.h>
 
 class Camera;
@@ -25,9 +25,9 @@ namespace scene
 		Renderer* textureRenderer3;
 
 		Shader* shader;
-		core::gl::Texture* texture1;
-		core::gl::Texture* texture2;
-		core::gl::Texture* texture3;
+		core::gl::Material* textureMat1;
+		core::gl::Material* textureMat2;
+		core::gl::Material* textureMat3;
 
 		unsigned int* indices;
 		core::Vertex* vertices1;

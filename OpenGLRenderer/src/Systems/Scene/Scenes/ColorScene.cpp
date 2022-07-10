@@ -8,12 +8,23 @@
 #include <GameVastu/GameVastu.h>
 
 using namespace core;
+using namespace core::gl;
 
 namespace scene
 {
 	ColorScene::ColorScene() :
 		Scene("ColorScene")
 	{
+		cameraVastu = CreateGameVastu();
+		cameraVastu->m_name = "Camera";
+		auto window = WindowManager::getInstance()->GetCurrentWindow();
+		camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
+		cameraVastu->AddComponent(*camera);
+		CameraController* cameraController = new CameraController();
+		cameraVastu->AddComponent(*cameraController);
+		cameraVastu->m_transform->SetPosition({ 0.0f, 0.0f, -6.f });
+		cameraVastu->m_transform->SetRotation({ 0.0f, 180.0f, 0.f });
+
 		Vec4 color1 { 0.8f, 0.25f, 0.1f, 1.0f };
 		Vec4 color2 { 0.1f, 0.25f, 0.8f, 1.0f };
 
@@ -73,31 +84,33 @@ namespace scene
 
 		increment = timeDelta = 0.00694444f;
 
-		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/Texture.shader");
+		colorMat1 = new Material();
+
+		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/Color.shader");
 
 		colorVastu1 = CreateGameVastu();
 		colorVastu1->m_name = "Color Renderer 1";
 		colorRenderer1 = new Renderer(vertices1, 8, indices1, 36);
-		colorVastu1->AddComponent(*colorRenderer1);
 		colorRenderer1->SetShader(*shader);
+		colorRenderer1->AddMaterial(colorMat1);
+		colorVastu1->AddComponent(*colorRenderer1);
 		colorVastu1->m_transform->SetPosition({ -2.0f, 0.0f, 0.f });
 
 		colorVastu2 = CreateGameVastu();
 		colorVastu2->m_name = "Color Renderer 2";
 		colorRenderer2 = new Renderer(vertices1, 8, indices1, 36);
-		colorVastu2->AddComponent(*colorRenderer2);
 		colorRenderer2->SetShader(*shader);
+		colorRenderer2->AddMaterial(colorMat1);
+		colorVastu2->AddComponent(*colorRenderer2);
 		colorVastu2->m_transform->SetPosition({ 1.0f, 0.0f, 0.f });
 
-		cameraVastu = CreateGameVastu();
-		cameraVastu->m_name = "Camera";
-		auto window = WindowManager::getInstance()->GetCurrentWindow();
-		camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight());
-		cameraVastu->AddComponent(*camera);
-		CameraController* cameraController = new CameraController();
-		cameraVastu->AddComponent(*cameraController);
-		cameraVastu->m_transform->SetPosition({ 0.0f, 0.0f, -6.f });
-		cameraVastu->m_transform->SetRotation({ 0.0f, 180.0f, 0.f });
+		light1 = CreateGameVastu();
+		light1->m_name = "Directional Light";
+		dirLight = new DirectionalLight();
+		light1->AddComponent(*dirLight);
+		dirLight->m_Color = { 1.0f, 1.0f, 1.0f };
+		auto light1Color = dirLight->m_Color;
+		light1->m_transform->SetRotation({ 0.0f, 90.0f, 0.f });
 	}
 
 	ColorScene::~ColorScene()
@@ -113,6 +126,7 @@ namespace scene
 		DestroyGameVastu(colorVastu3);
 		DestroyGameVastu(colorVastu4);
 		DestroyGameVastu(colorVastu5);
+		DestroyGameVastu(light1);
 		DestroyGameVastu(cameraVastu);
 	}
 

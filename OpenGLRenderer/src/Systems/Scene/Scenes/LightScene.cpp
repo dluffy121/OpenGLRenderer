@@ -51,7 +51,7 @@ namespace scene
 
 		mesh1Vastu = CreateGameVastu();
 		mesh1Vastu->m_name = "Barrel";
-		mesh1 = new Mesh("resources/models/Barrel/wine_barrel_01_4k.obj");
+		mesh1 = new MeshRenderer("resources/models/Barrel/wine_barrel_01_4k.obj");
 		mesh1->SetShader(*shader);
 		mesh1Vastu->AddComponent(*mesh1);
 		mesh1Vastu->m_transform->SetPosition({ -2.0f, 0.0f, 0.0f });
@@ -59,7 +59,7 @@ namespace scene
 
 		//mesh2Vastu = CreateGameVastu();
 		//mesh2Vastu->m_name = "Chest";
-		//mesh2 = new Mesh("resources/models/Chest/treasure_chest_4k.obj");
+		//mesh2 = new MeshRenderer("resources/models/Chest/treasure_chest_4k.obj");
 		//mesh2->SetShader(*shader);
 		//mesh2Vastu->AddComponent(*mesh2);
 		//mesh2Vastu->m_transform->SetPosition({ 2.0f, 0.0f, 0.0f });
@@ -72,6 +72,9 @@ namespace scene
 
 		DestroyGameVastu(mesh1Vastu);
 		DestroyGameVastu(mesh2Vastu);
+		DestroyGameVastu(light1);
+		DestroyGameVastu(light2);
+		DestroyGameVastu(light3);
 		DestroyGameVastu(cameraVastu);
 	}
 

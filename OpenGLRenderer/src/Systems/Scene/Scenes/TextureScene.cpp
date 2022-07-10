@@ -26,20 +26,18 @@ namespace scene
 		cameraVastu->m_transform->SetPosition({ 0.0f, 0.0f, -6.f });
 		cameraVastu->m_transform->SetRotation({ 0.0f, 180.0f, 0.f });
 
-		texture1 = new Texture("resources/textures/Opengl.png");
-		texture2 = new Texture("resources/textures/test.png");
-		texture3 = new Texture("resources/textures/hardfur.png");
+		textureMat1 = new Material();
+		textureMat1->m_DiffuseTexture = new Texture("resources/textures/Opengl.png");
+		textureMat2 = new Material();
+		textureMat2->m_DiffuseTexture = new Texture("resources/textures/test.png");
+		textureMat3 = new Material();
+		textureMat3->m_DiffuseTexture = new Texture("resources/textures/hardfur.png");
 
-		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/Texture.shader");
-
-		int samplers[2] = { 0, 1 };
-		shader->Bind();
-		shader->SetUniform1iv("u_Textures", samplers, 2);
-		shader->UnBind();
+		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/SimpleUnlit.shader");
 
 		int i = 0;
 
-		float width = (float)texture1->GetWidth() / (float)texture1->GetHeight();
+		float width = (float)textureMat1->m_DiffuseTexture->GetWidth() / (float)textureMat1->m_DiffuseTexture->GetHeight();
 		float height = 1 / width;
 		float halfwidth = width / 2.0f;
 		float halfheight = height / 2.0f;
@@ -62,10 +60,10 @@ namespace scene
 		textureVastu1->m_name = "Texture Renderer 1";
 		textureRenderer1 = new Renderer(vertices1, 4, indices, 6);
 		textureRenderer1->SetShader(*shader);
-		textureRenderer1->AddTexture(samplers[i++], *texture1);
+		textureRenderer1->AddMaterial(textureMat1);
 		textureVastu1->AddComponent(*textureRenderer1);
 
-		width = (float)texture2->GetWidth() / (float)texture2->GetHeight();
+		width = (float)textureMat2->m_DiffuseTexture->GetWidth() / (float)textureMat2->m_DiffuseTexture->GetHeight();
 		height = 1 / width;
 
 		vertices2 = new Vertex[4]
@@ -80,7 +78,7 @@ namespace scene
 		textureVastu2->m_name = "Texture Renderer 2";
 		textureRenderer2 = new Renderer(vertices2, 4, indices, 6);
 		textureRenderer2->SetShader(*shader);
-		textureRenderer2->AddTexture(samplers[i++], *texture2);
+		textureRenderer2->AddMaterial(textureMat2);
 		textureVastu2->AddComponent(*textureRenderer2);
 
 		vertices3 = new Vertex[8]
@@ -127,7 +125,7 @@ namespace scene
 		textureVastu3->m_name = "Texture Renderer 3";
 		textureRenderer3 = new Renderer(vertices3, 8, indices3, 36);
 		textureRenderer3->SetShader(*shader);
-		textureRenderer3->AddTexture(samplers[0], *texture3);
+		textureRenderer3->AddMaterial(textureMat3);
 		textureVastu3->AddComponent(*textureRenderer3);
 	}
 
@@ -144,9 +142,9 @@ namespace scene
 		delete[] vertices3;
 		delete[] indices3;
 
-		delete texture1;
-		delete texture2;
-		delete texture3;
+		delete textureMat1;
+		delete textureMat2;
+		delete textureMat3;
 
 		DestroyGameVastu(textureVastu1);
 		DestroyGameVastu(textureVastu2);

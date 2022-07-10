@@ -1,7 +1,9 @@
 #pragma once
 
 #include <Scene/Scene.h>
+#include <GL/Material/Material.h>
 #include <Math/Math.h>
+#include <Light/DirectionalLight.h>
 
 class Camera;
 class GameVastu;
@@ -28,6 +30,11 @@ namespace scene
 		Renderer* colorRenderer5;
 
 		Shader* shader;
+
+		GameVastu* light1;
+		DirectionalLight* dirLight;
+
+		core::gl::Material* colorMat1;
 
 		unsigned int* indices1;
 		unsigned int* indices2;

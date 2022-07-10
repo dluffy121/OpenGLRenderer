@@ -3,7 +3,7 @@
 #pragma once
 
 #include <Scene/Scene.h>
-#include <Mesh/Mesh.h>
+#include <MeshRenderer/MeshRenderer.h>
 #include <GL/Texture/Texture.h>
 #include <Light/DirectionalLight.h>
 #include <Light/PointLight.h>
@@ -23,10 +23,10 @@ namespace scene
 		Camera* camera;
 
 		GameVastu* mesh1Vastu;
-		Mesh* mesh1;
+		MeshRenderer* mesh1;
 
 		GameVastu* mesh2Vastu;
-		Mesh* mesh2;
+		MeshRenderer* mesh2;
 
 		GameVastu* light1;
 		DirectionalLight* dirLight;

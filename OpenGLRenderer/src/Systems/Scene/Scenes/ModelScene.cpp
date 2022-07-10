@@ -31,14 +31,14 @@ namespace scene
 
 		modelVastu1 = CreateGameVastu();
 		modelVastu1->m_name = "Spider";
-		mesh1 = new Mesh("resources/models/spider.obj");
+		mesh1 = new MeshRenderer("resources/models/spider.obj");
 		mesh1->SetShader(*shader);
 		modelVastu1->AddComponent(*mesh1);
 		modelVastu1->m_transform->SetScale({ 0.05f, 0.05f, 0.05f });
 
 		modelVastu2 = CreateGameVastu();
 		modelVastu2->m_name = "Cube";
-		mesh2 = new Mesh("resources/models/box.obj");
+		mesh2 = new MeshRenderer("resources/models/box.obj");
 		mesh2->SetShader(*shader);
 		modelVastu2->AddComponent(*mesh2);
 		//modelVastu1->m_transform->SetScale({ 0.05f, 0.05f, 0.05f });

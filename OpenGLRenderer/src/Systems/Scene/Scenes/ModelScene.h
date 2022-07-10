@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Scene/Scene.h>
-#include <Mesh/Mesh.h>
+#include <MeshRenderer/MeshRenderer.h>
 #include <GL/Texture/Texture.h>
 
 class Camera;
@@ -18,10 +18,10 @@ namespace scene
 		Camera* camera;
 
 		GameVastu* modelVastu1;
-		Mesh* mesh1;
+		MeshRenderer* mesh1;
 
 		GameVastu* modelVastu2;
-		Mesh* mesh2;
+		MeshRenderer* mesh2;
 
 		GameVastu* textureVastu1;
 		Renderer* renderer1;
