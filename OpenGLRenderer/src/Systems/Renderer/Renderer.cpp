@@ -53,14 +53,11 @@ void Renderer::CalculateNormals()
 		auto side_1 = v2.Position - v1.Position;
 		auto side_2 = v3.Position - v1.Position;
 
-		auto side_1_glm = glm::vec3(side_1.x, side_1.y, side_1.z);
-		auto side_2_glm = glm::vec3(side_2.x, side_2.y, side_2.z);
+		auto normal = Vec3::Cross(side_1, side_2);
 
-		auto normal = glm::cross(side_1_glm, side_2_glm);
-
-		m_Vertices[m_Indices[i]].Normal += Vec3(normal.x, normal.y, normal.z);
-		m_Vertices[m_Indices[i + 1]].Normal += Vec3(normal.x, normal.y, normal.z);
-		m_Vertices[m_Indices[i + 2]].Normal += Vec3(normal.x, normal.y, normal.z);
+		m_Vertices[m_Indices[i]].Normal		+= normal;
+		m_Vertices[m_Indices[i + 1]].Normal += normal;
+		m_Vertices[m_Indices[i + 2]].Normal += normal;
 	}
 
 	for (auto vertex : m_Vertices)
