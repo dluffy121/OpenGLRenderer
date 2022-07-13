@@ -24,7 +24,8 @@ static std::string GetFileName(const std::string& path)
 		&& bslashIndex == std::string::npos)
 		return path;
 
-	if (fslashIndex < bslashIndex)
+	if (bslashIndex != std::string::npos
+		&& fslashIndex < bslashIndex)
 		fslashIndex = bslashIndex;
 
 	fslashIndex += 1;
