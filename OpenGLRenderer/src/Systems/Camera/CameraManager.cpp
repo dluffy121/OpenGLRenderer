@@ -39,4 +39,6 @@ Camera* CameraManager::GetCamera()
 		if ((*i)->GetEnabled())
 			return *i;
 	}
+
+	return nullptr;
 }
