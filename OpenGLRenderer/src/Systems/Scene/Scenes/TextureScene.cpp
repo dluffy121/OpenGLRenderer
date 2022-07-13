@@ -26,14 +26,17 @@ namespace scene
 		cameraVastu->m_transform->SetPosition({ 0.0f, 0.0f, -6.f });
 		cameraVastu->m_transform->SetRotation({ 0.0f, 180.0f, 0.f });
 
+		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/SimpleLit.shader");
+
 		textureMat1 = new Material();
 		textureMat1->m_DiffuseTexture = new Texture("resources/textures/Opengl.png");
+		textureMat1->m_Shader = shader;
 		textureMat2 = new Material();
 		textureMat2->m_DiffuseTexture = new Texture("resources/textures/test.png");
+		textureMat2->m_Shader = shader;
 		textureMat3 = new Material();
 		textureMat3->m_DiffuseTexture = new Texture("resources/textures/hardfur.png");
-
-		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/SimpleUnlit.shader");
+		textureMat3->m_Shader = shader;
 
 		int i = 0;
 
@@ -50,16 +53,15 @@ namespace scene
 
 		vertices1 = new Vertex[4]
 		{
-			{ { -halfwidth, -halfheight, 0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 1 },
-			{ { -halfwidth,  halfheight, 0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, 1 },
-			{ {  halfwidth,  halfheight, 0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 1 },
-			{ {  halfwidth, -halfheight, 0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, 1 }
+			{ { -halfwidth, -halfheight, 0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 1, {0,1,0} },
+			{ { -halfwidth,  halfheight, 0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, 1, {0,1,0} },
+			{ {  halfwidth,  halfheight, 0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 1, {0,1,0} },
+			{ {  halfwidth, -halfheight, 0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, 1, {0,1,0} }
 		};
 
 		textureVastu1 = CreateGameVastu();
 		textureVastu1->m_name = "Texture Renderer 1";
-		textureRenderer1 = new Renderer(vertices1, 4, indices, 6);
-		textureRenderer1->SetShader(*shader);
+		textureRenderer1 = new Renderer(vertices1, 4, indices, 6, true);
 		textureRenderer1->AddMaterial(textureMat1);
 		textureVastu1->AddComponent(*textureRenderer1);
 
@@ -68,30 +70,29 @@ namespace scene
 
 		vertices2 = new Vertex[4]
 		{
-			{ {  0.0f,   0.0f,  0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 2 },
-			{ {  0.0f, height,  0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, 2 },
-			{ { width, height,  0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 2 },
-			{ { width,   0.0f,  0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, 2 }
+			{ {  0.0f,   0.0f,  0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, 2, {0,1,0} },
+			{ {  0.0f, height,  0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, 2, {0,1,0} },
+			{ { width, height,  0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, 2, {0,1,0} },
+			{ { width,   0.0f,  0.0f}, {}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, 2, {0,1,0} }
 		};
 
 		textureVastu2 = CreateGameVastu();
 		textureVastu2->m_name = "Texture Renderer 2";
-		textureRenderer2 = new Renderer(vertices2, 4, indices, 6);
-		textureRenderer2->SetShader(*shader);
+		textureRenderer2 = new Renderer(vertices2, 4, indices, 6, true);
 		textureRenderer2->AddMaterial(textureMat2);
 		textureVastu2->AddComponent(*textureRenderer2);
 
 		vertices3 = new Vertex[8]
 		{
-			{ {-0.5,-0.5,-0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {0.0, 0.0}, 1 }, // 0
-			{ {-0.5, 0.5,-0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {1.0, 0.0}, 1 }, // 1
-			{ { 0.5, 0.5,-0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {1.0, 1.0}, 1 }, // 2
-			{ { 0.5,-0.5,-0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {0.0, 1.0}, 1 }, // 3
+			{ {-0.5,-0.5,-0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {0.0, 0.0}, 1, {0,1,0} }, // 0
+			{ {-0.5, 0.5,-0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {1.0, 0.0}, 1, {0,1,0} }, // 1
+			{ { 0.5, 0.5,-0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {1.0, 1.0}, 1, {0,1,0} }, // 2
+			{ { 0.5,-0.5,-0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {0.0, 1.0}, 1, {0,1,0} }, // 3
 
-			{ {-0.5,-0.5, 0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {0.0, 0.0}, 1 }, // 4
-			{ {-0.5, 0.5, 0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {1.0, 0.0}, 1 }, // 5
-			{ { 0.5, 0.5, 0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {1.0, 1.0}, 1 }, // 6
-			{ { 0.5,-0.5, 0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {0.0, 1.0}, 1 }  // 7
+			{ {-0.5,-0.5, 0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {0.0, 0.0}, 1, {0,1,0} }, // 4
+			{ {-0.5, 0.5, 0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {1.0, 0.0}, 1, {0,1,0} }, // 5
+			{ { 0.5, 0.5, 0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {1.0, 1.0}, 1, {0,1,0} }, // 6
+			{ { 0.5,-0.5, 0.5 }, {}, { 1.0, 1.0, 1.0, 1.0}, {0.0, 1.0}, 1, {0,1,0} }  // 7
 		};
 
 		indices3 = new unsigned int[36]
@@ -123,8 +124,7 @@ namespace scene
 
 		textureVastu3 = CreateGameVastu();
 		textureVastu3->m_name = "Texture Renderer 3";
-		textureRenderer3 = new Renderer(vertices3, 8, indices3, 36);
-		textureRenderer3->SetShader(*shader);
+		textureRenderer3 = new Renderer(vertices3, 8, indices3, 36, true);
 		textureRenderer3->AddMaterial(textureMat3);
 		textureVastu3->AddComponent(*textureRenderer3);
 	}

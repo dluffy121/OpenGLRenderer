@@ -84,9 +84,10 @@ namespace scene
 
 		increment = timeDelta = 0.00694444f;
 
-		colorMat1 = new Material();
-
 		shader = ShaderManager::getInstance()->LoadShader("resources/shaders/Color.shader");
+
+		colorMat1 = new Material();
+		colorMat1->m_Shader = shader;
 
 		colorVastu1 = CreateGameVastu();
 		colorVastu1->m_name = "Color Renderer 1";
