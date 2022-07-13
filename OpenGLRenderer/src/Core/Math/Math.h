@@ -19,6 +19,14 @@ namespace core
 
 		inline Vec2 Negate() { return { -x, -y }; }
 
+		inline float Magnitude() { return sqrt((x * x) + (y * y)); }
+
+		inline void Normalize() { *this /= Magnitude(); }
+
+		inline static float Cross(Vec2 a, Vec2 b) { return (a.x * b.y) - (b.x * a.y); }
+
+		inline static float Dot(Vec2 a, Vec2 b) { return (a.x * b.x) + (a.y * b.y); }
+
 #pragma region Add
 		Vec2 operator + (const Vec2& v)
 		{
@@ -132,6 +140,21 @@ namespace core
 		Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
 
 		inline Vec3 Negate() { return { -x, -y, -z }; }
+
+		inline float Magnitude() { return sqrt((x * x) + (y * y) + (z * z)); }
+
+		inline void Normalize() { *this /= Magnitude(); }
+
+		static Vec3 Cross(Vec3 a, Vec3 b)
+		{
+			return Vec3(
+				(a.y * b.z) - (a.z * b.y),
+				(a.z * b.x) - (a.x * b.z),
+				(a.x * b.y) - (a.y * b.x)
+			);
+		}
+
+		inline static float Dot(Vec3 a, Vec3 b) { return (a.x * b.x) + (a.y * b.y) + (a.z * b.z); }
 
 #pragma region Add
 		Vec3 operator + (const Vec3& v)
@@ -255,6 +278,12 @@ namespace core
 		Vec4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 
 		inline Vec4 Negate() { return { -x, -y, -z, -w }; }
+
+		inline float Magnitude() { return sqrt((x * x) + (y * y) + (z * z) + (w * w)); }
+
+		inline void Normalize() { *this /= Magnitude(); }
+
+		inline static float Dot(Vec4 a, Vec4 b) { return (a.x * b.x) + (a.y * b.y) + (a.z * b.z) + (a.w * b.w); }
 
 #pragma region Add
 		Vec4 operator + (const Vec4& v)
