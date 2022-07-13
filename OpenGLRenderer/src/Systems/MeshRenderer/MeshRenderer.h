@@ -28,7 +28,7 @@ public:
 protected:
 	virtual void LoadResources() override;
 	virtual void UnLoadResources() override;
-	virtual void Prepare() override;
+	//virtual void Prepare() override;
 	virtual void Draw() override;
 
 	virtual void OnInspectorGUI() override;

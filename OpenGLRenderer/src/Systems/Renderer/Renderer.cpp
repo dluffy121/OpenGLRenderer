@@ -18,7 +18,7 @@ Renderer::Renderer() :
 	m_TriangleCount(0)
 {}
 
-Renderer::Renderer(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount) :
+Renderer::Renderer(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount, bool calculateNormals) :
 	m_VAO(NULL),
 	m_VertexBuffer(NULL),
 	m_IndexBuffer(NULL),
@@ -30,11 +30,41 @@ Renderer::Renderer(Vertex* vertices, unsigned int vertexCount, unsigned int* ind
 	m_MaterialCount(0),
 	m_Shader(NULL),
 	m_TriangleCount(indexCount / 3)
-{}
+{
+	if (calculateNormals) CalculateNormals();
+}
 
 Renderer::~Renderer()
 {
 	UnLoadResources();
+}
+
+void Renderer::CalculateNormals()
+{
+	for (auto vertex : m_Vertices)
+		vertex.Normal = Vec3(0.0f);
+
+	for (size_t i = 0; i < m_IndexCount; i += 3)
+	{
+		auto v1 = m_Vertices[m_Indices[i]];
+		auto v2 = m_Vertices[m_Indices[i + 1]];
+		auto v3 = m_Vertices[m_Indices[i + 2]];
+
+		auto side_1 = v2.Position - v1.Position;
+		auto side_2 = v3.Position - v1.Position;
+
+		auto side_1_glm = glm::vec3(side_1.x, side_1.y, side_1.z);
+		auto side_2_glm = glm::vec3(side_2.x, side_2.y, side_2.z);
+
+		auto normal = glm::cross(side_1_glm, side_2_glm);
+
+		m_Vertices[m_Indices[i]].Normal += Vec3(normal.x, normal.y, normal.z);
+		m_Vertices[m_Indices[i + 1]].Normal += Vec3(normal.x, normal.y, normal.z);
+		m_Vertices[m_Indices[i + 2]].Normal += Vec3(normal.x, normal.y, normal.z);
+	}
+
+	for (auto vertex : m_Vertices)
+		vertex.Normal.Normalize();
 }
 
 void Renderer::Awake()
@@ -141,19 +171,20 @@ void Renderer::Render()
 void Renderer::BindResources()
 {
 	m_VAO->Bind();
-	m_Shader->Bind();
 }
 
 void Renderer::UnBindResources()
 {
 	m_VAO->UnBind();
-	m_Shader->UnBind();
 }
 
 void Renderer::Prepare()
 {
 	auto window = WindowManager::getInstance()->GetCurrentWindow();
 	auto camera = window->GetCameraManager().GetCamera();
+
+	if (!camera) return;
+
 	glm::mat4 mvp = camera->GetProjectionMatrix() * camera->GetViewMatrix() * gameVastu->m_transform->GetTransformMatrix();
 
 	std::vector<Vertex> vertices = m_Vertices;
@@ -170,6 +201,14 @@ void Renderer::Prepare()
 	m_VertexBuffer->Bind();
 	GLLog(glBufferSubData(GL_ARRAY_BUFFER, 0, m_VertexCount * sizeof(Vertex), &vertices[0]));
 	m_VertexBuffer->UnBind();
+
+
+	for (auto material : m_Materials)
+	{
+		material->m_Shader->Bind();
+		window->GetLightingManager().UpdateShaderLightData(*material->m_Shader, *camera->GetGameVastu()->m_transform, *gameVastu->m_transform);
+		material->m_Shader->UnBind();
+	}
 }
 
 void Renderer::Draw()
@@ -179,7 +218,7 @@ void Renderer::Draw()
 
 	m_Materials[0]->Bind();
 
-	GLLog(glDrawElements(GL_TRIANGLES, m_IndexCount, GL_UNSIGNED_INT, nullptr));
+	GLLog(glDrawElementsBaseVertex(GL_TRIANGLES, m_IndexCount, GL_UNSIGNED_INT, 0, 0));
 }
 
 void Renderer::OnInspectorGUI()
@@ -195,16 +234,6 @@ void Renderer::OnInspectorGUI()
 		ImGui::Text("Triangles: ");
 		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
 		ImGui::Text(std::to_string(m_TriangleCount).c_str());
-	}
-
-	if (ImGui::CollapsingHeader("Shader Info"))
-	{
-		ImGui::Text("Shader Id: ");
-		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-		ImGui::Text(std::to_string(m_Shader->Id).c_str());
-		ImGui::Text("Shader Path: ");
-		ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-		ImGui::Text(m_Shader->Path.c_str());
 	}
 
 	if (ImGui::CollapsingHeader("Material Info"))
@@ -227,7 +256,9 @@ void Renderer::OnInspectorGUI()
 				{
 					ImGui::Text("Diffuse Texture: ");
 					ImGui::Indent();
+					ImGui::Text("Name: ");	ImGui::SameLine();
 					ImGui::Text(material->m_DiffuseTexture->FileName.c_str());
+					ImGui::Text("Path: ");	ImGui::SameLine();
 					ImGui::Text(material->m_DiffuseTexture->FilePath.c_str());
 					ImGui::Unindent();
 				}
@@ -236,7 +267,9 @@ void Renderer::OnInspectorGUI()
 				{
 					ImGui::Text("Specular Exponent Texture: ");
 					ImGui::Indent();
+					ImGui::Text("Name: ");	ImGui::SameLine();
 					ImGui::Text(material->m_SpecularExponent->FileName.c_str());
+					ImGui::Text("Path: ");	ImGui::SameLine();
 					ImGui::Text(material->m_SpecularExponent->FilePath.c_str());
 					ImGui::Unindent();
 				}
@@ -262,11 +295,11 @@ void Renderer::OnInspectorGUI()
 				ImGui::PushID(i);
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("X", &m_Vertices[i].Position.x);
+				ImGui::DragFloat("X", &m_Vertices[i].Position.x, 0.01f, 0.0f, 1.0f);
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("Y", &m_Vertices[i].Position.y);
+				ImGui::DragFloat("Y", &m_Vertices[i].Position.y, 0.01f, 0.0f, 1.0f);
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("Z", &m_Vertices[i].Position.z);
+				ImGui::DragFloat("Z", &m_Vertices[i].Position.z, 0.01f, 0.0f, 1.0f);
 				ImGui::PopID();
 			}
 		}
@@ -316,5 +349,31 @@ void Renderer::OnInspectorGUI()
 		{
 			ImGui::DragInt(std::to_string(i).c_str(), &m_Vertices[i].TexID);
 		}
+	}
+
+	if (ImGui::CollapsingHeader("Normals"))
+	{
+		if (ImGui::BeginTable("Normals", 3))
+		{
+			ImGui::TableNextColumn();
+			ImGui::TableHeader("X");
+			ImGui::TableNextColumn();
+			ImGui::TableHeader("Y");
+			ImGui::TableNextColumn();
+			ImGui::TableHeader("Z");
+			for (size_t i = 0; i < m_VertexCount; i++)
+			{
+				ImGui::PushID(i);
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("X", &m_Vertices[i].Normal.x, 0.01f, 0.0f, 1.0f);
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("Y", &m_Vertices[i].Normal.y, 0.01f, 0.0f, 1.0f);
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("Z", &m_Vertices[i].Normal.z, 0.01f, 0.0f, 1.0f);
+				ImGui::PopID();
+			}
+		}
+		ImGui::EndTable();
 	}
 }

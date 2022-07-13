@@ -32,7 +32,7 @@ protected:
 
 public:
 	Renderer();
-	Renderer(core::Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount);
+	Renderer(core::Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount, bool calculateNormals = false);
 	~Renderer();
 
 	void SetShader(Shader& shader);
@@ -54,4 +54,6 @@ protected:
 private:
 	void Awake() override;
 	void Render() override;
+
+	void CalculateNormals();
 };

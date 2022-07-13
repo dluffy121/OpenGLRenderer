@@ -140,6 +140,7 @@ void MeshRenderer::InitMaterials(const aiScene* scene, const std::string& path)
 		const aiMaterial* aiMaterial = scene->mMaterials[i];
 
 		m_Materials[i] = new Material();
+		m_Materials[i]->m_Shader = m_Shader;
 
 		LoadDiffuseTexture(dir, aiMaterial, m_Materials[i]);
 
@@ -221,15 +222,6 @@ void MeshRenderer::LoadColors(const aiMaterial* aiMaterial, core::gl::Material*&
 	}
 }
 
-void MeshRenderer::Prepare()
-{
-	Renderer::Prepare();
-
-	auto window = WindowManager::getInstance()->GetCurrentWindow();
-	auto camera = window->GetCameraManager().GetCamera();
-	window->GetLightingManager().UpdateShaderLightData(*m_Shader, *camera->GetGameVastu()->m_transform, *gameVastu->m_transform);
-}
-
 void MeshRenderer::Draw()
 {
 	for (size_t i = 0; i < m_SubMeshCount; i++)
@@ -239,13 +231,6 @@ void MeshRenderer::Draw()
 		assert(materialIndex < m_MaterialCount);
 
 		m_Materials[materialIndex]->Bind();
-
-		auto ambientColor = m_Materials[materialIndex]->m_AmbientColor;
-		m_Shader->SetUniform3f("u_Material.ambientColor", ambientColor.x, ambientColor.y, ambientColor.z);
-		auto diffuseColor = m_Materials[materialIndex]->m_DiffuseColor;
-		m_Shader->SetUniform3f("u_Material.diffuseColor", diffuseColor.x, diffuseColor.y, diffuseColor.z);
-		auto specularColor = m_Materials[materialIndex]->m_SpecularColor;
-		m_Shader->SetUniform3f("u_Material.specularColor", specularColor.x, specularColor.y, specularColor.z);
 
 		auto startIndex = sizeof(unsigned int) * m_SubMeshes[i].BaseIndex;	// since IndexBuffer is already populated, we just provide starting offset
 
