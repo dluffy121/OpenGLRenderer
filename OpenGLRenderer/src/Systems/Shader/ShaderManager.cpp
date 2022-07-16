@@ -91,7 +91,7 @@ Shader* ShaderManager::LoadShader(const std::string& shaderPath)
 	}
 
 	ShaderAsset* shaderAsset = GetShaderAsset(shaderPath);
-	ASSERT(shaderAsset != nullptr);
+	ASSERT(shaderAsset, "Shader Asset does not exist for path: " + shaderPath);
 
 	return LoadShader(*shaderAsset);
 }

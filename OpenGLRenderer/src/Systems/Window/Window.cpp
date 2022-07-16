@@ -33,7 +33,7 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 	if (!m_GLFWWindow)
 	{
 		OpenGLHelper::TerminateGLFW();
-		ASSERT(false);
+		ASSERT(false, "Failed to create GLFW window");
 		return;
 	}
 

@@ -18,7 +18,7 @@ namespace core::gl
 		stbi_set_flip_vertically_on_load(1);
 		unsigned char* localBuffer = stbi_load(FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 4);	// 4 is for RGBA
 
-		ASSERT(("Cannot load Image from path: " + texturePath, localBuffer));
+		ASSERT(localBuffer, "Cannot load Image from path: " + texturePath);
 
 		Log("Texture with id: " << Id << std::endl
 			<< "Load Status: " << (localBuffer != nullptr) << std::endl

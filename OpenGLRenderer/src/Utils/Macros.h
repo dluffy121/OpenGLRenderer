@@ -1,8 +1,18 @@
 #pragma once
 
+#include <string>
+
+#define EXPAND(x) x
+
+#define GET_MACRO(_1, _2, NAME,...) NAME
+
 #define ARRAYSIZE(a) \
   ((sizeof(a) / sizeof(*(a))) / \
   static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
+
+#define TO_STRING(x) std::to_string(x)
+
+#define TYPE(typename) typename
 
 #define __METHOD_NAME__ methodName(__PRETTY_FUNCTION__)
 

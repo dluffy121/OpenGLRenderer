@@ -1,5 +1,6 @@
 #include "Logger.h"
 #include <GL/glew.h>
+#include <cstdarg>
 
 namespace core
 {
@@ -21,5 +22,17 @@ namespace core
 			return false;
 		}
 		return true;
+	}
+
+	void __Assert(bool expr, const char* expr_str, const char* file, int line, const std::string& msg)
+	{
+		if (!expr)
+		{
+			LogError(
+				"Assert failed:\n" << msg << "\n"
+				<< "Expected:\t" << expr_str << "\n"
+				<< "Source:\t\t" << file << ", line " << line);
+			__debugbreak();
+		}
 	}
 }

@@ -13,7 +13,7 @@ namespace core::gl
 		case GL_UNSIGNED_SHORT:	return 2;
 		case GL_UNSIGNED_BYTE:	return 1;
 		}
-		ASSERT(false);
+		ASSERT(false, "Unsupported Type: " + TO_STRING(type));
 		return 0;
 	}
 

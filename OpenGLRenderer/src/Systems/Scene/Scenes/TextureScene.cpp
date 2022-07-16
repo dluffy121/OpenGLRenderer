@@ -6,7 +6,7 @@
 #include <Camera/Camera.h>
 #include <CameraController/CameraController.h>
 #include <GameVastu/GameVastu.h>
-#include "../../../Macros.h"
+#include <Macros.h>
 
 using namespace core;
 using namespace core::gl;
