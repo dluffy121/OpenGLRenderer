@@ -1321,7 +1321,7 @@
     <ClInclude Include="src\Systems\GameVastu\GameVastu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Macros.h">
+    <ClInclude Include="src\Utils\Macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imconfig.h">

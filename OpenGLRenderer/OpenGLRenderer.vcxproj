@@ -333,7 +333,7 @@
     <ClInclude Include="src\Systems\GameVastu\GameVastu.h" />
     <ClInclude Include="src\Systems\GameVastu\GameVastuManager.h" />
     <ClInclude Include="src\Systems\GUI\GUIWindow.h" />
-    <ClInclude Include="src\Macros.h" />
+    <ClInclude Include="src\Utils\Macros.h" />
     <ClInclude Include="src\Systems\Renderer\Renderer.h" />
     <ClInclude Include="src\Systems\Shader\Shader.h" />
     <ClInclude Include="src\Systems\Shader\ShaderManager.h" />
