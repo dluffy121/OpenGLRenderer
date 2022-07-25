@@ -108,7 +108,7 @@ vec4 CalcBaseLightColor(in BaseLight light, in vec3 direction, in vec3 normal)
 			diffuseFactor;
 
 		vec3 pixelToCamera = normalize(u_CameraLocalPosition - v_LocalPosition);	// Get Pixel to Camera Vector
-		vec3 lightReflect = normalize(reflect(direction, normal));	// Get Reflection Vector
+		vec3 lightReflect = normalize(reflect(direction, normal));					// Get Reflection Vector
 		float specularFactor = dot(pixelToCamera, lightReflect);					// Dot Product gives Specular Factor
 		if (specularFactor > 0)
 		{

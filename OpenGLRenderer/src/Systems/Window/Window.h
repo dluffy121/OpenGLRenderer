@@ -8,9 +8,9 @@
 #include <GL/VertexArray/VertexArray.h>
 #include "../Scene/Scene.h"
 #include <Math/Math.h>
-#include <BatchRenderer/BatchRenderer.h>
 #include <Camera/CameraManager.h>
 #include <Light/LightingManager.h>
+#include <RenderIntent/RenderIntent.h>
 
 class GameVastu;
 class Component;
@@ -66,6 +66,16 @@ private:
 	void ScrollCallback(GLFWwindow* glfwWindow, double xoffset, double yoffset);
 	void KeyCallback(GLFWwindow* glfwWindow, int keycode, int scancode, int action, int mods);
 	void CharCallback(GLFWwindow* glfwWindow, unsigned int c);
+
+#pragma endregion
+
+#pragma region RenderIntent
+
+private:
+	RenderIntent* m_RenderIntent;
+
+public:
+	inline RenderIntent& GetRenderIntent() { return *m_RenderIntent; }
 
 #pragma endregion
 
@@ -133,16 +143,6 @@ public:
 	bool IsSceneActive(const std::string& sceneName);
 	bool IsSceneActive(const scene::Scene& scene);
 	inline std::unordered_map<std::string, scene::Scene*>& GetAllScenes() { return m_Scenes; }
-
-#pragma endregion
-
-#pragma region Batch Render
-
-private:
-	BatchRenderer* m_BatchRenderer;
-
-public:
-	inline BatchRenderer*& GetBatchRenderer() { return m_BatchRenderer; }
 
 #pragma endregion
 

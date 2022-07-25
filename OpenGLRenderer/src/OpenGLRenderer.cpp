@@ -16,6 +16,7 @@
 #include <Scene/Scenes/TextureScene.h>
 #include <Scene/Scenes/ModelScene.h>
 #include <Scene/Scenes/LightScene.h>
+#include <Scene/Scenes/BatchRenderTest.h>
 
 using namespace core;
 using namespace core::gl;
@@ -71,6 +72,7 @@ int main(void)
 		scenesWindow.RegisterScene<scene::TextureScene>("TextureScene");
 		scenesWindow.RegisterScene<scene::ModelScene>("ModelScene");
 		scenesWindow.RegisterScene<scene::LightScene>("LightScene");
+		scenesWindow.RegisterScene<scene::BatchRenderTest>("BatchRenderTest");
 
 		window1->RegisterGUIWindow(scenesWindow);
 		//window2->RegisterGUIWindow(scenesWindow);

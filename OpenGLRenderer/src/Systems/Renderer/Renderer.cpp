@@ -7,29 +7,25 @@ using namespace core;
 using namespace core::gl;
 
 Renderer::Renderer() :
-	m_VAO(NULL),
-	m_VertexBuffer(NULL),
-	m_IndexBuffer(NULL),
-	m_VBLayout(NULL),
+	m_RenderResource(0),
 	m_VertexCount(0),
 	m_IndexCount(0),
 	m_MaterialCount(0),
 	m_Shader(NULL),
-	m_TriangleCount(0)
+	m_TriangleCount(0),
+	m_NormalsCalculated(false)
 {}
 
 Renderer::Renderer(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount, bool calculateNormals) :
-	m_VAO(NULL),
-	m_VertexBuffer(NULL),
-	m_IndexBuffer(NULL),
-	m_VBLayout(NULL),
+	m_RenderResource(0),
 	m_Vertices(std::vector<Vertex>(vertices, vertices + vertexCount)),
 	m_VertexCount(vertexCount),
 	m_Indices(std::vector<unsigned int>(indices, indices + indexCount)),
 	m_IndexCount(indexCount),
 	m_MaterialCount(0),
 	m_Shader(NULL),
-	m_TriangleCount(indexCount / 3)
+	m_TriangleCount(indexCount / 3),
+	m_NormalsCalculated(true)
 {
 	if (calculateNormals) CalculateNormals();
 }
@@ -55,7 +51,7 @@ void Renderer::CalculateNormals()
 
 		auto normal = Vec3::Cross(side_1, side_2);
 
-		m_Vertices[m_Indices[i]].Normal		+= normal;
+		m_Vertices[m_Indices[i]].Normal += normal;
 		m_Vertices[m_Indices[i + 1]].Normal += normal;
 		m_Vertices[m_Indices[i + 2]].Normal += normal;
 	}
@@ -71,29 +67,21 @@ void Renderer::Awake()
 
 void Renderer::LoadResources()
 {
-	m_VAO = new VertexArray();
-	m_VAO->Bind();
-	m_VertexBuffer = new VertexBuffer(m_VertexCount * sizeof(Vertex));
-	m_VertexBuffer->Bind();
-	if (!m_Indices.empty())
-	{
-		m_IndexBuffer = new IndexBuffer(&m_Indices[0], GL_UNSIGNED_INT, m_IndexCount);
-		m_IndexBuffer->Bind();
-	}
-	m_VBLayout = new VertexBufferLayout();
-	m_VBLayout->Push<Vertex>(m_VertexBuffer->Id, 1);
-	m_VBLayout->Bind();
+	RenderResourceConfig config;
+	config.DynamicVB = true;
+	config.VBSize = m_VertexCount * sizeof(Vertex);
+	config.DynamicIB = false;
+	config.IBType = GL_UNSIGNED_INT;
+	config.IBCount = m_IndexCount;
+
+	m_RenderResource = CurrentWindow().GetRenderIntent().GetRenderResource(config);
+
+	CurrentWindow().GetRenderIntent().PushVertexToLayout(m_RenderResource, 1);
 }
 
 void Renderer::UnLoadResources()
 {
-	delete m_VertexBuffer;
-	delete m_IndexBuffer;
-	delete m_VBLayout;
-	delete m_VAO;
-
-	//for (size_t i = 0; i < m_MaterialCount; i++)
-	//	delete m_Materials[i];
+	CurrentWindow().GetRenderIntent().DeleteRenderResource(m_RenderResource);
 
 	m_Vertices.clear();
 	m_Indices.clear();
@@ -167,12 +155,16 @@ void Renderer::Render()
 
 void Renderer::BindResources()
 {
-	m_VAO->Bind();
+	//m_VAO->Bind();
+
 }
 
 void Renderer::UnBindResources()
 {
-	m_VAO->UnBind();
+	//m_VertexBuffer->Remove(m_VertexCount * sizeof(Vertex));
+	//m_VAO->UnBind();
+
+	CurrentWindow().GetRenderIntent().RemoveVertices(m_RenderResource, m_VertexCount * sizeof(Vertex));
 }
 
 void Renderer::Prepare()
@@ -182,7 +174,8 @@ void Renderer::Prepare()
 
 	if (!camera) return;
 
-	glm::mat4 mvp = camera->GetProjectionMatrix() * camera->GetViewMatrix() * gameVastu->m_transform->GetTransformMatrix();
+	glm::mat4 mv = camera->GetViewMatrix() * gameVastu->m_transform->GetTransformMatrix();
+	glm::mat4 mvp = camera->GetProjectionMatrix() * mv;
 
 	std::vector<Vertex> vertices = m_Vertices;
 	for (size_t i = 0; i < m_VertexCount; i++)
@@ -193,13 +186,23 @@ void Renderer::Prepare()
 		vertices[i].PixelPosition.y = pixelPosition.y;
 		vertices[i].PixelPosition.z = pixelPosition.z;
 		vertices[i].PixelPosition.w = pixelPosition.w;
+
+		if (m_NormalsCalculated)
+		{
+			glm::vec4 normal(m_Vertices[i].Normal.x, m_Vertices[i].Normal.y, m_Vertices[i].Normal.z, 1.0f);
+			normal = mv * normal;
+			vertices[i].Normal.x = normal.x;
+			vertices[i].Normal.y = normal.y;
+			vertices[i].Normal.z = normal.z;
+		}
 	}
 
-	m_VertexBuffer->Bind();
-	GLLog(glBufferSubData(GL_ARRAY_BUFFER, 0, m_VertexCount * sizeof(Vertex), &vertices[0]));
-	m_VertexBuffer->UnBind();
+	CurrentWindow().GetRenderIntent().AddVertices(m_RenderResource, m_VertexCount * sizeof(Vertex), &vertices[0]);
 
+	std::vector<unsigned int> indices = m_Indices;
+	CurrentWindow().GetRenderIntent().AddIndices(m_RenderResource, m_IndexCount, &indices[0]);
 
+	// Supply already calculated vectors for less calculation
 	for (auto material : m_Materials)
 	{
 		material->m_Shader->Bind();
@@ -213,9 +216,7 @@ void Renderer::Draw()
 	if (m_MaterialCount < 1 || !m_Materials[0])
 		return;
 
-	m_Materials[0]->Bind();
-
-	GLLog(glDrawElementsBaseVertex(GL_TRIANGLES, m_IndexCount, GL_UNSIGNED_INT, 0, 0));
+	CurrentWindow().GetRenderIntent().Draw(m_RenderResource, m_Materials[0], m_IndexCount, 0, 0);
 }
 
 void Renderer::OnInspectorGUI()
@@ -244,6 +245,9 @@ void Renderer::OnInspectorGUI()
 				ImGui::PushID(i);
 
 				Material*& material = m_Materials[i];
+
+				std::string id = "Id: " + std::to_string(material->Id);
+				ImGui::Text(id.c_str());
 
 				ImGui::ColorEdit3("Ambient Color", material->m_AmbientColor);
 				ImGui::ColorEdit3("Diffuse Color", material->m_DiffuseColor);
@@ -292,11 +296,11 @@ void Renderer::OnInspectorGUI()
 				ImGui::PushID(i);
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("X", &m_Vertices[i].Position.x, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("X", &m_Vertices[i].Position.x, 0.01f);
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("Y", &m_Vertices[i].Position.y, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Y", &m_Vertices[i].Position.y, 0.01f);
 				ImGui::TableNextColumn();
-				ImGui::DragFloat("Z", &m_Vertices[i].Position.z, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Z", &m_Vertices[i].Position.z, 0.01f);
 				ImGui::PopID();
 			}
 		}

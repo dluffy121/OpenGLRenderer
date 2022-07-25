@@ -12,10 +12,8 @@
 class Renderer : public Component
 {
 protected:
-	core::gl::VertexArray* m_VAO;
-	core::gl::VertexBuffer* m_VertexBuffer;
-	core::gl::IndexBuffer* m_IndexBuffer;
-	core::gl::VertexBufferLayout* m_VBLayout;
+	unsigned int m_RenderResource;
+	bool m_NormalsCalculated;
 
 	unsigned int m_VertexCount;
 	std::vector<core::Vertex> m_Vertices;

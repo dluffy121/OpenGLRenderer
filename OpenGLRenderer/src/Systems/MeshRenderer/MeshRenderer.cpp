@@ -55,15 +55,16 @@ void MeshRenderer::InitMesh(const aiScene* scene, const std::string& path)
 
 	InitAllSubMeshes(scene);
 
-	m_VAO = new VertexArray();
-	m_VAO->Bind();
-	m_VertexBuffer = new VertexBuffer(m_VertexCount * sizeof(Vertex));
-	m_VertexBuffer->Bind();
-	m_IndexBuffer = new IndexBuffer(&m_Indices[0], GL_UNSIGNED_INT, m_IndexCount);
-	m_IndexBuffer->Bind();
-	m_VBLayout = new VertexBufferLayout();
-	m_VBLayout->Push<Vertex>(m_VertexBuffer->Id, 1);
-	m_VBLayout->Bind();
+	RenderResourceConfig config;
+	config.DynamicVB = true;
+	config.VBSize = m_VertexCount * sizeof(Vertex);
+	config.DynamicIB = false;
+	config.IBType = GL_UNSIGNED_INT;
+	config.IBCount = m_IndexCount;
+
+	m_RenderResource = CurrentWindow().GetRenderIntent().GetRenderResource(config);
+
+	CurrentWindow().GetRenderIntent().PushVertexToLayout(m_RenderResource, 1);
 
 	InitMaterials(scene, path);
 }
@@ -228,13 +229,8 @@ void MeshRenderer::Draw()
 	{
 		unsigned int materialIndex = m_SubMeshes[i].MaterialIndex;
 
-		assert(materialIndex < m_MaterialCount);
-
-		m_Materials[materialIndex]->Bind();
-
-		auto startIndex = sizeof(unsigned int) * m_SubMeshes[i].BaseIndex;	// since IndexBuffer is already populated, we just provide starting offset
-
-		GLLog(glDrawElementsBaseVertex(GL_TRIANGLES, m_SubMeshes[i].IndexCount, GL_UNSIGNED_INT, (void*)startIndex, m_SubMeshes[i].BaseVertex));
+		ASSERT(materialIndex < m_MaterialCount);
+		CurrentWindow().GetRenderIntent().Draw(m_RenderResource,m_Materials[materialIndex], m_SubMeshes[i].IndexCount, m_SubMeshes[i].BaseIndex, m_SubMeshes[i].BaseVertex);
 	}
 }
 

@@ -25,7 +25,6 @@ public:
 	void SelectedGameVastu(GameVastu* gameVastu);
 	GameVastu* SelectedGameVastu();
 
-
 	inline Window*& GetCurrentWindow() { return m_currentWindow; }
 
 protected:
@@ -38,3 +37,5 @@ private:
 	void InitImGuiRendererBackend();
 	void ShutdownImGuiRendererBackend();
 };
+
+static Window& CurrentWindow() { return *WindowManager::getInstance()->GetCurrentWindow(); }

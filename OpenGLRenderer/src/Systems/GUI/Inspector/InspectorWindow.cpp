@@ -18,14 +18,11 @@ void InspectorWindow::Draw(Window* window)
 
 	ImGui::Separator();
 
-	BatchRenderer& batchRender = *WindowManager::getInstance()->GetCurrentWindow()->GetBatchRenderer();
-	ImGui::Checkbox("Batch Renderer", &batchRender.Enable);
+	RenderIntent& renderIntent = CurrentWindow().GetRenderIntent();
+	ImGui::Checkbox("Render Info", &renderIntent.Enable);
 	ImGui::Text("Draw Calls: ");
 	ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-	ImGui::Text(std::to_string(batchRender.GetDrawCount()).c_str());
-	ImGui::Text("Total Draw Calls: ");
-	ImGui::SameLine(); ImGui::Spacing(); ImGui::SameLine();
-	ImGui::Text(std::to_string(batchRender.GetTotalDrawCalls()).c_str());
+	ImGui::Text(std::to_string(renderIntent.DrawCalls).c_str());
 
 	ImGui::Spacing();
 	ImGui::Separator();

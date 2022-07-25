@@ -317,11 +317,15 @@
     <ClInclude Include="src\Systems\Light\PointLight.h" />
     <ClInclude Include="src\Systems\Light\SpotLight.h" />
     <ClInclude Include="src\Systems\MeshRenderer\MeshRenderer.h" />
-    <ClInclude Include="src\Systems\BatchRenderer\BatchRenderer.h" />
     <ClInclude Include="src\Systems\CameraController\CameraController.h" />
     <ClInclude Include="src\Systems\GUI\Inspector\InspectorWindow.h" />
     <ClInclude Include="src\Systems\GUI\Scenes\ScenesWindow.h" />
+    <ClInclude Include="src\Systems\RenderIntent\BatchRenderIntent.h" />
+    <ClInclude Include="src\Systems\RenderIntent\RenderIntent.h" />
+    <ClInclude Include="src\Systems\RenderIntent\RenderResource.h" />
+    <ClInclude Include="src\Systems\RenderIntent\StandardRenderIntent.h" />
     <ClInclude Include="src\Systems\Scene\Scene.h" />
+    <ClInclude Include="src\Systems\Scene\Scenes\BatchRenderTest.h" />
     <ClInclude Include="src\Systems\Scene\Scenes\ColorScene.h" />
     <ClInclude Include="src\Systems\Scene\Scenes\LightScene.h" />
     <ClInclude Include="src\Systems\Scene\Scenes\ModelScene.h" />
@@ -643,7 +647,6 @@
     <ClCompile Include="src\Core\GL\VertexBufferLayout\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Core\GL\VertexBuffer\VertexBuffer.cpp" />
     <ClCompile Include="src\Core\Logger\Logger.cpp" />
-    <ClCompile Include="src\Systems\BatchRenderer\BatchRenderer.cpp" />
     <ClCompile Include="src\Systems\CameraController\CameraController.cpp" />
     <ClCompile Include="src\Systems\Camera\Camera.cpp" />
     <ClCompile Include="src\Systems\Camera\CameraManager.cpp" />
@@ -661,7 +664,11 @@
     <ClCompile Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.cpp" />
     <ClCompile Include="src\Systems\GUI\Inspector\InspectorWindow.cpp" />
     <ClCompile Include="src\Systems\GUI\Scenes\ScenesWindow.cpp" />
+    <ClCompile Include="src\Systems\RenderIntent\BatchRenderIntent.cpp" />
+    <ClCompile Include="src\Systems\RenderIntent\RenderResource.cpp" />
+    <ClCompile Include="src\Systems\RenderIntent\StandardRenderIntent.cpp" />
     <ClCompile Include="src\Systems\Scene\Scene.cpp" />
+    <ClCompile Include="src\Systems\Scene\Scenes\BatchRenderTest.cpp" />
     <ClCompile Include="src\Systems\Scene\Scenes\ColorScene.cpp" />
     <ClCompile Include="src\Systems\Scene\Scenes\LightScene.cpp" />
     <ClCompile Include="src\Systems\Scene\Scenes\ModelScene.cpp" />

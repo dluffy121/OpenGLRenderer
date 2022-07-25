@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <iterator>
 #include <imgui/imgui_impl_opengl3.h>
+#include <RenderIntent/StandardRenderIntent.h>
+#include <RenderIntent/BatchRenderIntent.h>
 
 using namespace core;
 using namespace core::gl;
@@ -17,6 +19,8 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 	m_Height(height),
 	m_CameraManager(new CameraManager()),
 	m_LightingManager(new LightingManager()),
+	//m_RenderIntent(new BatchRenderIntent()),
+	m_RenderIntent(new StandardRenderIntent()),
 	SelectedGameVastu(NULL)
 {
 	m_GLFWWindow = OpenGLHelper::CreateWindow(width, height, m_WindowId, sharedWindow);
@@ -27,8 +31,6 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 	CreateImGUIContext(sharedFontAtlas);
 
 	InstallCallbacks();
-
-	m_BatchRenderer = new BatchRenderer();
 
 	if (!m_GLFWWindow)
 	{
@@ -49,7 +51,7 @@ Window::~Window()
 	for (auto& scene : m_Scenes)
 		delete scene.second;
 
-	delete m_BatchRenderer;
+	if (m_RenderIntent) delete m_RenderIntent;
 	delete m_CameraManager;
 	delete m_LightingManager;
 
@@ -66,7 +68,7 @@ void Window::NewFrame()
 
 void Window::EndFrame()
 {
-	m_BatchRenderer->Reset();
+	m_RenderIntent->Reset();
 	m_ScrollOffset[0] = 0.0f; m_ScrollOffset[1] = 0.0f;
 }
 
@@ -100,8 +102,7 @@ void Window::Render()
 		component->_Render();
 	}
 
-	if (m_BatchRenderer->Enable)
-		m_BatchRenderer->Draw();
+	m_RenderIntent->Draw();
 }
 
 void Window::RenderGUI()
@@ -250,7 +251,7 @@ Vec2 Window::GetMousePos()
 
 Vec2 Window::GetScroll()
 {
-	return Vec2 { static_cast<float>(m_ScrollOffset[0]), static_cast<float>(m_ScrollOffset[1])};
+	return Vec2 { static_cast<float>(m_ScrollOffset[0]), static_cast<float>(m_ScrollOffset[1]) };
 }
 
 #pragma endregion
@@ -275,7 +276,7 @@ void Window::RegisterComponent(Component& component)
 		return;
 
 	component._Awake();
-	if(component.GetEnabled())
+	if (component.GetEnabled())
 		component._OnEnable();
 
 	m_Components.push_back(&component);
