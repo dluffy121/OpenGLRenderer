@@ -108,7 +108,7 @@ namespace core::gl
 
 		inline const std::unordered_map<GLuint, VertexBufferElement>& GetElements() const { return m_Elements; }
 		inline unsigned int GetStride() const { return m_Stride; }
-		void Bind();
-		void UnBind();
+		void Enable();
+		void Disable();
 	};
 }

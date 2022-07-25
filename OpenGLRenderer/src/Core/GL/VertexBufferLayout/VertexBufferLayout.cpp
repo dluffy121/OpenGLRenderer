@@ -4,7 +4,7 @@
 
 namespace core::gl
 {
-	void VertexBufferLayout::Bind()
+	void VertexBufferLayout::Enable()
 	{
 		unsigned int offset = 0;
 		unsigned int index = 0;
@@ -26,7 +26,7 @@ namespace core::gl
 		}
 	}
 
-	void VertexBufferLayout::UnBind()
+	void VertexBufferLayout::Disable()
 	{
 		unsigned int offset = 0;
 		unsigned int index = 0;
