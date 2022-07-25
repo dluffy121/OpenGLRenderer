@@ -7,15 +7,15 @@
 PointLight::PointLight() :
 	Light(LightType::Point),
 	m_ConstantAttenuation(1.0f),
-	m_LinearAttenuation(0.5f),
-	m_ExponentialAttenuation(0.5f)
+	m_LinearAttenuation(0.1f),
+	m_ExponentialAttenuation(0.01f)
 {}
 
 PointLight::PointLight(LightType type) :
 	Light(type),
 	m_ConstantAttenuation(1.0f),
-	m_LinearAttenuation(0.5f),
-	m_ExponentialAttenuation(0.5f)
+	m_LinearAttenuation(0.1f),
+	m_ExponentialAttenuation(0.01f)
 {}
 
 PointLight::~PointLight()

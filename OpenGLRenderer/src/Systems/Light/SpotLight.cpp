@@ -15,7 +15,7 @@ SpotLight::~SpotLight()
 	WindowManager::getInstance()->GetCurrentWindow()->GetLightingManager().UnSubscribe<SpotLight>(this);
 }
 
-core::Vec3 SpotLight::GetDirection(Transform& vastuTransform)
+core::Vec3 SpotLight::GetLocalDirection(Transform& vastuTransform)
 {
 	auto dirInWorld = gameVastu->m_transform->GetForward();
 	glm::mat3 local = glm::transpose(vastuTransform.GetRotationMatrix());
@@ -58,7 +58,7 @@ void SpotLight::UpdateShaderLightData(unsigned int index, Shader& shader, Transf
 	snprintf(uniform, sizeof(uniform), "u_SpotLights[%d].base.atten.Exponent", index);
 	shader.SetUniform1f(uniform, m_ExponentialAttenuation);
 
-	auto direction = GetDirection(vastuTransform);
+	auto direction = GetLocalDirection(vastuTransform);
 	snprintf(uniform, sizeof(uniform), "u_SpotLights[%d].direction", index);
 	shader.SetUniform3f(uniform, direction.x, direction.y, direction.z);
 

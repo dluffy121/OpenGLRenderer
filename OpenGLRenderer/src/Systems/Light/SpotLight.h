@@ -14,7 +14,7 @@ public:
 	SpotLight();
 	~SpotLight();
 
-	core::Vec3 GetDirection(Transform& vastuTransform);
+	core::Vec3 GetLocalDirection(Transform& vastuTransform);
 	inline float GetCutOffAngle() { return m_CutoffAngle; }
 	void SetCutOffAngle(float angle);
 
