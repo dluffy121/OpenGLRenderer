@@ -16,7 +16,7 @@ namespace core
 					if(!(x)) __debugbreak();
 
 #define ASSERT2(x, m)				\
-					__Assert(x, #x, __FILE__, __LINE__, m);
+					if(!__Assert(x, #x, __FILE__, __LINE__, m)) __debugbreak();
 
 #define GLLog(x)					\
 					GLClearError();	\
@@ -33,5 +33,5 @@ namespace core
 
 	void GLClearError();
 	bool GLLogCall(const char* function, const char* file, int line);
-	void __Assert(bool expr, const char* expr_str, const char* file, int line, const std::string& msg);
+	bool __Assert(bool expr, const char* expr_str, const char* file, int line, const std::string& msg);
 }

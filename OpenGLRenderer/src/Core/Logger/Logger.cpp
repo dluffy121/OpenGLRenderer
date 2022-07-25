@@ -24,7 +24,7 @@ namespace core
 		return true;
 	}
 
-	void __Assert(bool expr, const char* expr_str, const char* file, int line, const std::string& msg)
+	bool __Assert(bool expr, const char* expr_str, const char* file, int line, const std::string& msg)
 	{
 		if (!expr)
 		{
@@ -32,7 +32,8 @@ namespace core
 				"Assert failed:\n" << msg << "\n"
 				<< "Expected:\t" << expr_str << "\n"
 				<< "Source:\t\t" << file << ", line " << line);
-			__debugbreak();
+			return false;
 		}
+		return true;
 	}
 }
