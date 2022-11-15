@@ -87,7 +87,7 @@ public:
 		//Component& component = &(m_Components[type]);
 		//return (dynamic_cast<T&>(component));
 
-		std::unordered_map<std::string, Component*>::const_iterator pos = m_Components.find(type);
+		std::unordered_map<size_t, Component*>::const_iterator pos = m_Components.find(type);
 
 		if (pos == m_Components.end())
 			return nullptr;
