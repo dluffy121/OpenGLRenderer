@@ -1453,6 +1453,9 @@
     <ClInclude Include="src\Systems\RenderIntent\RenderResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Systems\GUI\Toolbar\WindowToolbar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\vendor\glm\detail\glm.cpp">
@@ -1600,6 +1603,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Systems\RenderIntent\RenderResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Systems\GUI\Toolbar\WindowToolbar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

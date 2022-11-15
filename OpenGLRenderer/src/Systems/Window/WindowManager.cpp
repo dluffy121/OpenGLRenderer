@@ -110,6 +110,15 @@ void WindowManager::WindowLoop()
 
 			m_currentWindow->EndFrame();
 
+			if (m_currentWindow->ResizeViewport())
+			{
+				int width, height;
+				glfwGetFramebufferSize(glfwWindow, &width, &height);
+				glViewport(0, 0, width, height);
+
+				m_currentWindow->ViewportResized();
+			}
+
 			if (glfwWindowShouldClose(glfwWindow))
 			{
 				windowClosed = true;

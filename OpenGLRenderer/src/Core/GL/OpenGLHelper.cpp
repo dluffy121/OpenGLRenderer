@@ -43,11 +43,12 @@ namespace core::gl
 		return true;
 	}
 
-	GLFWwindow* OpenGLHelper::CreateWindow(int width, int height, const std::string& title, GLFWwindow* sharedWindow, bool isHidden, bool isDecorated)
+	GLFWwindow* OpenGLHelper::CreateWindow(int width, int height, const std::string& title, GLFWwindow* sharedWindow, GLFWmonitor* monitor, bool isHidden, bool isDecorated)
 	{
 		glfwWindowHint(GLFW_VISIBLE, isHidden ? GLFW_FALSE : GLFW_TRUE);
 		glfwWindowHint(GLFW_DECORATED, isDecorated ? GLFW_TRUE : GLFW_FALSE);
-		return glfwCreateWindow(width, height, title.c_str(), NULL, sharedWindow);
+
+		return glfwCreateWindow(width, height, title.c_str(), monitor, sharedWindow);
 	}
 
 	void OpenGLHelper::SetSwapInterval(int interval)

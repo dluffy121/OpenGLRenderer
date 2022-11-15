@@ -16,7 +16,7 @@ private:
 public:
 	static WindowManager* getInstance();
 
-	Window* GetWindowInstance(const std::string& windowId, int width, int height, GLFWwindow* sharedWindow = NULL, ImFontAtlas* sharedFontAtlas = NULL);
+	Window* GetWindowInstance(const std::string& windowId, int width = 0, int height = 0, GLFWwindow* sharedWindow = NULL, ImFontAtlas* sharedFontAtlas = NULL);
 
 	void Init();
 	void WindowLoop();

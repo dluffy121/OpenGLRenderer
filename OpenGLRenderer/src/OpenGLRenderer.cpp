@@ -12,6 +12,7 @@
 #include <GUI/Scenes/ScenesWindow.h>
 #include <GUI/Inspector/InspectorWindow.h>
 #include <GUI/Hierarchy/HeirarchyWindow.h>
+#include <GUI/Toolbar/WindowToolbar.h>
 #include <Scene/Scenes/ColorScene.h>
 #include <Scene/Scenes/TextureScene.h>
 #include <Scene/Scenes/ModelScene.h>
@@ -35,7 +36,7 @@ int main(void)
 #if DEBUGGING
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 #endif
-	GLFWwindow* window = OpenGLHelper::CreateWindow(1, 1, "", NULL, true);
+	GLFWwindow* window = OpenGLHelper::CreateWindow(1, 1, "", NULL, NULL, true);
 	OpenGLHelper::UseGLFWWindow(window);
 	OpenGLHelper::SetSwapInterval(1);
 
@@ -46,7 +47,7 @@ int main(void)
 	if (!OpenGLHelper::InitializeGLEW())
 		return -1;
 
-	Window* window1 = windowManager->GetWindowInstance("Main Window", 2000, 1000, window, globalFontAtlas);
+	Window* window1 = windowManager->GetWindowInstance("Main Window", 0, 0, window, globalFontAtlas);
 	//Window* window2 = windowManager->GetWindowInstance("Second Window", 960, 480, window, globalFontAtlas);
 
 	fprintf(stdout, "Status: Using OpenGL version %s\n", glGetString(GL_VERSION));
@@ -86,6 +87,10 @@ int main(void)
 
 		window1->RegisterGUIWindow(heirarchyWindow);
 		//window2->RegisterGUIWindow(heirarchyWindow);
+
+		WindowToolbar windowToolbar;
+		window1->RegisterGUIWindow(windowToolbar);
+		//window2->RegisterGUIWindow(windowToolbar);
 
 		windowManager->Init();
 		windowManager->WindowLoop();

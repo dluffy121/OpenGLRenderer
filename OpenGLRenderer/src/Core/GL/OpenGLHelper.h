@@ -19,7 +19,7 @@ namespace core::gl
 
 		static void TerminateGLFW();
 
-		static GLFWwindow* CreateWindow(int width, int height, const std::string& title, GLFWwindow* sharedWindow = NULL, bool isHidden = false, bool isDecorated = true);
+		static GLFWwindow* CreateWindow(int width, int height, const std::string& title, GLFWwindow* sharedWindow = NULL, GLFWmonitor* monitor = NULL, bool isHidden = false, bool isDecorated = true);
 		static void SetSwapInterval(int interval);
 		static void UseGLFWWindow(GLFWwindow* window);
 		static void DestroyGLFWWindow(GLFWwindow* window);

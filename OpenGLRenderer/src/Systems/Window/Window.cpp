@@ -23,7 +23,16 @@ Window::Window(const std::string& rendererId, int width, int height, GLFWwindow*
 	m_RenderIntent(new StandardRenderIntent()),
 	SelectedGameVastu(NULL)
 {
-	m_GLFWWindow = OpenGLHelper::CreateWindow(width, height, m_WindowId, sharedWindow);
+	GLFWmonitor* monitor = NULL;
+
+	if (m_Width == 0 || m_Height == 0)
+	{
+		monitor = glfwGetPrimaryMonitor();
+		GetPrimaryMonitorSize(monitor, m_Width, m_Height);
+		m_IsFullscreen = true;
+	}
+
+	m_GLFWWindow = OpenGLHelper::CreateWindow(m_Width, m_Height, m_WindowId, sharedWindow, monitor);
 	glfwMakeContextCurrent(m_GLFWWindow);
 
 	glfwSetWindowUserPointer(m_GLFWWindow, this);
@@ -155,6 +164,10 @@ void Window::InstallCallbacks()
 	{
 		static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow))->CharCallback(glfwWindow, c);
 	};
+	auto resizeFunc = [](GLFWwindow* glfwWindow, int cx, int cy)
+	{
+		static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow))->ResizeCallback(glfwWindow, cx, cy);
+	};
 
 	glfwSetCursorEnterCallback(m_GLFWWindow, cursorEnterFunc);
 	glfwSetCursorPosCallback(m_GLFWWindow, cursorPosFunc);
@@ -162,6 +175,7 @@ void Window::InstallCallbacks()
 	glfwSetScrollCallback(m_GLFWWindow, scrollFunc);
 	glfwSetKeyCallback(m_GLFWWindow, keyFunc);
 	glfwSetCharCallback(m_GLFWWindow, charFunc);
+	glfwSetWindowSizeCallback(m_GLFWWindow, resizeFunc);
 }
 
 void Window::CursorEnterCallback(GLFWwindow* glfwWindow, int entered)
@@ -227,6 +241,11 @@ void Window::CharCallback(GLFWwindow* glfwWindow, unsigned int c)
 	ImGui::SetCurrentContext(lastImGuiContext);
 }
 
+void Window::ResizeCallback(GLFWwindow* glfwWindow, int cx, int cy)
+{
+	m_ResizeViewport = true;
+}
+
 bool Window::GetKeyPressed(int keyCode)
 {
 	return glfwGetKey(m_GLFWWindow, keyCode) == GLFW_PRESS;
@@ -246,12 +265,42 @@ Vec2 Window::GetMousePos()
 {
 	double x, y;
 	glfwGetCursorPos(m_GLFWWindow, &x, &y);
-	return Vec2 { static_cast<float>(x), static_cast<float>(y) };
+	return Vec2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 Vec2 Window::GetScroll()
 {
-	return Vec2 { static_cast<float>(m_ScrollOffset[0]), static_cast<float>(m_ScrollOffset[1]) };
+	return Vec2{ static_cast<float>(m_ScrollOffset[0]), static_cast<float>(m_ScrollOffset[1]) };
+}
+
+void Window::EnableFullScreen()
+{
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	if (!monitor) return;
+
+	GetPrimaryMonitorSize(glfwGetPrimaryMonitor(), m_Width, m_Height);
+
+	glfwSetWindowMonitor(m_GLFWWindow, monitor, 0, 0, m_Width, m_Height, GLFW_DONT_CARE);
+
+	m_IsFullscreen = true;
+	m_ResizeViewport = true;
+}
+
+void Window::EnableWindowed()
+{
+	glfwSetWindowMonitor(m_GLFWWindow, NULL, 50, 50, m_Width - 100, m_Height - 100, GLFW_DONT_CARE);
+
+	m_IsFullscreen = false;
+	m_ResizeViewport = true;
+}
+
+void Window::GetPrimaryMonitorSize(GLFWmonitor* monitor, int& width, int& height) const
+{
+	if (!monitor) return;
+
+	const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
+	width = videoMode->width;
+	height = videoMode->height;
 }
 
 #pragma endregion

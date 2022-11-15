@@ -27,8 +27,12 @@ private:
 
 	unsigned int m_Frames;
 
+	bool m_IsFullscreen;
+
+	bool m_ResizeViewport;
+
 public:
-	Window(const std::string& rendererId, int width = 640, int height = 480, GLFWwindow* sharedWindow = NULL, ImFontAtlas* sharedFontAtlas = NULL);
+	Window(const std::string& rendererId, int width = 0, int height = 0, GLFWwindow* sharedWindow = NULL, ImFontAtlas* sharedFontAtlas = NULL);
 	~Window();
 
 	void NewFrame();
@@ -42,6 +46,10 @@ public:
 	inline int GetWindowWidth() { return m_Width; }
 	inline int GetWindowHeight() { return m_Height; }
 	inline int GetFrames() { return m_Frames; }
+	inline bool IsFullScreen() { return m_IsFullscreen; }
+	inline bool ResizeViewport() { return m_ResizeViewport; }
+
+	inline void ViewportResized() { m_ResizeViewport = false; }
 
 #pragma region GLFW Window
 
@@ -57,6 +65,8 @@ public:
 	bool GetKeyUp(int keyCode);
 	core::Vec2 GetMousePos();
 	core::Vec2 GetScroll();
+	void EnableFullScreen();
+	void EnableWindowed();
 
 private:
 	void InstallCallbacks();
@@ -66,6 +76,9 @@ private:
 	void ScrollCallback(GLFWwindow* glfwWindow, double xoffset, double yoffset);
 	void KeyCallback(GLFWwindow* glfwWindow, int keycode, int scancode, int action, int mods);
 	void CharCallback(GLFWwindow* glfwWindow, unsigned int c);
+	void ResizeCallback(GLFWwindow* glfwWindow, int cx, int cy);
+
+	void GetPrimaryMonitorSize(GLFWmonitor* monitor, int& width, int& height) const;
 
 #pragma endregion
 

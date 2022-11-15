@@ -80,7 +80,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -138,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\include;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\Core;src\Utils;src\Systems;src\vendor;$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\include;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\include;$(SolutionDir)Dependencies\ASSIMP\assimp-5.2.4\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -147,9 +147,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\lib-vc2022;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;glfw3_mt.lib;glew32s.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\glfw-3.3.6.bin.WIN64\lib-vc2022;$(SolutionDir)Dependencies\GLEW\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependencies\ASSIMP\assimp-5.2.4\lib\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;glfw3.lib;glfw3_mt.lib;glew32s.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib</AdditionalDependencies>
       <ShowProgress>LinkVerbose</ShowProgress>
+      <LinkStatus>false</LinkStatus>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -310,6 +311,7 @@
     <ClInclude Include="src\Core\Math\Math.h" />
     <ClInclude Include="src\StaticMethods.h" />
     <ClInclude Include="src\Systems\Camera\CameraManager.h" />
+    <ClInclude Include="src\Systems\GUI\Toolbar\WindowToolbar.h" />
     <ClInclude Include="src\Systems\Light\DirectionalLight.h" />
     <ClInclude Include="src\Systems\Light\Light.h" />
     <ClInclude Include="src\Systems\GUI\Hierarchy\HeirarchyWindow.h" />
@@ -651,6 +653,7 @@
     <ClCompile Include="src\Systems\Camera\Camera.cpp" />
     <ClCompile Include="src\Systems\Camera\CameraManager.cpp" />
     <ClCompile Include="src\Systems\Component\Component.cpp" />
+    <ClCompile Include="src\Systems\GUI\Toolbar\WindowToolbar.cpp" />
     <ClCompile Include="src\Systems\Light\DirectionalLight.cpp" />
     <ClCompile Include="src\Systems\Light\Light.cpp" />
     <ClCompile Include="src\Systems\GameVastu\GameVastu.cpp" />
