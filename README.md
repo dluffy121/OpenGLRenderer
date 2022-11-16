@@ -10,7 +10,7 @@ Windows are created using GLFW library, which also takes care of creating OpenGL
 A window can be created by calling ***WindowManager::GetWindowInstance*** from singleton instance of ***WindowManager***.
 
 ```cpp
-    Window* window1 = WindowManager::getInstance()->GetWindowInstance("Hidden Window", 1, 1);
+Window* window1 = WindowManager::getInstance()->GetWindowInstance("Hidden Window", 1, 1);
 ```
 
 Multiple windows can exist at the same time. They can share resources or have resources of their own.
@@ -18,16 +18,19 @@ Resources like Vertex Buffers, Index buffers, Textures, Shaders can be shared ac
 Sharing resources helps in optimized performance and usage across multiple windows for different functionalities.
 
 ```cpp
-	Window* window2 = WindowManager::getInstance()->GetWindowInstance("Second Window", 1280, 720, window1->GetGLFWWindow());
+Window* window2 = WindowManager::getInstance()->GetWindowInstance("Second Window", 1280, 720, window1->GetGLFWWindow());
 ```
 
 In terms of GUI, a font atlas object (***ImFontAtlas***) can be shared across windows.
 
 ```cpp
-    ImGui::CreateContext();
-	ImFontAtlas* globalFontAtlas = ImGui::GetIO().Fonts;
-	Window* window3 = WindowManager::getInstance()->GetWindowInstance("Third Window", 1280, 720, window1->GetGLFWWindow(), globalFontAtlas);
+ImGui::CreateContext();
+ImFontAtlas* globalFontAtlas = ImGui::GetIO().Fonts;
+Window* window3 = WindowManager::getInstance()->GetWindowInstance("Third Window", 1280, 720, window1->GetGLFWWindow(), globalFontAtlas);
 ```
+
+![MultipleWindows](https://user-images.githubusercontent.com/43366313/202290734-035688ce-5db6-440e-86eb-c693016f4106.png)<br>
+*Multiple Windows*
 
 ### **GLSL Shaders**
 
@@ -98,18 +101,46 @@ There are many virtual methods to override to achieve desired functionality:
 
 #### Camera
 Camera Component is responsible for viewing and projecting the world on a 2D screen. It supports both types of projections, orthographic and perspective. This componont takes care of creating **View** matrix by using its gameVastu's Transform matrix and **Projection** matrix.
+
+![OrthographicCamera](https://user-images.githubusercontent.com/43366313/202291402-cbfa3fdd-67d5-456b-a5fd-fc190758cde0.png)<br>*Orthographic*
+
+![PerspectiveCamera](https://user-images.githubusercontent.com/43366313/202291576-615238cd-9762-4c48-b10c-caee82632a9d.png)<br>*Perspective*
+
 #### CameraController
 This component is responsible for controlling cameras movement. **WASD** can be using to translate camera, rotation can be achieved by combining this with **Alt** key, and zooming can be done by using **Mouse Scroll**.
+
 #### DirectionalLight
 This component handles lighting objects from a single direction. Its direction and color can be handled from its inspector.
+
+![DirectionalLight](https://user-images.githubusercontent.com/43366313/202291772-ebf41749-6aa0-4d66-bc46-d60400ebdb4b.gif)<br>
+*Directional Light - from left towards positive X axis*
+
 #### PointLight
 This component handles lighting objects from a single point in the world. Its intensities, radius can be handled from its inspector.
+
+![PointLight](https://user-images.githubusercontent.com/43366313/202291815-2813abbb-2887-4c1e-910a-772911b746ec.gif)<br>
+*Point Light - changing Y position*
+
 #### SpotLight
-This component handles lighting objects from a single point and spreading in a direction forming a conical light shape. Inspector can be used to modify its properties. This is a derived component of PointLight
+This component handles lighting objects from a single point and spreading in a direction forming a conical light shape. Inspector can be used to modify its properties. This is a derived component of PointLight.
+
+![SpotLight](https://user-images.githubusercontent.com/43366313/202291858-710c5d09-cba0-4a04-a9a2-b4319c4918c3.gif)<br>
+*Spot Light - changing X Rotation*
+
+![SpotLight_CuttOff](https://user-images.githubusercontent.com/43366313/202291865-9b64fbda-595f-407a-bdfc-d5cfe8d57742.gif)<br>
+*Spot Light - changing Cutoff value*
+
 #### Renderer
 Rendering of simple models can be handled by this component by taking vertices and indices as input.
+
+![Renderer](https://user-images.githubusercontent.com/43366313/202293876-958b81b2-fa26-4042-95ac-462c2631bc20.png)<br>
+*Renderer - Colored Cube using Color.shader and Textured cube and OpenGL Texture using SimpleLit.shader*
+
 #### MeshRenderer
 Rendering of complex ***obj*** models can be handled by this component. This is a derived component of Renderer.
+
+![MeshRenderer](https://user-images.githubusercontent.com/43366313/202294211-33b5fb7a-52e9-42fe-84c0-18ace5f47ce8.png)<br>
+*Mesh Renderer - using [Spider obj model](OpenGLRenderer/resources/models/spider.obj)*
 
 Component creation and attaching to GameVastu:
 ```cpp
@@ -137,10 +168,26 @@ Other classes like
 
 The GUI of the engine is handled using ImGUI library, which is a widely popular, robust and simple to use library. 
 ***[GUIWindow](OpenGLRenderer\src\Systems\GUI\GUIWindow.h)*** class can be derived from to create custom GUI windows. Currently the project has 4 predefined GUIWindows.
-1. **Scenes Window**: Lists scenes available for loading and unloading.
-2. **Heirarchy**: Window which shows loaded scenes and its gameVastus, which can be selected to inspect
-3. **Inspector**: Interface to show information about selected GameVastu and its components. It also allows editing component exposed parameters. Some basic rendering information can also be inspected.
-4. **Window Toolbar**: Comprises of window related functionalities like fullscreen toggling.
+
+#### **Scenes Window**
+Lists scenes available for loading and unloading.
+
+![ScenesWindow](https://user-images.githubusercontent.com/43366313/202292900-6c693219-4cce-4ace-a833-ce536a619310.png)
+
+#### **Heirarchy**
+Window which shows loaded scenes and its gameVastus, which can be selected to inspect.
+
+![HeirarchyWindow](https://user-images.githubusercontent.com/43366313/202292959-33fe4c39-0d91-4c0f-86ff-5e57a133145c.png)
+
+#### **Inspector**
+Interface to show information about selected GameVastu and its components. It also allows editing component exposed parameters. Some basic rendering information can also be inspected.
+
+![InspectorWindow](https://user-images.githubusercontent.com/43366313/202292967-48b2c2dd-70fb-4356-8f8b-a11b9e0f6268.png)
+
+#### **Window Toolbar**
+Comprises of window related functionalities like fullscreen toggling.
+
+![WindowToolbar](https://user-images.githubusercontent.com/43366313/202292985-6696cd87-fe67-4586-8336-7a22c494b614.png)
 
 Custom GUIWindows mus override ***GUIWindow::Draw*** method and use the ImGUI library to draw GUIs.
 
