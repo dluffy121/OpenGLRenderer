@@ -366,3 +366,7 @@ FodyWeavers.xsd
 
 x64/
 OpenGLRenderer/x64/
+Document/
+
+# Blend Files
+*.blend
