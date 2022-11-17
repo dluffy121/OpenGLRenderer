@@ -44,9 +44,9 @@ These code run on a graphical processing unit.<br>
 In this project only 2 types of shaders are used **Vertex Shader** and **Fragment Shader** which are written in **GLSL** as shading language.<br>
 These shader files can be found under ***[shaders](OpenGLRenderer/resources/shaders)*** folder:
 * [Color](OpenGLRenderer/resources/shaders/Color.shader)
-* [SimpleLit](resources/shaders/SimpleLit.shader)
-* [SimpleUnlit](resources/shaders/SimpleUnlit.shader)
-* [Texture](resources/shaders/Texture.shader)
+* [SimpleLit](OpenGLRenderer/resources/shaders/SimpleLit.shader)
+* [SimpleUnlit](OpenGLRenderer/resources/shaders/SimpleUnlit.shader)
+* [Texture](OpenGLRenderer/resources/shaders/Texture.shader)
 
 In this project shaders can exist as Shader Assets. The reason for this is so every time a shader is requested the system does not need to parse and compile the shader file and just provide the shader.
 
@@ -64,7 +64,7 @@ Unloading a shader as follow:
 ShaderManager::getInstance()->UnLoadShader(shader);
 ```
 
-### **[Scene](OpenGLRenderer\src\Systems\Scene\Scene.h)**
+### **[Scene](OpenGLRenderer/src/Systems/Scene/Scene.h)**
 A Scene is a 3D world canvas where objects live on. Scenes can be created by deriving from ***Scene*** class. Since scene editing is limited to code, any objects that needs to be in a scene needs to be declared inside the child class and initialized in the constructor.
 In order to let Scenes window know about new scene, it must be register to the ***ScenesWindow*** instance of ***main*** method of ***OpenGLRenderer*** class as follows:
 
@@ -73,7 +73,7 @@ In order to let Scenes window know about new scene, it must be register to the *
 scenesWindow.RegisterScene<scene::NewScene>("NewScene");
 ```
 
-### **[GameVastu](OpenGLRenderer\src\Systems\GameVastu\GameVastu.h)** (GameObject)
+### **[GameVastu](OpenGLRenderer/src/Systems/GameVastu/GameVastu.h)** (GameObject)
 
 A GameVastu is a defining entity of an object. Any features of the object like transform and components is associated with its gameVastu instance. This helps identify an object as whole instead of separate features existing as separate entities to define a single object.<br>
 A GameVastu has a base ***Transform*** component which can be used to translate, rotate, and scale any component in the scene.
@@ -84,7 +84,7 @@ GameVastu* cameraVastu = CreateGameVastu();
 cameraVastu->m_name = "Camera";
 ```
 
-### **[Component](OpenGLRenderer\src\Systems\Component\Component.h)**
+### **[Component](OpenGLRenderer/src/Systems/Component/Component.h)**
 
 A Component defines characteristics of a GameVastu. Muliple Components can be attached to a gameVastu. At a time only 1 component of same type can exist on a gameVastu, if trying to attach a new component of same type it won't be attached and will not exist. A component can be defined by deriving from ***Component*** class, or deriving from any other predefined component classes. Component creation can be done by simply calling its constructor.<br>
 There are many virtual methods to override to achieve desired functionality:
@@ -167,7 +167,7 @@ Other classes like
 ### **GUI**
 
 The GUI of the engine is handled using ImGUI library, which is a widely popular, robust and simple to use library. 
-***[GUIWindow](OpenGLRenderer\src\Systems\GUI\GUIWindow.h)*** class can be derived from to create custom GUI windows. Currently the project has 4 predefined GUIWindows.
+***[GUIWindow](OpenGLRenderer/src/Systems/GUI/GUIWindow.h)*** class can be derived from to create custom GUI windows. Currently the project has 4 predefined GUIWindows.
 
 #### **Scenes Window**
 Lists scenes available for loading and unloading.
@@ -209,7 +209,7 @@ void CustomComponent::OnInspectorGUI()
 }
 ```
 
-### **[RenderIntent](OpenGLRenderer\src\Systems\RenderIntent\RenderIntent.h)**
+### **[RenderIntent](OpenGLRenderer/src/Systems/RenderIntent/RenderIntent.h)**
 In order to control the way rendering resources are used a RenderIntent can be created. This not only helps separate resource management logic from renderers but also help keep tabs on those resources from one place. So Renderers just need to request resources and not care about managing them. At present there are 2 RenderIntents:
 1. Standard RenderIntent : Creates separate resources for each object and issues draw calls for each object.
 2. Batch RenderIntent : Creates one large resource shared among all objects and only one draw call is issued.
