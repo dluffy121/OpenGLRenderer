@@ -3,8 +3,32 @@
 A project to explore and understand the underlying mechanics of any game engine, like rendering objects, creating environments, lighting, etc. This project is based on OpenGL, one of the popular graphics library and hardware support for it is implemented widely in many graphical processing units. The project is written in C++ as it provides exceptional memory management, can have more control over resources making them flexibile and optimizable. The focus is on understanding concepts of OpenGL library like vertex and index buffers, their layouting using vertex buffer layouts, using Vertex Arrays, texture creation, etc. Along with this also explore different techniques of rendering in terms of world rendering using MVP matrices, using shaders to handle and use buffer data, architecturing entity component system, importing meshes, rendering GUIs, rendering different types of lights using Phong Lighting model and much more.
 
 ## Features
++ [Windows](#windows)
++ [GLSL Shaders](#glsl-shaders)
++ [Shader Creation and Usage -](#shader-creation-and-usage--)
++ [Scene](#scene)
++ [GameVastu (GameObject)](#gamevastu-gameobject)
++ [Component](#component)
++ [List Of Components](#list-of-components)
+  + [Camera](#camera)
+  + [CameraController](#cameracontroller)
+  + [DirectionalLight](#directionallight)
+  + [PointLight](#pointlight)
+  + [SpotLight](#spotlight)
+  + [Renderer](#renderer)
+  + [MeshRenderer](#meshrenderer)
++ [Core](#core)
++ [GUI](#gui)
+  + [Scenes Window](#scenes-window)
+  + [Heirarchy](#heirarchy)
+  + [Inspector](#inspector)
+  + [Window Toolbar](#window-toolbar)
++ [RenderIntent](#renderintent)
++ [Some Limitations](#some-limitations)
++ [Third Party Libraries](#third-party-libraries)
 
-### **Windows**
+
+## **Windows**
 
 Windows are created using GLFW library, which also takes care of creating OpenGL contexts, handling inputs and much more.<br>
 A window can be created by calling ***WindowManager::GetWindowInstance*** from singleton instance of ***WindowManager***.
@@ -32,7 +56,7 @@ Window* window3 = WindowManager::getInstance()->GetWindowInstance("Third Window"
 ![MultipleWindows](https://user-images.githubusercontent.com/43366313/202290734-035688ce-5db6-440e-86eb-c693016f4106.png)<br>
 *Multiple Windows*
 
-### **GLSL Shaders**
+## **GLSL Shaders**
 
 Shaders are code that help program the stages of a render pipeline, for example:
 1. **Vertex Shaders** which deal with processing of vertex
@@ -50,7 +74,7 @@ These shader files can be found under ***[shaders](OpenGLRenderer/resources/shad
 
 In this project shaders can exist as Shader Assets. The reason for this is so every time a shader is requested the system does not need to parse and compile the shader file and just provide the shader.
 
-### Shader Creation and Usage -
+## Shader Creation and Usage -
 In order to use shader a shader asset needs to be created, this can be done as follows:
 ```cpp
 ShaderManager::getInstance()->CreateShaderAsset("resources/shaders/Color.shader");
@@ -64,7 +88,7 @@ Unloading a shader as follow:
 ShaderManager::getInstance()->UnLoadShader(shader);
 ```
 
-### **[Scene](OpenGLRenderer/src/Systems/Scene/Scene.h)**
+## **[Scene](OpenGLRenderer/src/Systems/Scene/Scene.h)**
 A Scene is a 3D world canvas where objects live on. Scenes can be created by deriving from ***Scene*** class. Since scene editing is limited to code, any objects that needs to be in a scene needs to be declared inside the child class and initialized in the constructor.
 In order to let Scenes window know about new scene, it must be register to the ***ScenesWindow*** instance of ***main*** method of ***OpenGLRenderer*** class as follows:
 
@@ -73,7 +97,7 @@ In order to let Scenes window know about new scene, it must be register to the *
 scenesWindow.RegisterScene<scene::NewScene>("NewScene");
 ```
 
-### **[GameVastu](OpenGLRenderer/src/Systems/GameVastu/GameVastu.h)** (GameObject)
+## **[GameVastu](OpenGLRenderer/src/Systems/GameVastu/GameVastu.h)** (GameObject)
 
 A GameVastu is a defining entity of an object. Any features of the object like transform and components is associated with its gameVastu instance. This helps identify an object as whole instead of separate features existing as separate entities to define a single object.<br>
 A GameVastu has a base ***Transform*** component which can be used to translate, rotate, and scale any component in the scene.
@@ -84,7 +108,7 @@ GameVastu* cameraVastu = CreateGameVastu();
 cameraVastu->m_name = "Camera";
 ```
 
-### **[Component](OpenGLRenderer/src/Systems/Component/Component.h)**
+## **[Component](OpenGLRenderer/src/Systems/Component/Component.h)**
 
 A Component defines characteristics of a GameVastu. Muliple Components can be attached to a gameVastu. At a time only 1 component of same type can exist on a gameVastu, if trying to attach a new component of same type it won't be attached and will not exist. A component can be defined by deriving from ***Component*** class, or deriving from any other predefined component classes. Component creation can be done by simply calling its constructor.<br>
 There are many virtual methods to override to achieve desired functionality:
@@ -97,31 +121,31 @@ There are many virtual methods to override to achieve desired functionality:
 7. OnInspectorGUI - called each frame, to render Inspector GUI related content.
 8. OnDestroy - called when gameVastu or component cease to exist.
 
-#### **List Of Components**
+## **List Of Components**
 
-#### Camera
+### Camera
 Camera Component is responsible for viewing and projecting the world on a 2D screen. It supports both types of projections, orthographic and perspective. This componont takes care of creating **View** matrix by using its gameVastu's Transform matrix and **Projection** matrix.
 
 ![OrthographicCamera](https://user-images.githubusercontent.com/43366313/202291402-cbfa3fdd-67d5-456b-a5fd-fc190758cde0.png)<br>*Orthographic*
 
 ![PerspectiveCamera](https://user-images.githubusercontent.com/43366313/202291576-615238cd-9762-4c48-b10c-caee82632a9d.png)<br>*Perspective*
 
-#### CameraController
+### CameraController
 This component is responsible for controlling cameras movement. **WASD** can be using to translate camera, rotation can be achieved by combining this with **Alt** key, and zooming can be done by using **Mouse Scroll**.
 
-#### DirectionalLight
+### DirectionalLight
 This component handles lighting objects from a single direction. Its direction and color can be handled from its inspector.
 
 ![DirectionalLight](https://user-images.githubusercontent.com/43366313/202291772-ebf41749-6aa0-4d66-bc46-d60400ebdb4b.gif)<br>
 *Directional Light - from left towards positive X axis*
 
-#### PointLight
+### PointLight
 This component handles lighting objects from a single point in the world. Its intensities, radius can be handled from its inspector.
 
 ![PointLight](https://user-images.githubusercontent.com/43366313/202291815-2813abbb-2887-4c1e-910a-772911b746ec.gif)<br>
 *Point Light - changing Y position*
 
-#### SpotLight
+### SpotLight
 This component handles lighting objects from a single point and spreading in a direction forming a conical light shape. Inspector can be used to modify its properties. This is a derived component of PointLight.
 
 ![SpotLight](https://user-images.githubusercontent.com/43366313/202291858-710c5d09-cba0-4a04-a9a2-b4319c4918c3.gif)<br>
@@ -130,13 +154,13 @@ This component handles lighting objects from a single point and spreading in a d
 ![SpotLight_CuttOff](https://user-images.githubusercontent.com/43366313/202291865-9b64fbda-595f-407a-bdfc-d5cfe8d57742.gif)<br>
 *Spot Light - changing Cutoff value*
 
-#### Renderer
+### Renderer
 Rendering of simple models can be handled by this component by taking vertices and indices as input.
 
 ![Renderer](https://user-images.githubusercontent.com/43366313/202293876-958b81b2-fa26-4042-95ac-462c2631bc20.png)<br>
 *Renderer - Colored Cube using Color.shader and Textured cube and OpenGL Texture using SimpleLit.shader*
 
-#### MeshRenderer
+### MeshRenderer
 Rendering of complex ***obj*** models can be handled by this component. This is a derived component of Renderer.
 
 ![MeshRenderer](https://user-images.githubusercontent.com/43366313/202294211-33b5fb7a-52e9-42fe-84c0-18ace5f47ce8.png)<br>
@@ -149,7 +173,7 @@ Camera* camera = new Camera(window->GetWindowWidth(), window->GetWindowHeight())
 cameraVastu->AddComponent(*camera);
 ```
 
-### **Core**
+## **Core**
 
 The core part of this project contains scripts related to OpenGL library. Classes abstracting api usage:
 1. **IndexBuffer**: Index buffers are OpenGL element array buffers which can store indices. This class manages lifetime of an index buffer, its binding, unbinding, and manipulation.
@@ -164,27 +188,27 @@ Other classes like
 2. **Logger**: Contains Macros to log messages for debugging
 3. **Math**: Contains data types like Vectors, Vertex and some basic math functions.
 
-### **GUI**
+## **GUI**
 
 The GUI of the engine is handled using ImGUI library, which is a widely popular, robust and simple to use library. 
 ***[GUIWindow](OpenGLRenderer/src/Systems/GUI/GUIWindow.h)*** class can be derived from to create custom GUI windows. Currently the project has 4 predefined GUIWindows.
 
-#### **Scenes Window**
+### **Scenes Window**
 Lists scenes available for loading and unloading.
 
 ![ScenesWindow](https://user-images.githubusercontent.com/43366313/202292900-6c693219-4cce-4ace-a833-ce536a619310.png)
 
-#### **Heirarchy**
+### **Heirarchy**
 Window which shows loaded scenes and its gameVastus, which can be selected to inspect.
 
 ![HeirarchyWindow](https://user-images.githubusercontent.com/43366313/202292959-33fe4c39-0d91-4c0f-86ff-5e57a133145c.png)
 
-#### **Inspector**
+### **Inspector**
 Interface to show information about selected GameVastu and its components. It also allows editing component exposed parameters. Some basic rendering information can also be inspected.
 
 ![InspectorWindow](https://user-images.githubusercontent.com/43366313/202292967-48b2c2dd-70fb-4356-8f8b-a11b9e0f6268.png)
 
-#### **Window Toolbar**
+### **Window Toolbar**
 Comprises of window related functionalities like fullscreen toggling.
 
 ![WindowToolbar](https://user-images.githubusercontent.com/43366313/202292985-6696cd87-fe67-4586-8336-7a22c494b614.png)
@@ -209,7 +233,7 @@ void CustomComponent::OnInspectorGUI()
 }
 ```
 
-### **[RenderIntent](OpenGLRenderer/src/Systems/RenderIntent/RenderIntent.h)**
+## **[RenderIntent](OpenGLRenderer/src/Systems/RenderIntent/RenderIntent.h)**
 In order to control the way rendering resources are used a RenderIntent can be created. This not only helps separate resource management logic from renderers but also help keep tabs on those resources from one place. So Renderers just need to request resources and not care about managing them. At present there are 2 RenderIntents:
 1. Standard RenderIntent : Creates separate resources for each object and issues draw calls for each object.
 2. Batch RenderIntent : Creates one large resource shared among all objects and only one draw call is issued.
