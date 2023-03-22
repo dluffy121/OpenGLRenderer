@@ -4,6 +4,8 @@
 
 namespace core
 {
+#if _DEBUG
+
 	void GLClearError()
 	{
 		while (glGetError() != GL_NO_ERROR);
@@ -36,4 +38,6 @@ namespace core
 		}
 		return true;
 	}
+
+#endif
 }
