@@ -21,9 +21,6 @@ static size_t GetTypeHash()
 }
 
 template<typename T>
-struct falseType : std::false_type { };
-
-template<typename T>
 T* CopyArray(T*& arrayToCopy, unsigned int size)
 {
 	T* array = new T[size];

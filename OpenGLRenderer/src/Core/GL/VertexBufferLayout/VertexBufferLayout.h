@@ -5,6 +5,9 @@
 #include <GL/OpenGLHelper.h>
 #include <Math/Math.h>
 
+template<typename T>
+struct falseType : std::false_type { };
+
 namespace core::gl
 {
 	struct VertexBufferElement
